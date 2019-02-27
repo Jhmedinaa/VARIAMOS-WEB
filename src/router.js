@@ -33,6 +33,11 @@ export default new Router({
       component: () => import('./views/Applies.vue')
     },
     {
+      path: '/requirement',
+      name: 'Requirement',
+      component: () => import('./views/Requirement.vue')
+    },
+    {
       path: '/fragop',
       name: 'FragOP',
       component: () => import('./views/FragOP.vue')
