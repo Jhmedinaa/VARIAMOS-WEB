@@ -18,38 +18,36 @@
             <div class="row">
                 <div class="col">
                      <label for="requirementType">Requirement Type</label>
-                     <select id="requirementType" class="form-control">
-                        <option selected>functional requirement</option>
-                        <option>Quality requirement</option>
-                        <option>restriction requirement</option>
+                     <select v-model="requirement.requirementType" id="requirementType" class="form-control">
+                        <option value="functional requirement" >functional requirement</option>
+                        <option >Quality requirement</option>
+                        <option >restriction requirement</option>
                     </select>
                 </div>
                 <div class="col">
                     <label for="systemActivity">System Activity</label>
-                    <input id="systemActivity" type="text" class="form-control" placeholder="System Activity">
+                    <input v-model="requirement.systemActivity"  type="text" class="form-control" placeholder="System Activity">
                 </div>
             </div>
             <div class="row">
                 <div class="col">
-                     <label for="conditionType">Condition Type</label>
-                     <select id="conditionType" class="form-control">
-                        <option selected>Logical Condition</option>
-                        <option>None</option>
-                     </select>
+                     <label for="conditionType">Condition Type</label>                     
+                     <select v-model="requirement.conditionType" @change="onConditionTypeChange($event)" id="conditionType" class="form-control">
+                        <option v-for="(condition, index) in conditionsType" :key="index" :value="index" :selected="index == 0"> {{condition.label}}</option>
+                     </select> 
                 </div>
                 <div class="col">
                      <label for="condition">Condition</label>
-                     <input id="condition" type="text" class="form-control" placeholder="Condition">
+                     <input v-model="requirement.condition" id="condition" type="text" class="form-control" placeholder="Condition" :disabled="isCondition">
                 </div>
             </div>
             <div class="row">
                 <div class="col">
                     <label for="scopeRequirement">Scope of Requirement</label>
-                     <select id="scopeRequirement" class="form-control">
-                        <option selected>Family of Systems</option>
-                        <option>System</option>
-                        <option>System Component</option>
+                     <select id="scopeRequirement" v-model="requirement.scopeRequirement" class="form-control">
+                         <option v-for="scopeR in scopeRequirements" :value="scopeR.id" selected > {{ scopeR.label}}</option>
                      </select>
+                     <strong>{{ this.requirement.scopeRequirement }}</strong>
                 </div>
                 <div class="col">
                     <label for="reachLp">Reach (LP)</label>
@@ -122,7 +120,7 @@
       </div>
     </div>
    
-<div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+    <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -132,7 +130,7 @@
         </button>
       </div>
       <div class="modal-body">
-        Requirement in Process....
+       {{requirement.systemActivity}}
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -149,9 +147,41 @@
 
 <script>
 export default {
-    name: 'Requirement',
-    data() {
-        return {}
+    name: 'RequireX',
+    data() {        
+        return {
+            isCondition: false,
+            conditionsType: [
+                 {id: 0, label: "Logical Condition"}, 
+                 {id: 1, label: "Guided by State"},
+                 {id: 2, label: "Optional feature"}, 
+                 {id: 3, label: "Temporary condition"}, 
+                 {id: 4, label: "None"}
+                 ],
+            scopeRequirements: [
+                 {id:0, label: "Family of Systems"},
+                 {id:1, label: "System"},
+                 {id:2, label: "System Component"}
+            ],
+            requirement:[
+            {
+                requirementType:null,
+                systemActivity:null,
+                conditionType:  {id: 0, label: "Logical Condition"},
+                condition: null,
+                scopeRequirement:  0
+            },
+            ]
+        }
     },
+    methods:{
+        onConditionTypeChange(e){
+            if(e.target.value == "4"){
+                this.isCondition = true;
+            }else{
+                this.isCondition = false;
+            }
+        }
+    }
 }
 </script>

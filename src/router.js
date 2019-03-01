@@ -33,9 +33,9 @@ export default new Router({
       component: () => import('./views/Applies.vue')
     },
     {
-      path: '/requirement',
-      name: 'Requirement',
-      component: () => import('./views/Requirement.vue')
+      path: '/requirex',
+      name: 'RequireX',
+      component: () => import('./views/RequireX.vue')
     },
     {
       path: '/fragop',
