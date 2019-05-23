@@ -39,11 +39,13 @@
   "app_dashboard": "Dashboard",
   "app_share": "Share",
   "app_export": "Export",
-  "app_week": "This week",
+  "app_week": "This week",  
+  "app_requirex": "RequireX",
 
   "modal_save":"Save",
   "modal_success":"Success",
   "modal_error":"Error",
+  "modal_ok":"Ok",
   "models_save_model":"Model Saved!",
   "models_actions_derivation_response": "Derivation response",
 
@@ -66,6 +68,74 @@
   "verification_root":"More than one root element",
   "verification_dead":"Dead elements",
   "verification_false":"False optional elements",
-  "verification_path_problem":"Please setup BackEnd parameters first"
+  "verification_path_problem":"Please setup BackEnd parameters first",
 
+  "requirex_application": "Application",
+  "requirex_domain": "Domain",
+  "requirex_adaptation":"Adaptation",
+
+  "requirex_application_tittle": "Application requirement",
+  "requirex_domain_tittle": "Domain requirement",
+  "requirex_adaptation_tittle":"Adaptation requirement",
+
+  "requirex_requirement_yes":"Yes",
+  "requirex_requirement_no" : "No",
+  "requirex_requirement_description" : "Description",
+
+  "requirex_select":"select an option",
+  "requirex_requirement_type_label" : "Requirement Type",
+  "requirex_requirement_type1": "Constraint",  
+  "requirex_requirement_type2": "Functional Requirements",  
+  "requirex_requirement_type3": "Quality Requirement",
+  "requirex_requirement_type_value_1": "constraint",  
+  "requirex_requirement_type_value_2": "functionalRequirements",  
+  "requirex_requirement_type_value_3": "qualityRequirement",
+
+  "requirex_requirement_name_label": "Requirement Name", 
+
+  "requirex_requirement_condition_label": "Requirement have a conditional?",
+  "requirex_requirement_condition_descrive_label": "Plase enter a condition.",
+
+  "requirex_requirement_imperative_label" : "Imperative",
+  "requirex_requirement_imperative1": "Must",  
+  "requirex_requirement_imperative2": "Should",   
+  "requirex_requirement_imperative3": "Could",
+  "requirex_requirement_imperative_value_1": "must",  
+  "requirex_requirement_imperative_value_2": "should",  
+  "requirex_requirement_imperative_value_3": "could",
+
+  "requirex_requirement_system_name_label":"System or SubSystem",
+  "requirex_requirement_system_domain_name_label":"System family lines",
+
+  "requirex_requirement_system_activity_label" : "System Activity",
+  "requirex_requirement_system_activity1": "User Interaction",  
+  "requirex_requirement_system_activity2": "Autonomous Activity",   
+  "requirex_requirement_system_activity3": "External Interface",
+  "requirex_requirement_system_domain_activity_label" : "Productline Activity",
+  "requirex_requirement_system_domain_activity1": "User",  
+  "requirex_requirement_system_domain_activity2": "Autonomous Activity",   
+  "requirex_requirement_system_domain_activity3": "External Interface",
+  "requirex_requirement_system_activity_value_1": "userInt",  
+  "requirex_requirement_system_activity_value_2": "autoAct",  
+  "requirex_requirement_system_activity_value_3": "extInt",
+
+  "requirex_requirement_user_label":"User",
+  "requirex_requirement_user_domain_label":"Domain User",  
+  "requirex_requirement_process_verb_label":"Process Verb",
+  "requirex_requirement_object_domain_label":"Domain Objet",
+  "requirex_requirement_object_label":"Objet",
+
+  "requirex_requirement_system_condition_label": "Object have a conditional?",
+  "requirex_requirement_system_condition_domain_label": "Domain Object have a conditional?",
+  "requirex_requirement_system_condition_descrive_label": "Plase enter a condition of the type 'if and only if'",
+
+  "requirex_requirement_system_label":"External System or Device",
+
+  "requirex_requirement_from_label" : "Interface requirement interaction",
+  "requirex_requirement_from1": "From",  
+  "requirex_requirement_from2": "To",   
+  "requirex_requirement_from_value_1": "from",  
+  "requirex_requirement_from_value_2": "to",
+
+  "requirex_generate_pdf":"Generate Pdf"
 }
