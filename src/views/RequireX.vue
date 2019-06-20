@@ -8,7 +8,7 @@
       <Row :style="{margin: '1em 0'}">
         <Col span="6">
           <Dropdown placement="bottom-start" @on-click="onSelectedRequirement">
-            <Button type="#17233d" color="#17233d">
+            <Button  color="#17233d">
               <Icon type="ios-add" size="24"/>Add Requirement
               <Icon type="md-arrow-dropdown"/>
             </Button>
@@ -27,8 +27,8 @@
         </Col>
       </Row>
 
-      <div :style="{margin: '1em 0'}">
-        <Table :columns="requirementsTable" :data="data9"></Table>
+      <div :style="{margin: '1em 0'}">      
+        <Table :columns="requirementsTable" :data="requirementsTable"></Table>
       </div>
     </Card>
 
@@ -36,8 +36,7 @@
       on-visible-change="onShowModal"
       v-model="modal1"
       title="Common Modal dialog box title"
-      @on-ok="ok"
-      @on-cancel="cancel"
+   
     >
       <Scroll>
         <router-view></router-view>
