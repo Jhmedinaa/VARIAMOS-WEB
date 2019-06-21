@@ -8,7 +8,7 @@
       <Row :style="{margin: '1em 0'}">
         <Col span="6">
           <Dropdown placement="bottom-start" @on-click="onSelectedRequirement">
-            <Button  color="#17233d">
+            <Button color="#17233d">
               <Icon type="ios-add" size="24"/>Add Requirement
               <Icon type="md-arrow-dropdown"/>
             </Button>
@@ -27,30 +27,28 @@
         </Col>
       </Row>
 
-      <div :style="{margin: '1em 0'}">      
+      <div :style="{margin: '1em 0'}">
         <Table :columns="requirementsTable" :data="requirementsTable"></Table>
       </div>
     </Card>
-
-    <Modal
-      on-visible-change="onShowModal"
-      v-model="modal1"
-      title="Common Modal dialog box title"
    
-    >
-      <Scroll>
-        <router-view></router-view>
-      </Scroll>
-    </Modal>
+    <app-application></app-application>
+
   </Content>
 </template>
 
 <script src="//unpkg.com/vue/dist/vue.js"></script>
 <script src="//unpkg.com/iview/dist/iview.min.js"></script>
 <script>
-import requireApp from "./RequireXApplication";
+
+import application from "../components/requirex/RequireXApplication";
+import adaptation from "../components/requirex/RequireXAdaptation";
 
 export default {
+  components: {
+    "app-adaptation": adaptation,
+    "app-application" : application
+  },
   data() {
     return {
       requirementsTable: [
@@ -74,6 +72,8 @@ export default {
     onSelectedRequirement(name) {
       if ((name = "domain")) {
         this.modal1 = true;
+      }else if(name = "application"){
+
       }
     },
     onShowModal() {
