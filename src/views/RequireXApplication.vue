@@ -149,6 +149,9 @@
       <h1 slot="header">
         <span>{{$t("app_requirex")}} - {{$t('requirex_application')}}</span>
       </h1>
+      <p>Requirement Name : {{requirement.name}}</p>
+      <p>Requirement for Sistem: {{requirement.systemName}}</p>
+      <p>Requirement Type: {{requirement.reqType}}</p>
       <p>{{msg}}</p>
       <div slot="footer">
         <!-- Boton ok -->
@@ -327,7 +330,9 @@ export default {
     pdf() {
       var doc = new jsPDF();
 
-      doc.text(this.msg, 10, 10);
+      doc.text("Variamos Requirement", 10 , 10);
+      doc.text("Requirement : " + this.requirement.name, 10, 20);
+      doc.text(this.msg, 10, 30);
       doc.save("requirement.pdf");
     },
     json() {},

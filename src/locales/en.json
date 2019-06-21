@@ -73,10 +73,12 @@
   "requirex_application": "Application",
   "requirex_domain": "Domain",
   "requirex_adaptation":"Adaptation",
+  "requirex_admin":"Administration",
 
   "requirex_application_tittle": "Application requirement",
   "requirex_domain_tittle": "Domain requirement",
   "requirex_adaptation_tittle":"Adaptation requirement",
+  "requirex_admin_tittle":"Administration Panel",
 
   "requirex_requirement_yes":"Yes",
   "requirex_requirement_no" : "No",

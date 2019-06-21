@@ -14,6 +14,11 @@
       <h1>{{ $t("requirex_adaptation_tittle")}}</h1>
       <router-view></router-view>
     </tabPane>
+
+    <tabPane :label="$t('requirex_admin')" name="administration" v-if="tab0">
+      <h1>{{ $t("requirex_admin_tittle")}}</h1>
+      <router-view></router-view>
+    </tabPane>
   </tabs>
 </template>
 
