@@ -1,105 +1,125 @@
 <template>
-            <div id="tabs" class="container">
-              	<div class="tabs">
-					<div v-for="(item, $index) in data" :key="item.data.nodeId" >
-						<a id="atabs" v-if="checktabs(item)" @click="clickactivetab($index)" v-bind:class="[ activetab === item.data.nodeName ? 'active' : '' ]">
-							{{item.data.nodeName}}
-						</a>
-					</div>
-            	</div>
+    <div id="tabs" class="container">
+        <div class="tabs">
+			<div v-for="(item, $index) in getModels()" :key="item" >
+				<a id="atabs" v-if="checktabs(item,$index)" @click="clickactivetab($index)" v-bind:class="[ getactivetab === item ? 'active' : '' ]">
+					{{item}}
+				</a>
+			</div>
+        </div>
 
-            <div>
-				<div v-if="activetab !== ''" class="tabcontent">
-					<keep-alive>
-						<model :key='activetab' :activetab="activetab"></model>
-					</keep-alive>
-				</div>
+        <div>
+			<div v-if="getactivetab !== ''" class="tabcontent">
+				<keep-alive>
+					<model :key='getmodel_component'></model>
+				</keep-alive>
+			</div>
+        </div>
+        <div v-if="getactivetab === '' && $route.params.project !== 'default'" data-test="nofolder">
+            <div class="border-bottom text-left" style="padding-bottom: 10px"><h1 class="h2">Project: {{ $route.params.project }}</h1></div>
+            <div class="div-text-area" style="padding-up: 10px">Please select one folder
+                <br /><br />
             </div>
         </div>
+        <div v-if="getactivetab === '' && $route.params.project === 'default'" data-test="noproject">
+            <div class="border-bottom text-left" style="padding-bottom: 10px"><h1 class="h2">Please select one project</h1></div>
+        </div>
+    </div>
 </template>
 
 <script>
 import model from './Models.vue'
 import Bus from '../assets/js/common/bus.js'
+import { getModelInfo } from '../assets/js/common/global_info'
 
 export default{
     components:{
         model
     },
-    data: function() {
-        return{
-            activetab: '',
-            onetab: true,
-            data:[]
-		}
-    },
     methods:{
-        checktabs: function(item){ //set the first one diagram to activetab
-            var projectid = -1;
-            for(let i = 0; i < this.data.length; i++)
+        /**
+         * when the folder is opened, show up the tabs and model component
+         * @param {string} item     - the element of the array for tabs
+         * @param {number} index    - the index of the array for tabs
+         * @returns {boolean}
+         */
+        checktabs: function(item,index){
+            let data = this.getdata;
+            for(let i = 0; i < getModelInfo()[item].projFolders.length; i++)
             {
-                if(this.data[i].data.level == 1 && this.data[i].data.open)
-                    projectid = this.data[i].data.nodeId;
-            }
-            if(item.data.projectId === projectid && item.data.nodeType === 3) 
-            {
-                if(this.onetab)
+                // check the tabs for each folder
+                if(this.getmodel_component.includes(getModelInfo()[item].projFolders[i]))
                 {
-                    this.onetab =! this.onetab;
-                    this.activetab = item.data.nodeName;
+                    this.mxgraphreset = true;
+                    return true;
                 }
-                return true;
             }
-            if(projectid === -1)
-            {
-                this.onetab = true;
-                this.activetab = '';
-            }
+            // close model component
+            this.mxgraphreset = false;
             return false;
         },
+        // return the available models
+        getModels(){
+            return getModelInfo()["gmodels"];
+        },
+        /**
+         * click the tab and navigate to the corresponding path and model
+         * @param {number} index    - the index of the array for tabs
+         * @fires module:store~actions:updateactivetab
+         */
         clickactivetab (index) {
-            this.activetab = this.data[index].data.nodeName;
-            if(this.data[index].data.modeltype == 1)
-				this.$router.push("/models/feature");
-			else if(this.data[index].data.modeltype == 2) 
-                this.$router.push("/models/component");
-            else if(this.data[index].data.modeltype == 3)
-                this.$router.push("/models/binding_feature_component");
+            let data = this.getdata;
+            let projectname = '';
+			let foldername = data[this.getmodel_component_index].data.nodeName.replace(/\s+/g,"");
+			for(let i = 0; i < data.length; i++)
+			{
+				if(data[i].data.nodeId === data[this.getmodel_component_index].data.projectId)
+					projectname = data[i].data.nodeName;
+            }
+            this.$router.push("/models/"+projectname+"/"+foldername+"/"+getModelInfo()["gmodels"][index]);
+            this.$store.dispatch('updateactivetab', getModelInfo()["gmodels"][index]);
+        }
+    },
+    computed: {
+        /**
+		 * @returns	{string} activetab in the store
+		 */
+        getactivetab (){
+            return this.$store.getters.getactivetab;
+        },
+        /**
+		 * @returns {array} tree data in the store
+		 */
+        getdata (){
+            return this.$store.getters.getdata;
+        },
+        /**
+		 * @returns	{string} model_component in the store
+		 */
+        getmodel_component (){
+            return this.$store.getters.getmodelcomponent;
+        },
+        /**
+		 * @returns {number} the index of current folder in the store
+		 */
+        getmodel_component_index (){
+            return this.$store.getters.getmodelcomponentindex;
         }
     },
     mounted () {
-        Bus.$on('deletediagram', diagram => { // check the deleted diagram is same as activetab
-            if(diagram.data.nodeName === this.activetab)
-            {
-                this.onetab = true;
-                for(let i = 0; i < this.data.length; i++)
-                {
-                    if(this.data[i].data.parentId == diagram.data.parentId) 
-                    {
-                        if(this.onetab)
-                        {
-                            this.onetab =! this.onetab;
-                            this.activetab = this.data[i].data.nodeName;
-                        }
-                    }
-                }
-                if(this.onetab)
-                {
-                    this.activetab = '';
-                }
-            }
+        /**
+         * reset the model component
+         * @deprecated
+         */
+        Bus.$on('resetall', data => {
+            Bus.$emit('disablegraph',false);
+            this.mxgraphreset = false;
+            Vue.nextTick(()=>{
+                this.mxgraphreset = true;
+                this.model_component = data;
+                localStorage.clear();
+            },100);
         });
-        Bus.$on('clickactivetab', data =>{
-            this.activetab = data;
-        });
-        Bus.$on('updatedata', data => {
-            this.data = data;
-		});
-    },
-    watch:{
-        activetab: function(val) {
-            Bus.$emit('updateactivetab',val);
-        }
     }
 }
 </script>
@@ -113,7 +133,7 @@ export default{
 }
 
 .container {  
-    min-width: 1100px;
+    /* min-width: 1100px; */
     margin: 10px auto;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 0.9em;

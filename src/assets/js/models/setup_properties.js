@@ -1,9 +1,14 @@
-
 var setup_properties = function setup_properties(graph,properties_styles){
+	//remove previous listeners
+	if(graph.getSelectionModel().eventListeners.length>3){
+		graph.getSelectionModel().eventListeners.pop();
+		graph.getSelectionModel().eventListeners.pop();
+	}
+
     graph.getSelectionModel().addListener(mxEvent.CHANGE, function(sender, evt)
     {
         selectionChanged(graph,properties_styles);
-    });
+	});
 
     selectionChanged(graph,properties_styles);
 
@@ -16,16 +21,15 @@ var setup_properties = function setup_properties(graph,properties_styles){
 		div.innerHTML = '';
 		// Gets the selection cell
 		var cell = graph.getSelectionCell();
-
 		
 		if (cell == null)
 		{
-			mxUtils.writeln(div, messages["setup_properties_nothing"]);
+			mxUtils.writeln(div, global.messages["setup_properties_nothing"]);
 		}
 		else
 		{
 			if(cell.getId().includes("clon")){
-				mxUtils.writeln(div, messages["setup_properties_clon"]);
+				mxUtils.writeln(div, global.messages["setup_properties_clon"]);
 			}else{
 				if(cell.value.attributes){
 					var form = new mxForm("properties-table");
@@ -119,7 +123,7 @@ var setup_properties = function setup_properties(graph,properties_styles){
 	function executeApplyHandler(graph, form, cell, attribute, input, custom){
 
 		//apply custom configurations
-		applyCustomElements(input, custom);
+		applyCustomElements(input, custom, cell);
 
 		var applyHandler = function()
 		{
@@ -212,10 +216,11 @@ var setup_properties = function setup_properties(graph,properties_styles){
 		return def_display;
 	}
 
-	function applyCustomElements(input, custom){
+	function applyCustomElements(input, custom, cell){
 		if(custom!=null){
 			//add onchange listener
 			if(custom["onchange"]!=null){
+				input.name=cell.getId();
 				input.onchange = custom["onchange"];
 			}
 

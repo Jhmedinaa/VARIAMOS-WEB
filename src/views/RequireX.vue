@@ -1,41 +1,83 @@
 <template>
-  <tabs tabs @on-click="handleTabs">
-    <tabPane :label="$t('requirex_application')" name="application" v-if="tab0">      
-      <h1>{{ $t("requirex_application_tittle")}}</h1>      
-      <router-view></router-view>
-    </tabPane>
+  <Content :style="{padding: '0 30px'}">
+    <Breadcrumb :style="{margin: '3px 0'}">
+      <BreadcrumbItem>Variamos</BreadcrumbItem>
+      <BreadcrumbItem>RequireX</BreadcrumbItem>
+    </Breadcrumb>
+    <Card>
+      <Row :style="{margin: '1em 0'}">
+        <Col span="6">
+          <Dropdown placement="bottom-start" @on-click="onSelectedRequirement">
+            <Button color="#17233d">
+              <Icon type="ios-add" size="24"/>Add Requirement
+              <Icon type="md-arrow-dropdown"/>
+            </Button>
+            <DropdownMenu slot="list">
+              <DropdownItem name="domain">Domain</DropdownItem>
+              <DropdownItem name="aplication">Application</DropdownItem>
+              <DropdownItem name="adaptation">Adaptation</DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </Col>
+      </Row>
 
-    <tabPane :label="$t('requirex_domain')" name="domain" v-if="tab0">
-      <h1>{{ $t("requirex_domain_tittle") }}</h1>
-      <router-view></router-view>
-    </tabPane>
+      <Row :style="{margin: '2em 0'}">
+        <Col span="3">
+          <p>Requirements</p>
+        </Col>
+      </Row>
 
-    <tabPane :label="$t('requirex_adaptation')" name="adaptation" v-if="tab0">
-      <h1>{{ $t("requirex_adaptation_tittle")}}</h1>
-      <router-view></router-view>
-    </tabPane>
+      <div :style="{margin: '1em 0'}">
+        <Table :columns="requirementsTable" :data="requirementsTable"></Table>
+      </div>
+    </Card>
+   
+    <app-application></app-application>
 
-    <tabPane :label="$t('requirex_admin')" name="administration" v-if="tab0">
-      <h1>{{ $t("requirex_admin_tittle")}}</h1>
-      <router-view></router-view>
-    </tabPane>
-  </tabs>
+  </Content>
 </template>
 
 <script src="//unpkg.com/vue/dist/vue.js"></script>
 <script src="//unpkg.com/iview/dist/iview.min.js"></script>
 <script>
+
+import application from "../components/requirex/RequireXApplication";
+import adaptation from "../components/requirex/RequireXAdaptation";
+
 export default {
+  components: {
+    "app-adaptation": adaptation,
+    "app-application" : application
+  },
   data() {
     return {
-      tab0: true,
-      tab1: true,
-      tab2: true
+      requirementsTable: [
+        {
+          title: "Requirement Type",
+          key: "reqType"
+        },
+        {
+          title: "Name",
+          key: "name"
+        },
+        {
+          title: "System",
+          key: "systemName"
+        }
+      ],
+      modal1: false
     };
   },
   methods: {
-    handleTabs(name) {
-      this.$router.push("/requirex/" + name);
+    onSelectedRequirement(name) {
+      if ((name = "domain")) {
+        this.modal1 = true;
+      }else if(name = "application"){
+
+      }
+    },
+    onShowModal() {
+      this.$router.push("/requirex/application");
     }
   }
 };

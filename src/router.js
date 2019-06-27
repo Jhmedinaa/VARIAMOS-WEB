@@ -18,7 +18,7 @@ export default new Router({
       component: () => import('./views/About.vue')
     },
     {
-      path: '/models/:type',
+      path: '/models/:project/:folder/:type',
       name: 'Models',
       component: () => import('./views/Multi-models.vue')
     },
@@ -41,9 +41,9 @@ export default new Router({
       path: '/hlvl',
       name: 'HLVL',
       component: () => import('./views/HLVL.vue')
-    } ,
+    },
     {
-      path: '/requirex',
+      path: '/requireX',
       name: 'RequireX',
       component: () => import('./views/RequireX.vue'),
       children:[
@@ -68,6 +68,7 @@ export default new Router({
           component: () => import('./views/RequireXAdaptation.vue')
         }
       ]
-    }
+    },
+
   ]
 })

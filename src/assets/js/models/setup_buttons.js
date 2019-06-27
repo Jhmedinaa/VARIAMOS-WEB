@@ -1,9 +1,9 @@
-var setup_buttons = function setup_buttons(graph,undoManager,reused_functions){
+var setup_buttons = function setup_buttons(graph,undoManager,reused_functions,route_pare,store){
     /* begin buttonxml */
     // Adds an option to view the XML of the graph
     var buttonXML = document.getElementById('buttonXML');
     buttonXML.innerHTML="";
-    buttonXML.appendChild(mxUtils.button_with_icon(messages["setup_buttons_viewxml"], function()
+    buttonXML.appendChild(mxUtils.button_with_icon(global.messages["setup_buttons_viewxml"], function()
     {
         var encoder = new mxCodec();
         var node = encoder.encode(graph.getModel());
@@ -15,7 +15,7 @@ var setup_buttons = function setup_buttons(graph,undoManager,reused_functions){
     // Adds an option to reset the graph
     var buttonRESET = document.getElementById('buttonRESET');
     buttonRESET.innerHTML="";
-    buttonRESET.appendChild(mxUtils.button_with_icon(messages["setup_buttons_reset"], function()
+    buttonRESET.appendChild(mxUtils.button_with_icon(global.messages["setup_buttons_reset"], function()
     {
         var removed_cells = graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
 
@@ -44,11 +44,12 @@ var setup_buttons = function setup_buttons(graph,undoManager,reused_functions){
     // Adds an option to reset the graph
     var buttonRESETALL = document.getElementById('buttonRESETALL');
     buttonRESETALL.innerHTML="";
-    buttonRESETALL.appendChild(mxUtils.button_with_icon(messages["setup_buttons_reset_all"], function()
+    buttonRESETALL.appendChild(mxUtils.button_with_icon(global.messages["setup_buttons_reset_all"], function()
     {
         model_code.value="";
         var event = new Event('change');
         model_code.dispatchEvent(event);
+        store.dispatch('updatecacheselected', []);
         location.reload();
     },"eraser"));
     /* end buttonreset */
@@ -57,7 +58,7 @@ var setup_buttons = function setup_buttons(graph,undoManager,reused_functions){
     // Adds an option to save in localstorage the graph
     var buttonSAVE = document.getElementById('buttonSAVE');
     buttonSAVE.innerHTML="";
-    buttonSAVE.appendChild(mxUtils.button_with_icon(messages["setup_buttons_save"], function()
+    buttonSAVE.appendChild(mxUtils.button_with_icon(global.messages["setup_buttons_save"], function()
     {
         var encoder = new mxCodec();
         var result = encoder.encode(graph.getModel());
@@ -72,7 +73,7 @@ var setup_buttons = function setup_buttons(graph,undoManager,reused_functions){
     /* begin buttonExport */
     var buttonEXPORT = document.getElementById('buttonEXPORT');
     buttonEXPORT.innerHTML="";
-    buttonEXPORT.appendChild(mxUtils.button_with_icon(messages["setup_buttons_export"], function()
+    buttonEXPORT.appendChild(mxUtils.button_with_icon(global.messages["setup_buttons_export"], function()
     {
         var encoder = new mxCodec();
         var result = encoder.encode(graph.getModel());
@@ -84,7 +85,7 @@ var setup_buttons = function setup_buttons(graph,undoManager,reused_functions){
         var textToSaveAsBlob = new Blob([model_code.value], {type:"text/xml"});
         var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
         var downloadLink = document.createElement("a");
-        downloadLink.download = "model.xml";
+        downloadLink.download = route_pare.project + "_" + route_pare.folder + "_" + "model.xml";
         downloadLink.href = textToSaveAsURL;
         downloadLink.onclick = function(event)
         {
@@ -117,8 +118,9 @@ var setup_buttons = function setup_buttons(graph,undoManager,reused_functions){
 
     var buttonIMPORT = document.getElementById('buttonIMPORT');
     buttonIMPORT.innerHTML="";
-    buttonIMPORT.appendChild(mxUtils.button_with_icon(messages["setup_buttons_import"], function()
+    buttonIMPORT.appendChild(mxUtils.button_with_icon(global.messages["setup_buttons_import"], function()
     {   
+        store.dispatch('updatecacheselected', []);
         file.click();
     },"download"));
     /* end buttonImport */
@@ -133,7 +135,7 @@ var setup_buttons = function setup_buttons(graph,undoManager,reused_functions){
     /* begin buttonUNDO */
     var buttonUNDO = document.getElementById('buttonUNDO');
     buttonUNDO.innerHTML="";
-    buttonUNDO.appendChild(mxUtils.button_with_icon(messages["setup_buttons_undo"], function()
+    buttonUNDO.appendChild(mxUtils.button_with_icon(global.messages["setup_buttons_undo"], function()
     {
         if(undoManager.canUndo()){
             undoManager.undo();
@@ -144,7 +146,7 @@ var setup_buttons = function setup_buttons(graph,undoManager,reused_functions){
     /* begin buttonREDO */
     var buttonREDO = document.getElementById('buttonREDO');
     buttonREDO.innerHTML="";
-    buttonREDO.appendChild(mxUtils.button_with_icon(messages["setup_buttons_redo"], function()
+    buttonREDO.appendChild(mxUtils.button_with_icon(global.messages["setup_buttons_redo"], function()
     {
         if(undoManager.canRedo()){
             undoManager.redo();
@@ -155,7 +157,7 @@ var setup_buttons = function setup_buttons(graph,undoManager,reused_functions){
     /* begin buttonSHOW */
     var buttonSHOW = document.getElementById('buttonSHOW');
     buttonSHOW.innerHTML="";
-    buttonSHOW.appendChild(mxUtils.button_with_icon(messages["setup_buttons_show"], function()
+    buttonSHOW.appendChild(mxUtils.button_with_icon(global.messages["setup_buttons_show"], function()
     {
         var preview = new mxPrintPreview(graph, 1);
 		preview.open();
@@ -165,7 +167,7 @@ var setup_buttons = function setup_buttons(graph,undoManager,reused_functions){
     /* begin buttonDELETE */
     var buttonDELETE = document.getElementById('buttonDELETE');
     buttonDELETE.innerHTML="";
-    buttonDELETE.appendChild(mxUtils.button_with_icon(messages["setup_buttons_delete"], reused_functions[0],"cut"));
+    buttonDELETE.appendChild(mxUtils.button_with_icon(global.messages["setup_buttons_delete"], reused_functions[0],"cut"));
     /* end buttonDELETE */
 }
 

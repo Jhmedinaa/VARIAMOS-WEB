@@ -9,7 +9,7 @@ var setup_relations = function setup_relations(graph,relations){
         if(target.edges != null && target.edges.length>0){
             for (var i = 0; i < target.edges.length; i++) {
                 if(target.edges[i].target.getId()==source.getId()){
-                    alert(messages["setup_relations_bidirectional"]);
+                    alert(global.messages["setup_relations_bidirectional"]);
                     return null;
                 }
             }

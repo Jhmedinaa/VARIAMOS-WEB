@@ -1,12 +1,42 @@
 <template>
-<div>
-                    <div v-if="data.length !== 0" style="margin-right:10px; margin-bottom:10px;">
-                        <cotalogue ref="cotalogue" :data="data"></cotalogue>
+	<div>
+					<div class="button_tree_element">
+                        <div class="button-unique" >
+                            <button class="btn-model-area btn btn-sm btn-outline-secondary" type="primary" @click="newProject.isshow=!newProject.isshow" data-test="newprojectbutton">
+                                <div style="padding:1px; font-size:12px;">
+                                    <i class="fas fa-plus"></i>
+                                    {{$t("filemanagement_addproject_button")}}
+                                </div>
+                            </button>
+							<Modal
+								v-model="newProject.isshow"
+								:loading="newProject.loading"
+								:title="$t('filemanagement_addproject_title')"
+								class-name="vertical-center-modal"
+								width="600"
+								ok-text="OK"
+        						cancel-text="Cancel"
+								@on-ok="createproject"
+								@on-cancel="newProject.isshow=false,newProject.formval.projectName=''"
+								data-test="newprojectmodal">
+								<div class="form-horizontal">
+									<div class="form-group">
+										<label class="col-md-3 control-label"><em>*</em> {{$t("filemanagement_addproject_label")}}</label>
+										<div class="col-md-9">
+											<input type="text" class="form-control" maxlength="70" v-model="newProject.formval.projectName" :placeholder="$t('filemanagement_addproject_context')" data-test="newprojectmodalinput"/>
+										</div>
+									</div>
+								</div>
+							</Modal>
+                        </div>
+                    </div>
+                    <div v-if="getdata" style="margin-right:10px; margin-bottom:10px;">
+                        <cotalogue ref="cotalogue"></cotalogue>
                     </div>
 					<Modal
 						v-model="newName.isshow"
 						:loading="newName.loading"
-						title="Rename"
+						:title="$t('filemanagement_changename_title')"
 						class-name="vertical-center-modal"
 						width="600"
 						ok-text="OK"
@@ -15,42 +45,9 @@
 						@on-cancel="newName.isshow=false,newName.formval.changedName='',newName.formval.id=null">
 						<div class="form-horizontal">
 							<div class="form-group">
-								<label class="col-md-3 control-label"><em>*</em> New name:</label>
+								<label class="col-md-3 control-label"><em>*</em>{{$t("filemanagement_changename_label")}}</label>
 								<div class="col-md-9">
-									<input type="text" class="form-control" maxlength="70" v-model="newName.formval.changedName" :placeholder="'Please enter a new name'" />
-								</div>
-							</div>
-						</div>
-					</Modal>
-					<Modal
-						v-model="newDiagram.isshow"
-						:loading="newDiagram.loading"
-						title="New diagram"
-						class-name="vertical-center-modal"
-						width="600"
-						ok-text="OK"
-        				cancel-text="Cancel"
-						@on-ok="createDire"
-						@on-cancel="newDiagram.isshow=false,newDiagram.formval.diagramName='',newDiagram.formval.id=null">
-						<div class="form-horizontal">
-							<div class="form-group">
-								<label class="col-md-2 control-label">Father:</label>
-								<div class="col-md-9">
-									<input type="text" class="form-control" disabled v-model="newDiagram.formval.parentFolder" />
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-md-3 control-label"><em>*</em> Diagram name:</label>
-								<div class="col-md-9">
-									<input type="text" class="form-control" maxlength="70" v-model="newDiagram.formval.diagramName" :placeholder="'Please enter a new diagram name'" />
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-md-6 control-label"><em>*</em> Please select the type of model:</label>
-								<div class="col-md-9">
-									<Select placeholder="" v-model="newDiagram.formval.modeltype" style="width:200px">
-        								<Option v-for="item in modellist" :value="item.value" :key="item.value">{{ item.label }}</Option>
-    								</Select>
+									<input type="text" class="form-control" maxlength="70" v-model="newName.formval.changedName" :placeholder="$t('filemanagement_changename_context')" />
 								</div>
 							</div>
 						</div>
@@ -58,7 +55,7 @@
 					<Modal
 						v-model="newApplication.isshow"
 						:loading="newApplication.loading"
-						title="New Application"
+						:title="$t('filemanagement_newapplication_title')"
 						class-name="vertical-center-modal"
 						width="600"
 						ok-text="OK"
@@ -67,15 +64,15 @@
 						@on-cancel="newApplication.isshow=false,newApplication.applicationName='',newApplication.id=null">
 						<div class="form-horizontal">
 							<div class="form-group">
-								<label class="col-md-2 control-label">Father:</label>
+								<label class="col-md-2 control-label">{{$t("filemanagement_newapplication_father")}}</label>
 								<div class="col-md-9">
 									<input type="text" class="form-control" disabled v-model="newApplication.parentFolder" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-md-3 control-label"><em>*</em> Application name:</label>
+								<label class="col-md-3 control-label"><em>*</em>{{$t("filemanagement_newapplication_label")}}</label>
 								<div class="col-md-9">
-									<input type="text" class="form-control" maxlength="70" v-model="newApplication.applicationName" :placeholder="'Please enter a new application name'" />
+									<input type="text" class="form-control" maxlength="70" v-model="newApplication.applicationName" :placeholder="$t('filemanagement_newapplication_context')" />
 								</div>
 							</div>
 						</div>
@@ -83,7 +80,7 @@
 					<Modal
 						v-model="newAdaptation.isshow"
 						:loading="newAdaptation.loading"
-						title="New Adaptation"
+						:title="$t('filemanagement_newadaptation_title')"
 						class-name="vertical-center-modal"
 						width="600"
 						ok-text="OK"
@@ -92,50 +89,22 @@
 						@on-cancel="newAdaptation.isshow=false,newAdaptation.adapatationName='',newAdaptation.id=null">
 						<div class="form-horizontal">
 							<div class="form-group">
-								<label class="col-md-2 control-label">Father:</label>
+								<label class="col-md-2 control-label">{{$t('filemanagement_newadaptation_father')}}</label>
 								<div class="col-md-9">
 									<input type="text" class="form-control" disabled v-model="newAdaptation.parentFolder" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-md-3 control-label"><em>*</em> Adaptation name:</label>
+								<label class="col-md-3 control-label"><em>*</em>{{$t('filemanagement_newadaptation_label')}}</label>
 								<div class="col-md-9">
-									<input type="text" class="form-control" maxlength="70" v-model="newAdaptation.adapatationName" :placeholder="'Please enter a new adaptation name'" />
+									<input type="text" class="form-control" maxlength="70" v-model="newAdaptation.adapatationName" :placeholder="$t('filemanagement_newadaptation_context')" />
 								</div>
 							</div>
 						</div>
 					</Modal>
 					
-                    <div v-if="activetab === ''" class="button_tree_element">
-                        <div class="button-unique" >
-                            <button class="btn-model-area btn btn-sm btn-outline-secondary" type="primary" @click="newProject.isshow=!newProject.isshow">
-                                <div style="padding:1px; font-size:1px;">
-                                    <i class="fas fa-plus"></i>
-                                    Add a new project
-                                </div>
-                            </button>
-							<Modal
-								v-model="newProject.isshow"
-								:loading="newProject.loading"
-								title="New project"
-								class-name="vertical-center-modal"
-								width="600"
-								ok-text="OK"
-        						cancel-text="Cancel"
-								@on-ok="createproject"
-								@on-cancel="newProject.isshow=false,newProject.formval.projectName='',newProject.formval.id=null">
-								<div class="form-horizontal">
-									<div class="form-group">
-										<label class="col-md-3 control-label"><em>*</em> New project name:</label>
-										<div class="col-md-9">
-											<input type="text" class="form-control" maxlength="70" v-model="newProject.formval.projectName" :placeholder="'Please enter a new project name'" />
-										</div>
-									</div>
-								</div>
-							</Modal>
-                        </div>
-                    </div>
-                </div>
+                    
+    </div>
 </template>
 
 <script>
@@ -148,55 +117,38 @@ export default{
     },
     data: function() {
         return{
-			activetab:'',
-		modellist:[{
-			value: 1,
-			label: 'Feature'
-		},
-		{
-			value: 2,
-			label: 'Component'
-		},
-		{
-			value: 3,
-			label: 'Binding'
-		}
-		],
-        data: [],
+			/**
+			 * temporary object to store new name for rename function
+			 * @property	{string} changedName	- the new name which will replace the old name
+			 * @property	{string} type			- check between application and adaptation
+			*/
 			newName: {
 				isshow: false,
 				loading: true,
 				index: null,
 				formval: {
 					changedName: '',
-					id: null
+					id: null,
+					projectId: -1,
+					type: ''
 				}
 			},
+			/**
+			 * temporary object to store new name for a new project
+			 * @property	{string} projectName	- the name of the new project
+			 */
 			newProject: {
 				isshow: false,
 				loading: true,
-				index: null,
 				formval: {
 					projectName: '',
-					id: null,
-					parentId: -1,
-					parentFolder: '',
-					numberofmember: 0
 				}
 			},
-			newDiagram: {
-				isshow: false,
-				loading: true,
-				index: null,
-				formval: {
-					diagramName: '',
-					id: null,
-					parentId: null,
-					parentFolder: '',
-					numberofmember: 0,
-					modeltype: 0
-				}
-			},
+			/**
+			 * temporary object to store information for a new application folder
+			 * @property	{string} applicationName	- the name of the new application folder
+			 * @property	{string} parentFolder		- the name of the parent folder
+			 */
 			newApplication: {
 				isshow: false,
 				loading: true,
@@ -206,6 +158,11 @@ export default{
 				applicationName: '',
 				parentFolder: ''
 			},
+			/**
+			 * temporary object to store information for a new adaptation folder
+			 * @property	{string} adapatationName	- the name of the new adaptation folder
+			 * @property	{string} parentFolder	- the name of the parent folder
+			 */
 			newAdaptation: {
 				isshow: false,
 				loading: true,
@@ -218,16 +175,41 @@ export default{
         }
     },
 	mounted () {
-		//new diagram
-        Bus.$on('createdire', data => {
-			this.newDiagram.isshow = true;
-			this.newDiagram.index = this.getIndexById(data.data.nodeId);
-			this.newDiagram.formval.diagramName = '';
-			this.newDiagram.formval.parentId = data.data.nodeId;
-			this.newDiagram.formval.parentFolder = data.data.nodeName;
-			this.newDiagram.formval.numberofmember = data.numberOfChildren;
+		/**
+		 * get the tree data from local storage
+		 * @fires module:store~actions:loadtreedata
+		 */
+		if(localStorage['Filetree|User1'])
+		{
+			 let data = JSON.parse(localStorage.getItem('Filetree|User1'));
+			 this.$store.dispatch('loadtreedata', data);
+		}
+		/**
+		 * get the activetab from local storage
+		 * @fires module:store~actions:updateactivetab
+		 */
+		if(localStorage['Filetree|activetab'])
+		{
+			 let data = JSON.parse(localStorage.getItem('Filetree|activetab'));
+			 this.$store.dispatch('updateactivetab', data);
+		}
+		/**
+		 * get the model_component_index from local storage
+		 * @fires module:store~actions:updatemodelcomponent
+		 */
+		if(localStorage['Filetree|model_component_index'])
+		{
+			 let data = JSON.parse(localStorage.getItem('Filetree|model_component_index'));
+			 this.$store.dispatch('updatemodelcomponent', data);
+		}
+		this.$Message.config({
+    		top: 100,
+    		duration: 2
 		});
-
+		/**
+		 * open a modal to create a new application folder
+		 * @listens module:contextMenu~event:createapplication
+		 */
 		Bus.$on('createapplication', data => {
 			this.newApplication.isshow = true;
 			this.newApplication.index = this.getIndexById(data.data.nodeId);
@@ -235,7 +217,10 @@ export default{
 			this.newApplication.parentFolder = data.data.nodeName;
 			this.newApplication.parentId = data.data.nodeId;
 		});
-
+		/**
+		 * open a modal to create a new adaptation folder
+		 * @listens module:contextMenu~event:createadaption
+		 */
 		Bus.$on('createadaption', data => {
 			this.newAdaptation.isshow = true;
 			this.newAdaptation.index = this.getIndexById(data.data.nodeId);
@@ -243,545 +228,331 @@ export default{
 			this.newAdaptation.parentFolder = data.data.nodeName;
 			this.newAdaptation.parentId = data.data.nodeId;
 		});
-		//delete diagram
+		/**
+		 * delete the folder and its children, remove this folder from localstorage
+		 * @listens module:contextMenu~event:deletedire
+		 */
 		Bus.$on('deletedire', data => {
-			this.deleteDire(data);
+			let index = this.getIndexById(data.data.nodeId);
+			/**
+			 * if the folder is open, close the model component
+			 * @fires module:Models~event:setfalsegraph
+			 * @fires module:store~actions:updatemodelcomponent
+			 */
+			if(data.data.open)
+			{
+				Bus.$emit('setfalsegraph',false);
+				this.$store.dispatch('updatemodelcomponent', -1);
+				this.$store.dispatch('setopen', index);
+			}
+			this.$store.dispatch('deletefolder', index);
+			localStorage.removeItem(data.data.nodeName);
 		});
+		/**
+		 * delete the project and its children, set the page to 'please select a project'
+		 * @listens module:contextMenu~event:deleteproject
+		 * @fires	module:store~actions:deleteproject
+		 */
 		Bus.$on('deleteproject', data => {
 			let index = this.getIndexById(data.data.nodeId);
-			for(let i = index + 1; i < this.data.length; i++)
-			{
-				if(this.data[i].data.projectId !== data.data.nodeId)
-				{
-					console.log(this.data[i].data.projectId);
-					this.data.splice(index, i - index);
-					break;
-				}
-				if(i === this.data.length - 1)
-					this.data.splice(index, i - index + 1);
-			}
+			this.$store.dispatch('deleteproject', index);
+			this.$router.push("/models/default/default/default");
 		});
-		Bus.$on('updateactivetab', data =>{
-			this.activetab = data;
-			let parentid = -1;
-			for(let i = 0; i < this.data.length; i++)
-			{
-				if(this.data[i].data.nodeType === 3 && this.data[i].data.nodeName == data)
-				{
-					this.data[i].data.open = true;
-					parentid = this.data[i].data.parentId;
-				}
-			}
-			for(let i = 0; i < this.data.length; i++)
-			{
-				if(this.data[i].data.nodeId === parentid)
-					this.data[i].data.open = true;
-			}
-			
-					
-		});
-		//add update or delete element
-		Bus.$on('manageelement', cells => {
-			let projectid = 0;
-			let parentid = 0;
-			let parentindex = 0;
-            for(var i = 0; i < this.data.length; i++)
-            {
-                if(this.data[i].data.open && this.data[i].data.level === 1)
-                    projectid = this.data[i].data.nodeId; 
-            }
-            for(var i = 0; i < this.data.length; i++)
-            {
-                if(this.data[i].data.nodeName == this.activetab && this.data[i].data.projectId === projectid)
-                {
-                    parentid = this.data[i].data.nodeId;
-                    parentindex = i;
-                }
-			}
-			this.data.splice(parentindex+1, this.data[parentindex].numberOfChildren);
-			this.data[parentindex].numberOfChildren = 0;
-			for(let j = 0; j < cells.length; j++)
-			{
-				this.createelemnt(cells[j], parentid, parentindex, projectid);
-			}	
-		});
-		//delete element
-		Bus.$on('deletetask', data => {
-			this.deleteTask(data);
-		});
-		//rename
+		/**
+		 * open a modal to change the name
+		 * @listens module:contextMenu~event:newname
+		 */
 		Bus.$on('newname', data => {
 			this.newName.isshow = true;
 			this.newName.index = this.getIndexById(data.data.nodeId);
-			this.newName.formval.changedName = data.data.nodeName;
+			this.newName.formval.changedName = '';
+			this.newName.formval.type = data.data.nodeName.split('-')[0];
+			this.newName.formval.projectId = data.data.projectId;
 		});
 	},
     methods:{
-		getnewnodeid(){ //get a new nodeID
-			let temp = 0;
-			for(let i = 0; i < this.data.length; i++)
-				temp = this.data[i].data.nodeId > temp ? this.data[i].data.nodeId : temp;
-			return temp + 1;
-		},
+		/**
+		 * get the index in the tree data array
+		 * @param	{number} nodeId	- the id of the current node
+		 * @returns	{number} i		- the index of the current node
+		 */
 		getIndexById(nodeId){
-			for(let i = 0;i<this.data.length;i++){
-				if(this.data[i].data.nodeId === nodeId){
-					return i
+			let data = this.getdata;
+			for(let i = 0; i < data.length; i++){
+				if(data[i].data.nodeId === nodeId){
+					return i;
 				}
 			}
 		},
-		getChildrenLength(index){
-			var _this = this;
-				length = 0;
-			if(_this.data.length < 2){
-				return 0
-			}else{
-				for(let i = index + 1;i < _this.data.length;i++){
-					if(_this.data[i].data.level > _this.data[index].data.level){
-						length += 1
-					}else if(_this.data[i].data.level === _this.data[index].data.level){
-						return length
-					}
-				}
+		/**
+		 * when you add a new project, check if there is another opened project
+		 * @returns	{boolean} 
+		 */
+		checkopenproject(){
+			let data = this.getdata;
+			for(let i = 0; i < data.length; i++)
+			{
+				if(data[i].data.open && data[i].data.level === 1)
+					return true;
 			}
+			return false;
 		},
+		/**
+		 * create a new project
+		 */
 		createproject(){
-			var _this = this;
-			setTimeout(()=>{
-				if(typeof (_this.data.find(function(data_diagram){
-					return data_diagram.data.nodeName === _this.newProject.formval.projectName && data_diagram.data.parentId == -1;
-				}))!=='undefined')
-				{
-					_this.newProject.loading = false;
-					_this.$nextTick(() => {
-						_this.newProject.loading = true;
-						_this.$Message.warning('Duplicated name!');
-					});
-                }
-                else if(_this.newProject.formval.projectName.length === 0){
-						_this.newProject.loading = false;
-						_this.$nextTick(() => {
-						_this.newProject.loading = true;
-						_this.$Message.warning('Empty is not allowed!');
-					});
-				}
-                else if(_this.newProject.formval.modeltype === 0){
-						_this.newProject.loading = false;
-						_this.$nextTick(() => {
-						_this.newProject.loading = true;
-						_this.$Message.warning('Please select a model type!');
-                    });
-                }
-				else {
-					let temp = this.getnewnodeid();
-					_this.data.unshift({
-						children: [],
-							data: {
-								open: false,
-								isSelected: false,
-								level:  1,
-								nodeId:  temp,
-								nodeName: _this.newProject.formval.projectName,
-								nodeType: 1,
-								parentId: -1,
-								projectId: temp,
-								modeltype: 1,
-								contextmenuIndex: 3
-							},
-							numberOfChildren: 2
-					},{
-						children: [],
-						data: {
-							open: false,
-							isSelected: false,
-							level: 2,
-							nodeId: temp+1,
-							nodeName: "Domain - " + _this.newProject.formval.projectName,
-							nodeType: 1,
-							parentId: temp,
-							projectId: temp,
-							modeltype: 1,
-							contextmenuIndex: 6
-						},
-						numberOfChildren: 0
-					},{
-						children: [],
-						data: {
-							open: false,
-							isSelected: false,
-							level: 2,
-							nodeId: temp+2,
-							nodeName: "Application - default",
-							nodeType: 1,
-							parentId: temp,
-							projectId: temp,
-							modeltype: 1,
-							contextmenuIndex: 5
-						},
-						numberOfChildren: 1
-					},{
-						children: [],
-						data: {
-							open: false,
-							isSelected: false,
-							level: 3,
-							nodeId: temp+3,
-							nodeName: "Adaptation - default",
-							nodeType: 1,
-							parentId: temp+2,
-							projectId: temp,
-							modeltype: 1,
-							contextmenuIndex: 1
-						},
-						numberOfChildren: 0
-					});
-					_this.newProject.loading = false;
-					_this.newProject.isshow = false;
-				}
-            }, 300);
-		},
-		createDire(){
-			var _this = this;
-			if(typeof(_this.newDiagram.index) === 'undefined'){
-				return
+			let data = this.getdata;
+			let pro = this.newProject;
+			// check the duplicated project name
+			if(typeof (data.find(function(data_diagram){
+				return data_diagram.data.nodeName === pro.formval.projectName && data_diagram.data.parentId == -1;
+			}))!=='undefined')
+			{
+				this.newProject.loading = false;
+				this.$nextTick(() => {
+					this.newProject.loading = true;
+					this.$Message.warning('Duplicated name!');
+				});
 			}
-			if(!_this.data[_this.newDiagram.index].data.open){
-				_this.$refs.cotalogue.expand_menu(_this.newDiagram.index);
+			// check the empty project name
+			else if(this.newProject.formval.projectName.length === 0){
+				this.newProject.loading = false;
+				this.$nextTick(() => {
+					this.newProject.loading = true;
+					this.$Message.warning('Empty is not allowed!');
+				});
 			}
-			setTimeout(()=>{
-				if(typeof (_this.data.find(function(data_diagram){
-					return data_diagram.data.nodeName === _this.newDiagram.formval.diagramName && data_diagram.data.parentId == _this.newDiagram.formval.parentId;
-				}))!=='undefined')
-				{
-					_this.newDiagram.loading = false;
-					_this.$nextTick(() => {
-						_this.newDiagram.loading = true;
-						_this.$Message.warning('Duplicated name!');
-					});
-				}
-				else {
-					if(_this.newDiagram.formval.diagramName.length){
-						_this.data.splice(_this.newDiagram.index + 1, 0 , {
-							children: [],
-							data: {
-								open: false,
-								isSelected: false,
-								level:  _this.data[_this.newDiagram.index].data.level + 1,
-								nodeId:  this.getnewnodeid(),
-								nodeName: _this.newDiagram.formval.diagramName,
-								nodeType: 3,
-								parentId: _this.data[_this.newDiagram.index].data.nodeId,
-								projectId: _this.data[_this.newDiagram.index].data.projectId,
-								modeltype: _this.newDiagram.formval.modeltype,
-								contextmenuIndex: 2
-							},
-							numberOfChildren: 0
-						});
-						_this.data[_this.newDiagram.index].numberOfChildren++;
-						_this.newDiagram.loading = false;
-						_this.newDiagram.isshow = false;
-					}
-					else{
-						_this.newDiagram.loading = false;
-						_this.$nextTick(() => {
-							_this.newDiagram.loading = true;
-							_this.$Message.warning('Empty is not allowed!');
-						});
-					}
-                }
-                Bus.$emit('updatedata',this.data);
-            }, 300);
-            
+			// check the other opened project
+			else if(this.checkopenproject()){
+				this.newProject.loading = false;
+				this.newProject.isshow = false;
+				this.$Message.warning('Please close the opened project!');
+			}
+			/**
+			 * create the new project in the tree data
+			 * @fires module:store~actions:createproject
+			 */
+			else {
+				this.$store.dispatch('createproject', this.newProject.formval.projectName);
+				this.newProject.loading = false;
+				this.newProject.isshow = false;
+			}
 		},
+		/**
+		 * create a new application folder
+		 */
 		createApplication(){
-			var _this = this;
-			if(typeof(_this.newApplication.index) === 'undefined'){
+			let data = this.getdata;
+			if(typeof(this.newApplication.index) === 'undefined'){
 				return
 			}
-			if(!_this.data[_this.newApplication.index].data.open){
-				_this.$refs.cotalogue.expand_menu(_this.newApplication.index);
+			// keep the folder open
+			if(!data[this.newApplication.index].data.open){
+				this.$refs.cotalogue.expand_menu(this.newApplication.index);
 			}
-			setTimeout(()=>{
-				if(typeof (_this.data.find(function(data_diagram){
-					return data_diagram.data.nodeName === _this.newApplication.applicationName && data_diagram.data.parentId == _this.newApplication.parentId;
-				}))!=='undefined')
+
+			let app = this.newApplication;
+			// check the duplicated application name
+			if(typeof (data.find(function(data_diagram){
+				return data_diagram.data.nodeName.split('- ')[2] === app.applicationName && data_diagram.data.parentId === app.parentId;
+			}))!=='undefined')
+			{
+				this.newApplication.loading = false;
+				this.$nextTick(() => {
+					this.newApplication.loading = true;
+					this.$Message.warning('Duplicated name!');
+				});
+			}
+			// check the empty application name
+			else if(this.newApplication.applicationName.length === 0){
+				this.newApplication.loading = false;
+				this.$nextTick(() => {
+					this.newApplication.loading = true;
+					this.$Message.warning('Empty is not allowed!');
+				});
+			}
+			else {
+				/**
+				 * @deprecated the counter of application folder is not used
+				 */
+				let index = 0;
+				for(let i = 0; i < data.length; i++)
 				{
-					_this.newApplication.loading = false;
-					_this.$nextTick(() => {
-						_this.newApplication.loading = true;
-						_this.$Message.warning('Duplicated name!');
-					});
+					if(data[i].data.parentId === app.parentId && data[i].data.nodeName.includes('Application'))
+						index++;
 				}
-				else {
-					if(_this.newApplication.applicationName.length){
-						let temp = this.getnewnodeid();
-						let tempindex = 0;
-						for(let i = 0; i < _this.data.length; i ++)
-						{
-							if(_this.data[i].data.projectId === _this.data[_this.newApplication.index].data.nodeId)
-								tempindex++;
-						}
-						_this.data.splice(_this.newApplication.index + tempindex, 0 , {
-							children: [],
-							data: {
-								open: false,
-								isSelected: false,
-								level:  _this.data[_this.newApplication.index].data.level + 1,
-								nodeId:  temp,
-								nodeName: "Application - " + _this.newApplication.applicationName,
-								nodeType: 1,
-								parentId: _this.data[_this.newApplication.index].data.nodeId,
-								projectId: _this.data[_this.newApplication.index].data.nodeId,
-								modeltype: _this.data[_this.newApplication.index].data.modeltype,
-								contextmenuIndex: 5
-							},
-							numberOfChildren: 1
-						});
-						_this.data.splice(_this.newApplication.index + tempindex + 1, 0 , {
-							children: [],
-							data: {
-								open: false,
-								isSelected: false,
-								level:  _this.data[_this.newApplication.index].data.level + 2,
-								nodeId:  this.getnewnodeid(),
-								nodeName: "Adaptation - " + _this.newApplication.applicationName,
-								nodeType: 1,
-								parentId: temp,
-								projectId: _this.data[_this.newApplication.index].data.nodeId,
-								modeltype: _this.data[_this.newApplication.index].data.modeltype,
-								contextmenuIndex: 1
-							},
-							numberOfChildren: 0
-						});
-						_this.data[_this.newApplication.index].numberOfChildren++;
-						_this.newApplication.loading = false;
-						_this.newApplication.isshow = false;
-					}
-					else{
-						_this.newApplication.loading = false;
-						_this.$nextTick(() => {
-							_this.newApplication.loading = true;
-							_this.$Message.warning('Empty is not allowed!');
-						});
-					}
-                }
-                Bus.$emit('updatedata',this.data);
-            }, 300);
-            
+				this.newApplication.appindex = index + 1;
+				/**
+				 * add new application folder and close modal
+				 * @fires module:store~actions:createapplication
+				 */
+				this.$store.dispatch('createapplication', this.newApplication);
+				this.newApplication.loading = false;
+				this.newApplication.isshow = false;
+			}
 		},
+		/**
+		 * create a new adaptation folder
+		 */
 		createAdaptation(){
-			var _this = this;
-			if(typeof(_this.newAdaptation.index) === 'undefined'){
+			let data = this.getdata;
+			if(typeof(this.newAdaptation.index) === 'undefined'){
 				return
 			}
-			if(!_this.data[_this.newAdaptation.index].data.open){
-				_this.$refs.cotalogue.expand_menu(_this.newAdaptation.index);
+			// if(!data[this.newAdaptation.index].data.open){
+			// 	this.$refs.cotalogue.expand_menu(this.newAdaptation.index);
+			// }
+			let adp = this.newAdaptation;
+			// check the duplicated adaptation folder
+			if(typeof (data.find(function(data_diagram){
+				return data_diagram.data.nodeName.split('- ')[3] === adp.adapatationName && data_diagram.data.parentId == adp.parentId;
+			}))!=='undefined')
+			{
+				this.newAdaptation.loading = false;
+				this.$nextTick(() => {
+					this.newAdaptation.loading = true;
+					this.$Message.warning('Duplicated name!');
+				});
 			}
-			setTimeout(()=>{
-				if(typeof (_this.data.find(function(data_diagram){
-					return data_diagram.data.nodeName === _this.newAdaptation.adapatationName && data_diagram.data.parentId == _this.newAdaptation.parentId;
-				}))!=='undefined')
+			// check the empty adaptation folder
+			else if(this.newAdaptation.adapatationName.length === 0)
+			{
+				this.newAdaptation.loading = false;
+				this.$nextTick(() => {
+					this.newAdaptation.loading = true;
+					this.$Message.warning('Empty is not allowed!');
+				});
+			}
+			else {
+				/**
+				 * @deprecated the counter of adaptation folder is not used
+				 */
+				let index = 0;
+				for(let i = 0; i < data.length; i++)
 				{
-					_this.newAdaptation.loading = false;
-					_this.$nextTick(() => {
-						_this.newAdaptation.loading = true;
-						_this.$Message.warning('Duplicated name!');
-					});
+					if(data[i].data.parentId === adp.parentId && data[i].data.nodeName.includes('Adaptation'))
+						index++;
 				}
-				else {
-					if(_this.newAdaptation.adapatationName.length){
-						_this.data.splice(_this.newAdaptation.index + 1, 0 , {
-							children: [],
-							data: {
-								open: false,
-								isSelected: false,
-								level:  _this.data[_this.newAdaptation.index].data.level + 1,
-								nodeId:  this.getnewnodeid(),
-								nodeName: "Adaptation - " + _this.newAdaptation.adapatationName,
-								nodeType: 1,
-								parentId: _this.data[_this.newAdaptation.index].data.nodeId,
-								projectId: _this.data[_this.newAdaptation.index].data.projectId,
-								modeltype: _this.data[_this.newAdaptation.index].data.modeltype,
-								contextmenuIndex: 1
-							},
-							numberOfChildren: 0
-						});
-						_this.data[_this.newAdaptation.index].numberOfChildren++;
-						_this.newAdaptation.loading = false;
-						_this.newAdaptation.isshow = false;
-					}
-					else{
-						_this.newAdaptation.loading = false;
-						_this.$nextTick(() => {
-							_this.newAdaptation.loading = true;
-							_this.$Message.warning('Empty is not allowed!');
-						});
-					}
-                }
-                Bus.$emit('updatedata',this.data);
-            }, 300);
-            
-		},
-		createelemnt(cells, parentid, parentindex, projectid)
-		{
-			if(cells.getAttribute('type') == 'relation')
-			{
-				this.data.splice(parentindex + 1, 0 , {
-				children: [],
-				data: {
-					open: false,
-					isSelected: false,
-					level: this.data[parentindex].data.level + 1,
-					nodeId: this.getnewnodeid(),
-					nodeName: 'Relation - ' + cells.getAttribute('relType'),
-					nodeType: 2,
-					status: 1,
-					parentId: parentid,
-					projectId: projectid,
-					contextmenuIndex: 4
-				},
-					numberOfChildren: 0
-				});
-				this.data[parentindex].numberOfChildren++;
-			}
-			else if(cells.getAttribute('type') == 'bundle')
-			{
-				this.data.splice(parentindex + 1, 0 , {
-				children: [],
-				data: {
-					open: false,
-					isSelected: false,
-					level: this.data[parentindex].data.level + 1,
-					nodeId: this.getnewnodeid(),
-					nodeName: 'Bundle - ' + cells.getAttribute('bundleType'),
-					nodeType: 2,
-					status: 1,
-					parentId: parentid,
-					projectId: projectid,
-					contextmenuIndex: 4
-				},
-					numberOfChildren: 0
-				});
-				this.data[parentindex].numberOfChildren++;
-			}
-			else
-			{
-				this.data.splice(parentindex + 1, 0 , {
-				children: [],
-				data: {
-					open: false,
-					isSelected: false,
-					level: this.data[parentindex].data.level + 1,
-					nodeId: this.getnewnodeid(),
-					nodeName: cells.getAttribute('label'),
-					nodeType: 2,
-					status: 0,
-					parentId: parentid,
-					projectId: projectid,
-					contextmenuIndex: 4
-				},
-					numberOfChildren: 0
-				});
-				this.data[parentindex].numberOfChildren++;
+				this.newApplication.adpindex = index + 1;
+				/**
+				 * add a new adaptation folder and close modal
+				 * @fires module:store~actions:createadaptation
+				 */
+				this.$store.dispatch('createadaptation', this.newAdaptation);
+				this.newAdaptation.loading = false;
+				this.newAdaptation.isshow = false;
 			}
 		},
-		deleteDire(data){
-			var _this = this,
-				index = _this.getIndexById(data.data.nodeId);
-			if(typeof(index) === 'undefined'){
-				return
-			}
-			_this.data.splice(index, 1);
-			
-			for(let i = 0; i < _this.data.length; i++)
-			{
-				if(_this.data[i].data.parentId === data.data.nodeId)
-				{
-					if(_this.data[i].data.nodeType == 2)
-						this.deleteTask(_this.data[i]);
-					else if(_this.data[i].data.nodeType == 1 || _this.data[i].data.nodeType == 3)
-						this.deleteDire(_this.data[i]);
-				}
-			}
-            Bus.$emit('deletediagram',data);
-            Bus.$emit('updatedata',this.data);
-		},
-		// createTask(){
-		// 	var _this = this;
-		// 	if(typeof(_this.newElement.index) === 'undefined'){
-		// 		return
-		// 	}
-		// 	if(!_this.data[_this.newElement.index].data.open){
-		// 		_this.$refs.cotalogue.expand_menu(_this.newElement.index);
-		// 	}
-		// 	setTimeout(()=>{
-		// 		if(_this.newElement.formval.elementName.length){
-		// 			_this.data.splice(_this.newElement.index + 1, 0 , {
-		// 				children: [],
-		// 				data: {
-		// 					open: false,
-		// 					isSelected: false,
-		// 					level: _this.data[_this.newElement.index].data.level + 1,
-		// 					nodeId: this.getnewnodeid(),
-		// 					nodeName: _this.newElement.formval.elementName,
-		// 					nodeType: 2,
-		// 					status: 0,
-		// 					parentId: _this.data[_this.newElement.index].data.nodeId,
-		// 					contextmenuIndex: 3
-		// 				},
-		// 				numberOfChildren: 0
-		// 			});
-		// 			_this.data[_this.newElement.index].numberOfChildren++;
-		// 			_this.newElement.loading = false;
-		// 			_this.newElement.isshow = false;
-		// 		}else{
-		// 			_this.newElement.loading = false;
-		// 			_this.$nextTick(() => {
-		// 				_this.newElement.loading = true;
-		// 				_this.$Message.warning('Empty is not allowed！');
-		// 			});
-		// 		}
-		// 	}, 300);
-		// },
-		deleteTask(data){
-			var _this = this,
-				index = _this.getIndexById(data.data.nodeId);
-			if(typeof(index) === 'undefined'){
-				return
-			}
-			_this.data.splice(index, 1);
-		},
+		// change name
 		rename(){
-			var _this = this;
-			setTimeout(()=>{
-				if(_this.newName.formval.changedName.length){
-					if(typeof(_this.newName.index) === 'undefined'){
-						return
+			let data = this.getdata;
+			if(typeof(this.newName.index) === 'undefined')
+				return
+			// modal accepts empty input
+			else if(this.newName.formval.changedName.length === 0){
+				this.newName.isshow = false;
+				this.newName.loading = false;
+				this.newName.formval.changedName='';
+				this.newName.formval.id=null;
+				return;
+			}
+			let nn = this.newName;
+			// put the new name in the format "type" - "project name" - "application name" - "adaptation name"
+			if(nn.formval.type === 'Application ')
+				nn.formval.changedName = data[nn.index].data.nodeName.split('-')[0] + '-' + data[nn.index].data.nodeName.split('-')[1] + '- ' + nn.formval.changedName;
+			else if(nn.formval.type === 'Adaptation ')
+				nn.formval.changedName = data[nn.index].data.nodeName.split('-')[0] + '-' + data[nn.index].data.nodeName.split('-')[1] + '-' + data[nn.index].data.nodeName.split('-')[2] + '- ' + nn.formval.changedName;
+			// check the duplicated name
+			if(typeof (data.find(function(data_diagram){
+				return data_diagram.data.nodeName === nn.formval.changedName && data_diagram.data.projectId == nn.formval.projectId
+				&& data_diagram.data.nodeType === 3;
+			}))!=='undefined')
+			{
+				this.newName.loading = false;
+				this.$nextTick(() => {
+					this.newName.loading = true;
+					this.$Message.warning('Duplicated name!');
+				});
+			}
+			else{
+				// check localstorage, if exists, replace it
+				if(localStorage[data[nn.index].data.nodeName])
+				{
+					localStorage[nn.formval.changedName] = localStorage[data[nn.index].data.nodeName];
+					localStorage.removeItem(data[nn.index].data.nodeName);
+				}
+				// if type is application, check the localstorage of adapatation and replace them
+				if(nn.formval.type === 'Application ')
+				{
+					for(let i = nn.index + 1; i < data.length; i++)
+					{
+						if(data[i].data.parentId === data[nn.index].data.nodeId && data[i].data.nodeName.includes('Adaptation') && localStorage[data[i].data.nodeName])
+						{
+							localStorage['Adaptation -'+ nn.formval.changedName.split('-')[1] + '-' + nn.formval.changedName.split('-')[2] + ' -' + data[i].data.nodeName.split('-')[3]] = localStorage[data[i].data.nodeName];
+							localStorage.removeItem(data[i].data.nodeName);
+						}
 					}
-					_this.newName.isshow = false;
-					_this.newName.loading = false;
-					_this.data[_this.newName.index].data.nodeName = _this.newName.formval.changedName;
-				}else{
-					_this.newName.loading = false;
-					_this.$nextTick(() => {
-						_this.newName.loading = true;
-						_this.$Message.warning('Empty is not allowed！');
-					});
-                }
-                Bus.$emit('updatedata',this.data);
-            }, 250);
+				}
+				/**
+				 * change name in the tree data and close modal
+				 * @fires module:store~actions:changename
+				 */
+				this.$store.dispatch('changename', this.newName);
+				this.newName.isshow = false;
+				this.newName.loading = false;
+				// change the router path to the new one
+				let projectname = '';
+				for(let i = 0; i < data.length; i++)
+				{
+					if(data[i].data.nodeId === data[nn.index].data.projectId)
+						projectname = data[i].data.nodeName;
+				}
+				if(data[this.newName.index].data.open)
+					this.$router.push("/models/"+projectname+"/"+nn.formval.changedName.replace(/\s+/g,"")+"/"+this.getactivetab);
+			}
 		}
 	},
+	computed: {
+		/**
+		 * @returns	{string} activetab in the store
+		 */
+        getactivetab (){
+            return this.$store.getters.getactivetab;
+		},
+		/**
+		 * @returns {array} tree data in the store
+		 */
+        getdata (){
+            return this.$store.getters.getdata;
+		},
+		/**
+		 * @returns {number} the index of current folder in the store
+		 */
+        getmodel_component_index (){
+            return this.$store.getters.getmodelcomponentindex;
+        }
+    },
 	watch:{
-		$route (to, from){
-			if(this.$route.name !== 'Models')
-			{
-				for(let i = 0; i < this.data.length; i++)
-				{
-					if(this.data[i].data.level === 1)
-						this.data[i].data.open = false;
-				}
-			}
+		// when activetab changes, update localstorage
+		getactivetab:{
+			handler(val) {
+				localStorage.setItem('Filetree|activetab', JSON.stringify(val));
+     	 	},
+      		deep:true
+		},
+		// when tree data changes, update localstorage
+		getdata:{
+			handler(val) {
+				localStorage.setItem('Filetree|User1', JSON.stringify(val));
+     	 	},
+      		deep:true
+		},
+		// when model_component_index changes, update localstorage
+		getmodel_component_index:{
+			handler(val) {
+				localStorage.setItem('Filetree|model_component_index', JSON.stringify(val));
+     	 	},
+      		deep:true
 		}
 	}
 }
@@ -791,6 +562,7 @@ export default{
 .button_tree_element{
   display: inline-block;
   width: 100%;
+  border-bottom: 1px solid #ccc;
 }
 
 .button-unique{

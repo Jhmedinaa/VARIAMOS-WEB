@@ -15,7 +15,6 @@ export default {
     props: {
         contextMenuData: {
             type: Object,
-            requred: false,
             default () {
               return {
                 menuName: null,
@@ -23,7 +22,7 @@ export default {
                   x: null,
                   y: null
                 },
-                menulists: []
+                menulists: {}
               }
             }
         },
@@ -31,6 +30,7 @@ export default {
             type: String,
             default: ''
         },
+        // the element of tree data
         data: {
             type: Object,
             default: {}
@@ -43,16 +43,22 @@ export default {
 
     },
     watch: {
+        // watch the change of the property axios of the object contextMenuData 
         'contextMenuData.axios' (val) {
             var x = val.x;
             var y = val.y;
             var _this = this;
             var menuName = 'vue-contextmenuName-' + _this.contextMenuData.menuName + '' + _this.data.data.nodeType + '' + _this.data.data.nodeId;
+                // if the clicked item matches the context menu, the context menu show up
                 if(menuName === _this.targetClass){
                     var menu = document.getElementById(menuName);
                     menu.style.display = 'block';
                     menu.style.left = x + 'px';
                     menu.style.top = y + 'px';
+                    /**
+                     * click the option in the context menu, the context menu closes
+                     * @listens medule:contextMenu~event:mouseup
+                     */
                     document.addEventListener('mouseup', function () {
                         menu.style.display = 'none'
                     }, false);
@@ -60,6 +66,11 @@ export default {
         }
     },
     methods: {
+        /**
+         * click the option in the context menu, send the corresponding event
+         * @param {string} item     - the element of the context menu array
+         * @fires medule:contextMenu~event:mouseup
+         */
         fnHandler (item) {
             Bus.$emit(item.fnHandler,this.data);
         }
@@ -97,7 +108,7 @@ export default {
         float: left;
     }
     .vue-contextmenu-listWrapper .context-menu-list button i {
-        color: #09c;
+        color: rgb(120, 120, 120);
         padding: 8px 10px;
     }
     .vue-contextmenu-listWrapper .context-menu-list button:hover {
