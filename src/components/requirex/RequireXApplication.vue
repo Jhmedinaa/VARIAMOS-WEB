@@ -1,13 +1,12 @@
 <template>
   <div class="container">
-    <!-- Modal del mensaje-->
-    <modal v-model="dialog" title="RequireX" @on-ok="ok" ok-text="ok">
+  
       <h1 slot="header">
         <span>{{$t("app_requirex")}} - {{$t('requirex_application')}}</span>
       </h1>
 
       <i-form :model="requirement" ref="requirement" :label-width="120" :rules="ruleValidate">
-        <form-item :label="$t('requirex_requirement_type_label')" prop="reqType">
+        <form-item :label="$t('requirex_requirement_type_label')">
           <i-select v-model="requirement.reqType" :placeholder="$t('requirex_select')">
             <i-option
               :value="$t('requirex_requirement_type_value_1')"
@@ -153,13 +152,7 @@
         </form-item>
       </i-form>
 
-      <div slot="footer">
-        <!-- Boton ok -->
-        <Button type="info" size="small" @click="ok">{{$t("modal_ok")}}</Button>
-        <!-- Boton Genrar Pdf-->
-        <Button size="small" @click="pdf">{{$t("requirex_generate_pdf") }}</Button>
-      </div>
-    </modal>
+    
   </div>
 </template>
  
@@ -233,7 +226,7 @@ export default {
       userInt: false,
       autoAct: false,
       extInt: false,
-      dialog: true,
+      dialog: flase,
       jsonFile: ""
     };
   },

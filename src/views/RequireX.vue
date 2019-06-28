@@ -32,7 +32,9 @@
       </div>
     </Card>
    
+  <modal v-model="dialog" title="RequireX">
     <app-application></app-application>
+  </modal>
 
   </Content>
 </template>
@@ -65,19 +67,20 @@ export default {
           key: "systemName"
         }
       ],
-      modal1: false
+      dialog: false
     };
   },
   methods: {
     onSelectedRequirement(name) {
       if ((name = "domain")) {
-        this.modal1 = true;
+        this.dialog = true;
       }else if(name = "application"){
+      }else if (name = "adaptation"){
 
       }
     },
     onShowModal() {
-      this.$router.push("/requirex/application");
+     // this.$router.push("/requirex/application");
     }
   }
 };
