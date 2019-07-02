@@ -31,10 +31,9 @@
         <Table :columns="requirementsTable" :data="requirementsTable"></Table>
       </div>
     </Card>
-   
-  <modal v-model="dialog" title="RequireX">
-    <app-application></app-application>
-  </modal>
+    
+    <app-application :dialog="dialog" @onApplicationCancel="dialog = $event"></app-application>
+ 
 
   </Content>
 </template>

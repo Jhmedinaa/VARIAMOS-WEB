@@ -117,10 +117,10 @@
   "requirex_adaptation":"Adaptation",
   "requirex_admin":"Administration",
 
-  "requirex_application_tittle": "Application requirement",
-  "requirex_domain_tittle": "Domain requirement",
-  "requirex_adaptation_tittle":"Adaptation requirement",
-  "requirex_admin_tittle":"Administration Panel",
+  "requirex_application_tittle": "RequireX - Application requirement",
+  "requirex_domain_tittle": "RequireX - Domain requirement",
+  "requirex_adaptation_tittle":"RequireX - Adaptation requirement",
+  "requirex_admin_tittle":"RequireX - Administration Panel",
 
   "requirex_requirement_yes":"Yes",
   "requirex_requirement_no" : "No",
@@ -181,5 +181,8 @@
   "requirex_requirement_from_value_1": "from",  
   "requirex_requirement_from_value_2": "to",
 
-  "requirex_generate_pdf":"Generate Pdf"
+  "requirex_generate_pdf":"Generate Pdf",
+  "requirex_generate":"Generate Requirement",
+  "requirex_cancel":"Cancel"
+
 }
