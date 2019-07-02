@@ -14,7 +14,7 @@
             </Button>
             <DropdownMenu slot="list">
               <DropdownItem name="domain">Domain</DropdownItem>
-              <DropdownItem name="aplication">Application</DropdownItem>
+              <DropdownItem name="application">Application</DropdownItem>
               <DropdownItem name="adaptation">Adaptation</DropdownItem>
             </DropdownMenu>
           </Dropdown>
@@ -49,7 +49,7 @@ import adaptation from "../components/requirex/RequireXAdaptation";
 export default {
   components: {
     "app-adaptation": adaptation,
-    "app-application" : application
+    "app-application" : application,
   },
   data() {
     return {
@@ -72,10 +72,12 @@ export default {
   },
   methods: {
     onSelectedRequirement(name) {
-      if ((name = "domain")) {
-        this.dialog = true;
-      }else if(name = "application"){
-      }else if (name = "adaptation"){
+      //alert(name);
+      if ((name == "domain")) {
+       // this.dialog = true;
+      }else if((name == "application")){
+          this.dialog = true;
+      }else if (name == "adaptation"){
 
       }
     },
