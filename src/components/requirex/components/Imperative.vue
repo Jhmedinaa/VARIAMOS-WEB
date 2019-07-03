@@ -1,8 +1,8 @@
-<template >
+<template>
   <div>
     <form-item :label="$t('requirex_requirement_imperative_label')" prop="imperative">
       <i-select
-        v-model="imperative"
+        :value="imperative"
         :placeholder="$t('requirex_select')"
         @on-change="onImperativeChange"
       >

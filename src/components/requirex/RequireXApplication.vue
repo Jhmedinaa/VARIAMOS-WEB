@@ -3,31 +3,37 @@
     <modal
       :value="dialog"
       :title="$t('requirex_application_tittle')"
-      @on-ok="handleSubmit('requirement')"
+      @on-ok="handleSubmit('requirement', requirement)"
       :ok-text=" $t('requirex_generate')"
-      @on-cancel="onApplicationCancel(false)"
-      :cancel-text="$t('requirex_cancel')"   
+      @on-cancel="onApplicationCancel(false, 'requirement')"
+      :cancel-text="$t('requirex_cancel')"
       :closable="false"
-      :mask-closable="false"  
+      :mask-closable="false"
       :scrollable="true"
-      :loading="loading"
+     
     >
       <h1>{{requirement.reqType}}</h1>
       <i-form :model="requirement" ref="requirement" :label-width="120" :rules="ruleValidate">
-       
-        <app-requireType @onRequireTypeChange="onRequireTypeChange" :reqType="requirement.reqType"></app-requireType>
+        <app-requireType
+          @onRequireTypeChange="requirement.reqType = $event"
+          :reqType="requirement.reqType"
+        ></app-requireType>
 
-        <form-item :label="$t('requirex_requirement_name_label')" prop="name">
-          <i-input v-model="requirement.name" :placeholder="$t('requirex_requirement_name_label')"/>
-        </form-item>
+        <Row>
+          <form-item :label="$t('requirex_requirement_name_label')" prop="name">
+            <i-input
+              v-model="requirement.name"
+              :placeholder="$t('requirex_requirement_name_label')"
+            />
+          </form-item>
 
-        <form-item :label="$t('requirex_requirement_condition_label')">
-          <i-switch v-model="requirement.condition" size="large">
-            <span slot="open">{{$t('requirex_requirement_yes')}}</span>
-            <span slot="close">{{$t('requirex_requirement_no')}}</span>
-          </i-switch>
-        </form-item>
-
+          <form-item :label="$t('requirex_requirement_condition_label')">
+            <i-switch v-model="requirement.condition" size="large">
+              <span slot="open">{{$t('requirex_requirement_yes')}}</span>
+              <span slot="close">{{$t('requirex_requirement_no')}}</span>
+            </i-switch>
+          </form-item>
+        </Row>
         <form-item
           :label="$t('requirex_requirement_description')"
           prop="desc"
@@ -40,9 +46,8 @@
             :placeholder="$t('requirex_requirement_condition_descrive_label')"
           ></i-input>
         </form-item>
-
         <app-imperative
-          @onImperativeChange="onImperativeChange"
+          @onImperativeChange="requirement.imperative = $event"
           :imperative="requirement.imperative"
         ></app-imperative>
 
@@ -133,7 +138,6 @@
             ></i-input>
           </form-item>
         </div>
-
       </i-form>
     </modal>
   </div>
@@ -152,6 +156,23 @@ export default {
     dialog: {
       type: Boolean,
       required: true
+    },
+    requirementProp: {
+      reqType: String,
+      name: String,
+      condition: Boolean,
+      conditionDescription: String,
+      imperative: String,
+      systemName: String,
+      systemActivity: String,
+      user: String,
+      processVerb: String,
+      object: String,
+      system: String,
+      from: String,
+      processVerb: String,
+      systemCondition: Boolean,
+      systemConditionDescription: String
     }
   },
   data() {
@@ -212,16 +233,10 @@ export default {
       },
       isSystemActivity: false,
       dial: false,
-      loading : true
+      loading: true
     };
   },
   methods: {
-    onRequireTypeChange(type) {
-      this.requirement.reqType = type;
-    },
-    onImperativeChange(imperative) {
-      this.requirement.imperative = imperative;
-    },
     //Realizar filtro de opciones al cambiar de actividades
     onSystemActivityChange() {
       this.isSystemActivity = true;
@@ -243,26 +258,30 @@ export default {
         this.extInt = true;
       }
     },
-    handleSubmit(name) {
+    handleSubmit(name, req) {
       //Validar el formulario
       this.$refs[name].validate(valid => {
         if (valid) {
-          
-          this.loading = true;
+          //this.loading = true;
+          this.dial = false;
+          this.$emit("onApplicationCancel", this.dial);
+          this.requirement = req;
+          this.$emit("handleSubmit", this.requirement);
         } else {
           this.loading = false;
           this.$Message.error("Fail!");
         }
       });
     },
-     handleReset(name) {
+    handleReset(name) {
       this.$refs[name].resetFields();
     },
-    onVisibleChange(estate){
+    onVisibleChange(estate) {
       alert(estate);
     },
-    onApplicationCancel(value){
+    onApplicationCancel(value, name) {
       this.dial = value;
+      this.$refs[name].resetFields();
       this.$emit("onApplicationCancel", this.dial);
     }
   }

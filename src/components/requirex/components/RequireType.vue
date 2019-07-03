@@ -1,8 +1,8 @@
 <template>
   <div>
-    <form-item :label="$t('requirex_requirement_type_label')">
+    <form-item :label="$t('requirex_requirement_type_label')" prop="reqType">
       <i-select
-        v-model="reqType"
+        :value="reqType"
         :placeholder="$t('requirex_select')"
         @on-change="onRequireTypeChange"
       >
@@ -16,10 +16,7 @@
           :value="$t('requirex_requirement_type_value_3')"
         >{{ $t('requirex_requirement_type3')}}</i-option>
       </i-select>
-      
-    <p>{{ reqType }}</p>
     </form-item>
-
   </div>
 </template>
 
@@ -32,15 +29,15 @@ export default {
     }
   },
   data() {
-      return{
-          require: ''
-      }
+    return {
+      require: ""
+    };
   },
   methods: {
     onRequireTypeChange(event) {
       this.require = event;
       this.$emit("onRequireTypeChange", this.require);
     }
-  },
+  }
 };
 </script>
