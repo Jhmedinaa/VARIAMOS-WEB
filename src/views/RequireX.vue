@@ -9,8 +9,8 @@
         <Col span="6">
           <Dropdown placement="bottom-start" @on-click="onSelectedRequirement">
             <Button color="#17233d">
-              <Icon type="ios-add" size="24"/>Add Requirement
-              <Icon type="md-arrow-dropdown"/>
+              <Icon type="ios-add" size="24" />Add Requirement
+              <Icon type="md-arrow-dropdown" />
             </Button>
             <DropdownMenu slot="list">
               <DropdownItem name="domain">Domain</DropdownItem>
@@ -29,14 +29,16 @@
 
       <div v-if="requirementApplication">
         <Row :style="{margin: '2em 0'}">
-          <Col span="3">
-            <pre>{{ requirementApplication.name}}</pre>
+          <Col span="6">
+            <div>{{ requirementApplication.name}}</div>
             <Button @click="onAddRequirement(requirementApplication)">
-              <Icon type="ios-add" size="24"/>Add
+              <Icon type="ios-add" size="24" />Add
             </Button>
           </Col>
         </Row>
       </div>
+
+      <h1>{{requirementsTableCollection[0].listRequirements.length}}</h1>
 
       <div :style="{margin: '1em 0'}">
         <Table
@@ -131,7 +133,26 @@ export default {
     },
     onAddRequirement(requirement) {
       var require = requirement;
-      this.requirementsTableCollection[0].listRequirements.push(require);
+      var newRequire = {
+        reqType: require.reqType,
+        name: require.name,
+        condition: require.condition,
+        conditionDescription: require.conditionDescription,
+        imperative: require.imperative,
+        systemName: require.systemName,
+        systemActivity: require.systemActivity,
+        user: require.user,
+        processVerb: require.processVerb,
+        object: require.object,
+        system: require.system,
+        from: require.from,
+        processVerb: require.processVerb,
+        systemCondition: require.systemCondition,
+        systemConditionDescription: require.systemConditionDescription,
+        msg: require.msg
+      };
+      this.requirementsTableCollection[1].listRequirements.push(newRequire);
+      this.requirementsTableCollection[1].amount += 1;
     },
     onShowModal() {
       // this.$router.push("/requirex/application");

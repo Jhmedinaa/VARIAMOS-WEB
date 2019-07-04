@@ -172,7 +172,8 @@ export default {
       from: String,
       processVerb: String,
       systemCondition: Boolean,
-      systemConditionDescription: String
+      systemConditionDescription: String,
+      msg: String
     }
   },
   data() {
@@ -192,7 +193,8 @@ export default {
         from: "",
         processVerb: "",
         systemCondition: false,
-        systemConditionDescription: ""
+        systemConditionDescription: "",
+        msg: ""
       },
       ruleValidate: {
         reqType: [
@@ -262,6 +264,51 @@ export default {
       //Validar el formulario
       this.$refs[name].validate(valid => {
         if (valid) {
+          this.requirement.msg = "";
+          //this.$Message.success("Success!");
+          //Si hay una condición
+          if (this.requirement.condition) {
+            this.requirement.msg += this.requirement.conditionDescription + " ";
+          }
+
+          this.requirement.msg +=
+            "The " +
+            this.requirement.systemName +
+            " " +
+            this.requirement.imperative;
+
+          //Validate system activity
+          if (this.requirement.systemActivity == "autoAct") {
+            this.requirement.msg +=
+              " " +
+              this.requirement.processVerb +
+              " " +
+              this.requirement.object;
+          } else if (this.requirement.systemActivity == "userInt") {
+            this.requirement.msg +=
+              " provide the " + this.requirement.user + " the capacity of";
+            this.requirement.msg +=
+              " " +
+              this.requirement.processVerb +
+              " " +
+              this.requirement.object;
+          } else if (this.requirement.systemActivity == "extInt") {
+            this.requirement.msg +=
+              " have the capacity of " +
+              this.requirement.processVerb +
+              " " +
+              this.requirement.object +
+              " " +
+              this.requirement.from +
+              " the " +
+              this.requirement.system;
+          }
+
+          //Validat conditions
+          if (this.requirement.systemCondition) {
+            this.requirement.msg += ", " + this.requirement.systemConditionDescription;
+          }
+      
           //this.loading = true;
           this.dial = false;
           this.$emit("onApplicationCancel", this.dial);
