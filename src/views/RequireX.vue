@@ -21,24 +21,33 @@
         </Col>
       </Row>
 
+      <div v-if="requirementApplication">
+        <Row :style="{margin: '2em 0'}">
+          <p>Add this Requirements?</p>
+          <CellGroup>
+            <Card>
+              <p slot="title">Application</p>
+              <p>Name : {{requirementApplication.name}}</p>
+              <Button @click="onAddRequirement(requirementApplication, 2)">
+                <Icon type="ios-add" size="24" />Add
+              </Button>
+            </Card>
+            <Card>
+              <p slot="title">Domain</p>
+              <p>Name : {{requirementDomain.name}}</p>
+              <Button @click="onAddRequirement(requirementDomain, 1)">
+                <Icon type="ios-add" size="24" />Add
+              </Button>
+            </Card>
+          </CellGroup>
+        </Row>
+      </div>
+
       <Row :style="{margin: '2em 0'}">
         <Col span="3">
           <p>Requirements</p>
         </Col>
       </Row>
-
-      <div v-if="requirementApplication">
-        <Row :style="{margin: '2em 0'}">
-          <Col span="6">
-            <div>{{ requirementApplication.name}}</div>
-            <Button @click="onAddRequirement(requirementApplication)">
-              <Icon type="ios-add" size="24" />Add
-            </Button>
-          </Col>
-        </Row>
-      </div>
-
-      <h1>{{requirementsTableCollection[0].listRequirements.length}}</h1>
 
       <div :style="{margin: '1em 0'}">
         <Table
@@ -50,29 +59,39 @@
     </Card>
 
     <app-application
-      :dialog="dialog"
-      @onApplicationCancel="dialog = $event"
+      :dialog="dialogApplication"
+      @onApplicationCancel="dialogApplication = $event"
       :requirementProp="requirementApplication"
       @handleSubmit="requirementApplication = $event"
     ></app-application>
+
+    <app-domain
+      :dialog="dialogDomain"
+      @onDomainCancel="dialogDomain = $event"
+      :requirementProp="requirementDomain"
+      @handleSubmit="requirementDomain = $event"
+    ></app-domain>
   </Content>
 </template>
 
-<script src="//unpkg.com/vue/dist/vue.js"></script>
-<script src="//unpkg.com/iview/dist/iview.min.js"></script>
 <script>
 import application from "../components/requirex/RequireXApplication";
 import adaptation from "../components/requirex/RequireXAdaptation";
+import domain from "../components/requirex/RequireXDomain";
+
 import expandRow from "../components/requirex/components/TableExpand";
+
 export default {
   components: {
     "app-adaptation": adaptation,
     "app-application": application,
+    "app-domain": domain,
     expandRow
   },
   data() {
     return {
       requirementApplication: [Object],
+      requirementDomain: [Object],
       requirementsTableCollection: [
         {
           reqType: this.$t("requirex_domain"),
@@ -118,41 +137,68 @@ export default {
           key: "lastTime"
         }
       ],
-      dialog: false
+      dialogDomain: false,
+      dialogApplication: false
     };
   },
   methods: {
     onSelectedRequirement(name) {
       //alert(name);
       if (name == "domain") {
-        // this.dialog = true;
+        this.dialogDomain = true;
       } else if (name == "application") {
-        this.dialog = true;
+        this.dialogApplication = true;
       } else if (name == "adaptation") {
       }
     },
-    onAddRequirement(requirement) {
+    onAddRequirement(requirement, type) {
       var require = requirement;
-      var newRequire = {
-        reqType: require.reqType,
-        name: require.name,
-        condition: require.condition,
-        conditionDescription: require.conditionDescription,
-        imperative: require.imperative,
-        systemName: require.systemName,
-        systemActivity: require.systemActivity,
-        user: require.user,
-        processVerb: require.processVerb,
-        object: require.object,
-        system: require.system,
-        from: require.from,
-        processVerb: require.processVerb,
-        systemCondition: require.systemCondition,
-        systemConditionDescription: require.systemConditionDescription,
-        msg: require.msg
-      };
-      this.requirementsTableCollection[1].listRequirements.push(newRequire);
-      this.requirementsTableCollection[1].amount += 1;
+
+      if (type == 1) {
+        var newRequire = {
+          reqType: require.reqType,
+          name: require.name,
+          condition: require.condition,
+          conditionDescription: require.conditionDescription,
+          imperative: require.imperative,
+          systemName: require.systemName,
+          systemActivity: require.systemActivity,
+          user: require.user,
+          processVerb: require.processVerb,
+          object: require.object,
+          system: require.system,
+          from: require.from,
+          processVerb: require.processVerb,
+          systemCondition: require.systemCondition,
+          systemConditionDescription: require.systemConditionDescription,
+          msg: require.msg
+        };
+        this.requirementsTableCollection[0].listRequirements.push(newRequire);
+        this.requirementsTableCollection[0].amount += 1;
+
+      } else if (type == 2) {
+        
+        var newRequire = {
+          reqType: require.reqType,
+          name: require.name,
+          condition: require.condition,
+          conditionDescription: require.conditionDescription,
+          imperative: require.imperative,
+          systemName: require.systemName,
+          systemActivity: require.systemActivity,
+          user: require.user,
+          processVerb: require.processVerb,
+          object: require.object,
+          system: require.system,
+          from: require.from,
+          processVerb: require.processVerb,
+          systemCondition: require.systemCondition,
+          systemConditionDescription: require.systemConditionDescription,
+          msg: require.msg
+        };
+        this.requirementsTableCollection[1].listRequirements.push(newRequire);
+        this.requirementsTableCollection[1].amount += 1;
+      }
     },
     onShowModal() {
       // this.$router.push("/requirex/application");

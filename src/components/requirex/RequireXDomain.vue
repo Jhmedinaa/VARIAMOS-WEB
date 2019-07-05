@@ -2,37 +2,31 @@
   <div>
     <modal
       :value="dialog"
-      :title="$t('requirex_application_tittle')"
+      :title="$t('requirex_domain_tittle')"
       @on-ok="handleSubmit('requirement', requirement)"
       :ok-text=" $t('requirex_generate')"
-      @on-cancel="onApplicationCancel(false, 'requirement')"
+      @on-cancel="onDomainCancel(false, 'requirement')"
       :cancel-text="$t('requirex_cancel')"
       :closable="false"
       :mask-closable="false"
       :scrollable="true"
-     
     >
-      <i-form :model="requirement" ref="requirement" :label-width="120" :rules="ruleValidate">
+      <i-form ref="requirement" :model="requirement" :label-width="120" :rules="ruleValidate">
         <app-requireType
           @onRequireTypeChange="requirement.reqType = $event"
           :reqType="requirement.reqType"
         ></app-requireType>
 
-        <Row>
-          <form-item :label="$t('requirex_requirement_name_label')" prop="name">
-            <i-input
-              v-model="requirement.name"
-              :placeholder="$t('requirex_requirement_name_label')"
-            />
-          </form-item>
+        <form-item :label="$t('requirex_requirement_name_label')" prop="name">
+          <i-input v-model="requirement.name" :placeholder="$t('requirex_requirement_name_label')" />
+        </form-item>
 
-          <form-item :label="$t('requirex_requirement_condition_label')">
-            <i-switch v-model="requirement.condition" size="large">
-              <span slot="open">{{$t('requirex_requirement_yes')}}</span>
-              <span slot="close">{{$t('requirex_requirement_no')}}</span>
-            </i-switch>
-          </form-item>
-        </Row>
+        <form-item :label="$t('requirex_requirement_condition_label')">
+          <i-switch v-model="requirement.condition" size="large">
+            <span slot="open">{{$t('requirex_requirement_yes')}}</span>
+            <span slot="close">{{$t('requirex_requirement_no')}}</span>
+          </i-switch>
+        </form-item>
 
         <form-item
           :label="$t('requirex_requirement_description')"
@@ -119,7 +113,7 @@
             />
           </form-item>
 
-          <form-item :label="$t('requirex_requirement_system_condition_label')">
+          <form-item :label="$t('requirex_requirement_system_condition_domain_label')">
             <i-switch v-model="requirement.systemCondition" size="large">
               <span slot="open">{{$t('requirex_requirement_yes')}}</span>
               <span slot="close">{{$t('requirex_requirement_no')}}</span>
@@ -196,9 +190,9 @@ export default {
         systemCondition: false,
         systemConditionDescription: "",
         msg: ""
-      },
+      }, //Realizar validaciones del formulario
       ruleValidate: {
-        reqType: [
+        msg: [
           {
             required: true,
             message: "Please select the requirement type",
@@ -261,14 +255,25 @@ export default {
         this.extInt = true;
       }
     },
+    handleReset(name) {
+      this.$refs[name].resetFields();
+    },
+    onVisibleChange(estate) {
+      alert(estate);
+    },
+    onDomainCancel(value, name) {
+      this.dial = value;
+      this.$refs[name].resetFields();
+      this.$emit("onDomainCancel", this.dial);
+    },
     handleSubmit(name, req) {
       //Validar el formulario
       this.$refs[name].validate(valid => {
         if (valid) {
+          //Reiniciar requerimiento
           this.requirement.msg = "";
-          //this.$Message.success("Success!");
           //Si hay una condición
-          if (this.requirement.condition) {
+          if (this.requirement.condition == true) {
             this.requirement.msg += this.requirement.conditionDescription + " ";
           }
 
@@ -287,7 +292,7 @@ export default {
               this.requirement.object;
           } else if (this.requirement.systemActivity == "userInt") {
             this.requirement.msg +=
-              " provide the " + this.requirement.user + " the capacity of";
+              " provide the " + this.requirement.user + " the capacity ";
             this.requirement.msg +=
               " " +
               this.requirement.processVerb +
@@ -307,12 +312,12 @@ export default {
 
           //Validat conditions
           if (this.requirement.systemCondition) {
-            this.requirement.msg += ", " + this.requirement.systemConditionDescription;
+            this.requirement.msg +=
+              ", " + this.requirement.systemConditionDescription;
           }
-      
           //this.loading = true;
           this.dial = false;
-          this.$emit("onApplicationCancel", this.dial);
+          this.$emit("onDomainCancel", this.dial);
           this.requirement = req;
           this.$emit("handleSubmit", this.requirement);
         } else {
@@ -320,21 +325,7 @@ export default {
           this.$Message.error("Fail!");
         }
       });
-    },
-    handleReset(name) {
-      this.$refs[name].resetFields();
-    },
-    onVisibleChange(estate) {
-      alert(estate);
-    },
-    onApplicationCancel(value, name) {
-      this.dial = value;
-      this.$refs[name].resetFields();
-      this.$emit("onApplicationCancel", this.dial);
     }
   }
 };
 </script>
-
-<style scoped>
-</style>
