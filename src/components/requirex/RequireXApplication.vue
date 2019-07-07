@@ -174,8 +174,9 @@ export default {
       processVerb: String,
       systemCondition: Boolean,
       systemConditionDescription: String,
+      isComplete: false,
       msg: String
-    }
+    },
   },
   data() {
     return {
@@ -195,7 +196,8 @@ export default {
         processVerb: "",
         systemCondition: false,
         systemConditionDescription: "",
-        msg: ""
+        msg: "",
+        isComplete: false
       },
       ruleValidate: {
         reqType: [
@@ -312,6 +314,7 @@ export default {
       
           //this.loading = true;
           this.dial = false;
+          this.requirement.isComplete = true;
           this.$emit("onApplicationCancel", this.dial);
           this.requirement = req;
           this.$emit("handleSubmit", this.requirement);
