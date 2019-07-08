@@ -9,8 +9,8 @@
         <Col span="6">
           <Dropdown placement="bottom-start" @on-click="onSelectedRequirement">
             <Button color="#17233d">
-              <Icon type="ios-add" size="24"/>Create Requirement
-              <Icon type="md-arrow-dropdown"/>
+              <Icon type="ios-add" size="24" />Create Requirement
+              <Icon type="md-arrow-dropdown" />
             </Button>
             <DropdownMenu slot="list">
               <DropdownItem name="domain">Domain</DropdownItem>
@@ -28,7 +28,7 @@
               <h3 class="card-title">{{$t('requirex_domain')}}</h3>
               <p class="card-text">Name : {{requirementDomain.name}}</p>
               <Button @click="onAddRequirement(requirementDomain, 1)">
-                <Icon type="ios-add" size="24"/>Add
+                <Icon type="ios-add" size="24" />Add
               </Button>
             </div>
           </div>
@@ -38,8 +38,8 @@
             <div class="card-body">
               <h3 class="card-title">{{$t('requirex_application')}}</h3>
               <p class="card-text">Name : {{requirementApplication.name}}</p>
-               <Button @click="onAddRequirement(requirementApplication, 2)">
-                <Icon type="ios-add" size="24"/>Add
+              <Button @click="onAddRequirement(requirementApplication, 2)">
+                <Icon type="ios-add" size="24" />Add
               </Button>
             </div>
           </div>
@@ -49,8 +49,8 @@
             <div class="card-body">
               <h3 class="card-title">{{$t('requirex_adaptation')}}</h3>
               <p class="card-text">Text</p>
-             <Button @click="onAddRequirement(requirementApplication, 2)">
-                <Icon type="ios-add" size="24"/>Add
+              <Button @click="onAddRequirement(requirementApplication, 2)">
+                <Icon type="ios-add" size="24" />Add
               </Button>
             </div>
           </div>
@@ -61,9 +61,7 @@
         <Col span="3">
           <p>Requirements</p>
         </Col>
-        <Col span="16">
-          
-        </Col>
+        <Col span="16"></Col>
       </Row>
 
       <div :style="{margin: '1em 0'}">
@@ -74,10 +72,9 @@
         ></Table>
       </div>
 
-      <div class="container">
-        <button type="button" class="btn btn-danger">Generarte Pdf</button>
+      <div class="container text-right">
+        <button type="button" class="btn btn-danger" @click="onGeneratePdf">Generarte Pdf</button>
       </div>
-
     </Card>
 
     <app-application
@@ -103,6 +100,9 @@ import domain from "../components/requirex/RequireXDomain";
 
 import expandRow from "../components/requirex/components/TableExpand";
 
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+
 export default {
   components: {
     "app-adaptation": adaptation,
@@ -112,7 +112,7 @@ export default {
   },
   data() {
     return {
-      requirementApplication:[Object],
+      requirementApplication: [Object],
       requirementDomain: [Object],
       requirementsTableCollection: [
         {
@@ -198,6 +198,10 @@ export default {
         };
         this.requirementsTableCollection[0].listRequirements.push(newRequire);
         this.requirementsTableCollection[0].amount += 1;
+        this.requirementsTableCollection[0].lastTime = new Date()
+          .toISOString()
+          .slice(0, 10);
+        this.requirementDomain = new Object();
       } else if (type == 2) {
         var newRequire = {
           reqType: require.reqType,
@@ -219,11 +223,69 @@ export default {
         };
         this.requirementsTableCollection[1].listRequirements.push(newRequire);
         this.requirementsTableCollection[1].amount += 1;
+        this.requirementsTableCollection[1].lastTime = new Date()
+          .toISOString()
+          .slice(0, 10);
+        this.requirementApplication = new Object();
+      } else if (type == 3) {
       }
-      this.requirementApplication = new Object;
     },
     onShowModal() {
       // this.$router.push("/requirex/application");
+    },
+    onGeneratePdf() {
+      var domainCount = this.requirementsTableCollection[0].amount;
+      var applicationCount = this.requirementsTableCollection[1].amount;
+      var linea = 20;
+
+      var total = domainCount + applicationCount;
+      var doc = new jsPDF();
+
+      if (total > 0) {
+        //Titulo
+        doc.setFontSize(22);
+        doc.text(20, linea, "Variamos - RequireX");
+        linea += 20;
+        var idCount = 1;
+        //Sub titulo
+        if (domainCount > 0) {
+          doc.setFontSize(16);
+          doc.text(20, linea, this.$t("requirex_domain_tittle") + "s");
+          linea += 10;
+
+          var vec = [];
+          for (var i = 0; i < domainCount; i++) {
+            var item = {
+              id: "R." + idCount,
+              name: this.requirementsTableCollection[0].listRequirements[i]
+                .name,
+              requirement: this.requirementsTableCollection[0].listRequirements[
+                i
+              ].msg,
+              date: this.requirementsTableCollection[0].lastTime
+            };
+
+            alert(item.name);
+            vec.push(item);
+            idCount++;
+          }
+
+          doc.autoTable({
+            columns: [
+              { header: "Id", dataKey: "id" },
+              { header: "Name", dataKey: "name" },
+              { header: "Requirement", dataKey: "requirement" },
+              { header: "Date", dataKey: "date" }
+            ],
+            body: vec,
+            startY: linea,
+            theme: "grid"
+          });
+        }
+        doc.save("requirement.pdf");
+      } else {
+        this.$Message.error("There are no requirements to generate!");
+      }
     }
   }
 };
