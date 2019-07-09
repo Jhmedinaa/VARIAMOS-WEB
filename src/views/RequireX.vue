@@ -90,6 +90,10 @@
       :requirementProp="requirementDomain"
       @handleSubmit="requirementDomain = $event"
     ></app-domain>
+
+    <app-adaptation  :dialog="dialogAdaptation"
+      @onAdaptationCancel="dialogAdaptation = $event">
+    </app-adaptation>
   </Content>
 </template>
 
@@ -161,6 +165,7 @@ export default {
       ],
       dialogDomain: false,
       dialogApplication: false,
+      dialogAdaptation: false,
       isCompleteApplication: false
     };
   },
@@ -172,6 +177,7 @@ export default {
       } else if (name == "application") {
         this.dialogApplication = true;
       } else if (name == "adaptation") {
+        this.dialogAdaptation = true;
       }
     },
     onAddRequirement(requirement, type) {
@@ -237,16 +243,17 @@ export default {
       var domainCount = this.requirementsTableCollection[0].amount;
       var applicationCount = this.requirementsTableCollection[1].amount;
       var linea = 20;
-
+      var idCount = 1;
       var total = domainCount + applicationCount;
       var doc = new jsPDF();
 
+      //Titulo
+      doc.setFontSize(22);
+      doc.text(20, linea, "Variamos - RequireX");
+
       if (total > 0) {
-        //Titulo
-        doc.setFontSize(22);
-        doc.text(20, linea, "Variamos - RequireX");
         linea += 20;
-        var idCount = 1;
+
         //Sub titulo
         if (domainCount > 0) {
           doc.setFontSize(16);
@@ -265,7 +272,40 @@ export default {
               date: this.requirementsTableCollection[0].lastTime
             };
 
-            alert(item.name);
+            vec.push(item);
+            idCount++;
+          }
+
+          doc.autoTable({
+            columns: [
+              { header: "Id", dataKey: "id" },
+              { header: "Name", dataKey: "name" },
+              { header: "Requirement", dataKey: "requirement" },
+              { header: "Date", dataKey: "date" }
+            ],
+            body: vec,
+            startY: linea,
+            theme: "grid"
+          });
+        }
+
+        if (applicationCount > 0) {
+          doc.setFontSize(16);
+          doc.text(20, linea, this.$t("requirex_application_tittle") + "s");
+          linea += 10;
+          
+          var vec = [];
+          for (var i = 0; i < applicationCount; i++) {
+            var item = {
+              id: "R." + idCount,
+              name: this.requirementsTableCollection[1].listRequirements[i]
+                .name,
+              requirement: this.requirementsTableCollection[1].listRequirements[
+                i
+              ].msg,
+              date: this.requirementsTableCollection[1].lastTime
+            };
+
             vec.push(item);
             idCount++;
           }

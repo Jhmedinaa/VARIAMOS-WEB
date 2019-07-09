@@ -10,29 +10,31 @@
       :closable="false"
       :mask-closable="false"
       :scrollable="true"
-     
+      :loading="loading"
     >
-      <i-form :model="requirement" ref="requirement" :label-width="120" :rules="ruleValidate">
+      <i-form :model="requirement" ref="requirement" :rules="ruleValidate">
         <app-requireType
           @onRequireTypeChange="requirement.reqType = $event"
           :reqType="requirement.reqType"
         ></app-requireType>
 
-        <Row>
-          <form-item :label="$t('requirex_requirement_name_label')" prop="name">
-            <i-input
-              v-model="requirement.name"
-              :placeholder="$t('requirex_requirement_name_label')"
-            />
-          </form-item>
+        <form-item :label="$t('requirex_requirement_system_name_label')" prop="systemName">
+          <i-input
+            v-model="requirement.systemName"
+            :placeholder="$t('requirex_requirement_system_name_label')"
+          />
+        </form-item>
 
-          <form-item :label="$t('requirex_requirement_condition_label')">
-            <i-switch v-model="requirement.condition" size="large">
-              <span slot="open">{{$t('requirex_requirement_yes')}}</span>
-              <span slot="close">{{$t('requirex_requirement_no')}}</span>
-            </i-switch>
-          </form-item>
-        </Row>
+        <form-item :label="$t('requirex_requirement_name_label')" prop="name">
+          <i-input v-model="requirement.name" :placeholder="$t('requirex_requirement_name_label')" />
+        </form-item>
+
+        <form-item :label="$t('requirex_requirement_condition_label')">
+          <i-switch v-model="requirement.condition" size="large">
+            <span slot="open">{{$t('requirex_requirement_yes')}}</span>
+            <span slot="close">{{$t('requirex_requirement_no')}}</span>
+          </i-switch>
+        </form-item>
 
         <form-item
           :label="$t('requirex_requirement_description')"
@@ -51,13 +53,6 @@
           @onImperativeChange="requirement.imperative = $event"
           :imperative="requirement.imperative"
         ></app-imperative>
-
-        <form-item :label="$t('requirex_requirement_system_name_label')" prop="systemName">
-          <i-input
-            v-model="requirement.systemName"
-            :placeholder="$t('requirex_requirement_system_name_label')"
-          />
-        </form-item>
 
         <form-item :label="$t('requirex_requirement_system_activity_label')" prop="systemActivity">
           <i-select
@@ -78,7 +73,7 @@
         </form-item>
 
         <div class="sub-form" v-if="isSystemActivity">
-          <form-item :label="$t('requirex_requirement_user_label')" v-if="userInt">
+          <form-item :label="$t('requirex_requirement_user_label')" v-if="userInt" prop="user">
             <i-input
               v-model="requirement.user"
               :placeholder="$t('requirex_requirement_user_label')"
@@ -106,13 +101,13 @@
             </i-select>
           </form-item>
 
-          <form-item :label="$t('requirex_requirement_process_verb_label')">
+          <form-item :label="$t('requirex_requirement_process_verb_label')" prop="processVerb">
             <i-input
               v-model="requirement.processVerb"
               :placeholder="$t('requirex_requirement_process_verb_label')"
             />
           </form-item>
-          <form-item :label="$t('requirex_requirement_object_label')">
+          <form-item :label="$t('requirex_requirement_object_label')" prop="object">
             <i-input
               v-model="requirement.object"
               :placeholder="$t('requirex_requirement_object_label')"
@@ -176,9 +171,19 @@ export default {
       systemConditionDescription: String,
       isComplete: false,
       msg: String
-    },
+    }
   },
   data() {
+    const validateUser = (rule, value, callback) => {
+      if (this.userInt) {
+        if (value === "") {
+          callback(false);
+         // Callback(new Error("content cannot be empty"));
+        }
+      } else {
+         callback();
+      }
+    };
     return {
       requirement: {
         reqType: "",
@@ -234,11 +239,35 @@ export default {
             message: "Please select the system activity",
             trigger: "change"
           }
+        ],
+        processVerb: [
+          {
+            required: true,
+            message: "The Process Verb cannot be empty",
+            trigger: "change"
+          }
+        ],
+        object: [
+          {
+            required: true,
+            message: "The Object  cannot be empty",
+            trigger: "change"
+          }
+        ],
+        user: [
+          {
+            required: true,
+            validator: validateUser,
+            trigger: "blur"
+          }
         ]
       },
       isSystemActivity: false,
       dial: false,
-      loading: true
+      loading: true,
+      userInt: false,
+      autoAct: false,
+      extInt: false
     };
   },
   methods: {
@@ -309,9 +338,10 @@ export default {
 
           //Validat conditions
           if (this.requirement.systemCondition) {
-            this.requirement.msg += ", " + this.requirement.systemConditionDescription;
+            this.requirement.msg +=
+              ", " + this.requirement.systemConditionDescription;
           }
-      
+
           //this.loading = true;
           this.dial = false;
           this.requirement.isComplete = true;
