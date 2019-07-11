@@ -189,7 +189,7 @@ export default {
       required: true
     },
     requirementProp: {
-      affectedSystems: "",
+      affectedSystems: String,
       reqType: String,
       name: String,
       condition: Boolean,
@@ -334,6 +334,7 @@ export default {
         if (valid) {
           //Reiniciar requerimiento
           this.requirement.msg = "";
+          this.requirement.msg += this.requirement.affectedSystems;
           //Si hay una condición
           if (this.requirement.condition == true) {
             this.requirement.msg += this.requirement.conditionDescription + " ";

@@ -15,7 +15,7 @@
             <DropdownMenu slot="list">
               <DropdownItem name="domain">Domain</DropdownItem>
               <DropdownItem name="application">Application</DropdownItem>
-              <DropdownItem name="adaptation">Adaptation</DropdownItem>
+              <DropdownItem :name="$t('requirex_adaptation')">{{$t('requirex_adaptation')}}</DropdownItem>
             </DropdownMenu>
           </Dropdown>
         </Col>
