@@ -330,7 +330,7 @@ export default {
       loading: true,
       userInt: false,
       autoAct: false,
-      extInt: false
+      extInt: false 
     };
   },
   methods: {

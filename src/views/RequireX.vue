@@ -264,6 +264,7 @@ export default {
           for (var i = 0; i < domainCount; i++) {
             var item = {
               id: "R." + idCount,
+              system: this.requirementsTableCollection[0].listRequirements[i].systemName, 
               name: this.requirementsTableCollection[0].listRequirements[i]
                 .name,
               requirement: this.requirementsTableCollection[0].listRequirements[
@@ -313,6 +314,7 @@ export default {
           doc.autoTable({
             columns: [
               { header: "Id", dataKey: "id" },
+              { header: "System", dataKey: "system" },
               { header: "Name", dataKey: "name" },
               { header: "Requirement", dataKey: "requirement" },
               { header: "Date", dataKey: "date" }

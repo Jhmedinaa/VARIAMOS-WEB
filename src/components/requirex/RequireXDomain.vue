@@ -13,6 +13,8 @@
       :loading="loading"
     >
       <i-form ref="requirement" :model="requirement" :rules="ruleValidate">
+        <app-quantity @onAffectedSystemChange="requirement.affectedSystems = $event" :affectedSystems="requirement.affectedSystems"></app-quantity>
+
         <app-requireType
           @onRequireTypeChange="requirement.reqType = $event"
           :reqType="requirement.reqType"
@@ -173,11 +175,13 @@
 <script>
 import requireType from "./components/RequireType";
 import imperative from "./components/Imperative";
+import quantity from "./components/Quantity";
 
 export default {
   components: {
     "app-requireType": requireType,
-    "app-imperative": imperative
+    "app-imperative": imperative,
+    "app-quantity": quantity
   },
   props: {
     dialog: {
@@ -185,6 +189,7 @@ export default {
       required: true
     },
     requirementProp: {
+      affectedSystems: "",
       reqType: String,
       name: String,
       condition: Boolean,
@@ -206,6 +211,7 @@ export default {
   data() {
     return {
       requirement: {
+        affectedSystems: "",
         reqType: "",
         name: "",
         condition: false,
