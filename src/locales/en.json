@@ -141,15 +141,20 @@
   "requirex_requirement_condition_descrive_label": "Plase enter a condition.",
 
   "requirex_requirement_imperative_label" : "Imperative",
-  "requirex_requirement_imperative1": "Must",  
+  "requirex_requirement_imperative1": "Shall",  
   "requirex_requirement_imperative2": "Should",   
   "requirex_requirement_imperative3": "Could",
-  "requirex_requirement_imperative_value_1": "must",  
+  "requirex_requirement_imperative_value_1": "shall",  
   "requirex_requirement_imperative_value_2": "should",  
   "requirex_requirement_imperative_value_3": "could",
 
   "requirex_requirement_system_name_label":"System or SubSystem",
-  "requirex_requirement_system_domain_name_label":"System family lines",
+  "requirex_requirement_system_domain_name_label":"Product Line Name",
+
+  "requirex_requirement_affected_systems_label":"Affected Systems",
+  "requirex_requirement_affected_systems1": "All",  
+  "requirex_requirement_affected_systems2": "Some",   
+  "requirex_requirement_affected_systems3": "Those",
 
   "requirex_requirement_system_activity_label" : "System Activity",
   "requirex_requirement_system_activity1": "User Interaction",  
@@ -177,9 +182,9 @@
 
   "requirex_requirement_from_label" : "Interface requirement interaction",
   "requirex_requirement_from1": "From",  
-  "requirex_requirement_from2": "To",   
+  "requirex_requirement_from2": "Towards",   
   "requirex_requirement_from_value_1": "from",  
-  "requirex_requirement_from_value_2": "to",
+  "requirex_requirement_from_value_2": "towards",
 
   "requirex_generate_pdf":"Generate Pdf",
   "requirex_generate":"Generate Requirement",

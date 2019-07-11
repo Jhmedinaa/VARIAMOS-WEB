@@ -12,6 +12,8 @@
       :scrollable="true"
     >
       <i-form ref="requirement" :model="requirement" :label-width="120" :rules="ruleValidate">
+        <app-quantity @onAffectedSystemChange="requirement.affectedSystems = $event" :affectedSystems="requirement.affectedSystems"></app-quantity>
+
         <app-requireType
           @onRequireTypeChange="requirement.reqType = $event"
           :reqType="requirement.reqType"
@@ -46,10 +48,10 @@
           :imperative="requirement.imperative"
         ></app-imperative>
 
-        <form-item :label="$t('requirex_requirement_system_name_label')" prop="systemName">
+        <form-item :label="$t('requirex_requirement_system_domain_name_label')" prop="systemName">
           <i-input
             v-model="requirement.systemName"
-            :placeholder="$t('requirex_requirement_system_name_label')"
+            :placeholder="$t('requirex_requirement_system_domain_name_label')"
           />
         </form-item>
 
@@ -141,11 +143,13 @@
 <script>
 import requireType from "./components/RequireType";
 import imperative from "./components/Imperative";
+import quantity from "./components/Quantity";
 
 export default {
   components: {
     "app-requireType": requireType,
-    "app-imperative": imperative
+    "app-imperative": imperative,
+    "app-quantity": quantity
   },
   props: {
     dialog: {
@@ -153,6 +157,7 @@ export default {
       required: true
     },
     requirementProp: {
+      affectedSystems: "",
       reqType: String,
       name: String,
       condition: Boolean,
@@ -174,6 +179,7 @@ export default {
   data() {
     return {
       requirement: {
+        affectedSystems: "",
         reqType: "",
         name: "",
         condition: false,
