@@ -266,13 +266,6 @@ export default {
             trigger: "change"
           }
         ],
-        msg: [
-          {
-            required: true,
-            message: "Please select the requirement type",
-            trigger: "change"
-          }
-        ],
         name: [
           {
             required: true,

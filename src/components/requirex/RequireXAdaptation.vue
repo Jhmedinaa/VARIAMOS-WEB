@@ -12,7 +12,7 @@
       :scrollable="true"
       :loading="loading"
     >
-      <i-form :model="requirement" ref="requirement" label-position="top">
+      <i-form :model="requirement" ref="requirement" :rules="ruleValidate">
         <app-requireType
           @onRequireTypeChange="requirement.reqType = $event"
           :reqType="requirement.reqType"
@@ -184,6 +184,57 @@ export default {
         msg: "",
         isComplete: false
       },
+      ruleValidate: {
+        reqType: [
+          {
+            required: true,
+            message: "Please select the requirement type",
+            trigger: "change"
+          }
+        ],
+        systemName: [
+          {
+            required: true,
+            message: "The system or subsystem name cannot be empty",
+            trigger: "blur"
+          }
+        ],
+        name: [
+          {
+            required: true,
+            message: "The name cannot be empty",
+            trigger: "blur"
+          }
+        ],
+        imperative: [
+          {
+            required: true,
+            message: "Please select the imperative",
+            trigger: "change"
+          }
+        ],
+        processVerb: [
+          {
+            required: true,
+            message: "The Process Verb cannot be empty",
+            trigger: "change"
+          }
+        ],
+        object: [
+          {
+            required: true,
+            message: "The Object  cannot be empty",
+            trigger: "change"
+          }
+        ],
+        relaxing: [
+          {
+            required: false,
+            message: "The Object  cannot be empty",
+            trigger: "change"
+          }
+        ]
+      },
       dial: false,
       loading: true,
       userInt: false,
@@ -204,9 +255,11 @@ export default {
       this.$emit("onAdaptationCancel", this.dial);
     },
     handleSubmit(name, req) {
+      alert("1");
       //Validar el formulario
       this.$refs[name].validate(valid => {
         if (valid) {
+          alert("2");
           this.requirement.msg = "";
           //this.$Message.success("Success!");
           //Si hay una condición
@@ -216,13 +269,13 @@ export default {
 
           //Complemento y nombre
           this.requirement.msg +=
-            $t("requirex_requirement_sel_adaptive_complement") +
+            this.$t("requirex_requirement_sel_adaptive_complement") +
             this.requirement.systemName +
             " " +
             this.requirement.imperative;
           //Process Verrb
           this.requirement.msg += " " + this.requirement.processVerb + " ";
-
+          alert("3");
           //Validate Relax
           if (
             (this.requirement.relaxing ==
@@ -257,6 +310,7 @@ export default {
               " " +
               this.requirement.event;
           }
+          alert("4");
 
           //this.loading = true;
           this.dial = false;
