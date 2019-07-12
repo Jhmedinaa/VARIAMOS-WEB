@@ -3,9 +3,13 @@
     <Modal
       :value="dialog"
       :title="$t('requirex_adaptation_tittle')"
+      @on-ok="handleSubmit('requirement', requirement)"
       :ok-text=" $t('requirex_generate')"
       @on-cancel="onAdaptationCancel(false, 'requirement')"
       :cancel-text="$t('requirex_cancel')"
+      :closable="false"
+      :mask-closable="false"
+      :scrollable="true"
       :loading="loading"
     >
       <i-form :model="requirement" ref="requirement" label-position="top">
@@ -142,6 +146,23 @@ export default {
     dialog: {
       type: Boolean,
       required: true
+    },
+    requirementProp: {
+      reqType: String,
+      name: String,
+      condition: Boolean,
+      conditionDescription: String,
+      imperative: String,
+      systemName: String,
+      processVerb: String,
+      object: String,
+      system: String,
+      processVerb: String,
+      relaxing: String,
+      postBehaviour: String,
+      event: String,
+      msg: String,
+      isComplete: Boolean
     }
   },
   data() {
@@ -177,10 +198,10 @@ export default {
     onVisibleChange(estate) {
       alert(estate);
     },
-    onApplicationCancel(value, name) {
+    onAdaptationCancel(value, name) {
       this.dial = value;
       this.$refs[name].resetFields();
-      this.$emit("onApplicationCancel", this.dial);
+      this.$emit("onAdaptationCancel", this.dial);
     },
     handleSubmit(name, req) {
       //Validar el formulario
@@ -240,7 +261,7 @@ export default {
           //this.loading = true;
           this.dial = false;
           this.requirement.isComplete = true;
-          this.$emit("onApplicationCancel", this.dial);
+          this.$emit("onAdaptationCancel", this.dial);
           this.requirement = req;
           this.$emit("handleSubmit", this.requirement);
         } else {

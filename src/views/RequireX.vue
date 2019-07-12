@@ -9,8 +9,8 @@
         <Col span="6">
           <Dropdown placement="bottom-start" @on-click="onSelectedRequirement">
             <Button color="#17233d">
-              <Icon type="ios-add" size="24" />Create Requirement
-              <Icon type="md-arrow-dropdown" />
+              <Icon type="ios-add" size="24"/>Create Requirement
+              <Icon type="md-arrow-dropdown"/>
             </Button>
             <DropdownMenu slot="list">
               <DropdownItem :name="$t('requirex_domain')">{{$t('requirex_domain')}}</DropdownItem>
@@ -28,7 +28,7 @@
               <h3 class="card-title">{{$t('requirex_domain')}}</h3>
               <p class="card-text">Name : {{requirementDomain.name}}</p>
               <Button @click="onAddRequirement(requirementDomain, 1)">
-                <Icon type="ios-add" size="24" />Add
+                <Icon type="ios-add" size="24"/>Add
               </Button>
             </div>
           </div>
@@ -39,7 +39,7 @@
               <h3 class="card-title">{{$t('requirex_application')}}</h3>
               <p class="card-text">Name : {{requirementApplication.name}}</p>
               <Button @click="onAddRequirement(requirementApplication, 2)">
-                <Icon type="ios-add" size="24" />Add
+                <Icon type="ios-add" size="24"/>Add
               </Button>
             </div>
           </div>
@@ -48,9 +48,9 @@
           <div class="card">
             <div class="card-body">
               <h3 class="card-title">{{$t('requirex_adaptation')}}</h3>
-              <p class="card-text">Text</p>
-              <Button @click="onAddRequirement(requirementApplication, 2)">
-                <Icon type="ios-add" size="24" />Add
+              <p class="card-text">Name : {{requirementAdaptation.name}}</p>
+              <Button @click="onAddRequirement(requirementAdaptation, 3)">
+                <Icon type="ios-add" size="24"/>Add
               </Button>
             </div>
           </div>
@@ -61,7 +61,6 @@
         <Col span="3">
           <p>Requirements</p>
         </Col>
-        <Col span="16"></Col>
       </Row>
 
       <div :style="{margin: '1em 0'}">
@@ -91,9 +90,12 @@
       @handleSubmit="requirementDomain = $event"
     ></app-domain>
 
-    <app-adaptation  :dialog="dialogAdaptation"
-      @onAdaptationCancel="dialogAdaptation = $event">
-    </app-adaptation>
+    <app-adaptation
+      :dialog="dialogAdaptation"
+      @onAdaptationCancel="dialogAdaptation = $event"
+      :requirementProp="requirementAdaptation"
+      @handleSubmit="requirementAdaptation = $event"
+    ></app-adaptation>
   </Content>
 </template>
 
@@ -118,6 +120,7 @@ export default {
     return {
       requirementApplication: [Object],
       requirementDomain: [Object],
+      requirementAdaptation: [Object],
       requirementsTableCollection: [
         {
           reqType: this.$t("requirex_domain"),
@@ -172,11 +175,11 @@ export default {
   methods: {
     onSelectedRequirement(name) {
       //alert(name);
-      if (name == this.$t('requirex_domain')) {
+      if (name == this.$t("requirex_domain")) {
         this.dialogDomain = true;
-      } else if (name == this.$t('requirex_application')) {
+      } else if (name == this.$t("requirex_application")) {
         this.dialogApplication = true;
-      } else if (name == this.$t('requirex_adaptation')) {
+      } else if (name == this.$t("requirex_adaptation")) {
         this.dialogAdaptation = true;
       }
     },
@@ -264,7 +267,8 @@ export default {
           for (var i = 0; i < domainCount; i++) {
             var item = {
               id: "R." + idCount,
-              system: this.requirementsTableCollection[0].listRequirements[i].systemName, 
+              system: this.requirementsTableCollection[0].listRequirements[i]
+                .systemName,
               name: this.requirementsTableCollection[0].listRequirements[i]
                 .name,
               requirement: this.requirementsTableCollection[0].listRequirements[
@@ -294,7 +298,7 @@ export default {
           doc.setFontSize(16);
           doc.text(20, linea, this.$t("requirex_application_tittle") + "s");
           linea += 10;
-          
+
           var vec = [];
           for (var i = 0; i < applicationCount; i++) {
             var item = {
