@@ -12,7 +12,7 @@
       :scrollable="true"
       :loading="loading"
     >
-      <i-form :model="requirement" ref="requirement" :rules="ruleValidate">
+      <i-form :model="requirement" ref="requirement" :rules="ruleValidate" label-position="top">
         <app-requireType
           @onRequireTypeChange="requirement.reqType = $event"
           :reqType="requirement.reqType"
@@ -109,6 +109,7 @@
             </form-item>
           </div>
         </div>
+
         <div
           class="row"
           v-if="requirement.relaxing == $t('requirex_requirement_relax_many') |
@@ -124,6 +125,20 @@
             </form-item>
           </div>
         </div>
+
+        <div
+          class="row"
+          v-if="requirement.relaxing == $t('requirex_requirement_relax_within') | requirement.relaxing == $t('requirex_requirement_relax_least')"
+        >
+          <div class="col">
+            <form-item :label="$t('requirex_requirement_time')" prop="event">
+              <InputNumber :max="999999" :min="1" :step="1" v-model="requirement.time"></InputNumber>
+            </form-item>
+          </div>
+          <div class="col">
+            <app-time-list :units="requirement.units" @onUnitChange="requirement.units = $event"></app-time-list>
+          </div>
+        </div>
       </i-form>
     </Modal>
   </div>
@@ -134,13 +149,15 @@ import requireType from "./components/RequireType";
 import imperative from "./components/Imperative";
 import relaxing from "./components/Relax";
 import postBehavior from "./components/PostBehaviour";
+import timeList from "./components/TimeList";
 
 export default {
   components: {
     "app-requireType": requireType,
     "app-imperative": imperative,
     "app-relaxing": relaxing,
-    "app-postBehavior": postBehavior
+    "app-postBehavior": postBehavior,
+    "app-time-list": timeList
   },
   props: {
     dialog: {
@@ -160,6 +177,8 @@ export default {
       relaxing: String,
       postBehaviour: String,
       event: String,
+      timne: Number,
+      units: String,
       msg: String,
       isComplete: Boolean
     }
@@ -180,6 +199,8 @@ export default {
         relaxing: "",
         postBehaviour: "",
         event: "",
+        time: 0,
+        units: "",
         msg: "",
         isComplete: false
       },
@@ -254,11 +275,9 @@ export default {
       this.$emit("onAdaptationCancel", this.dial);
     },
     handleSubmit(name, req) {
-      alert("1");
       //Validar el formulario
       this.$refs[name].validate(valid => {
         if (valid) {
-          alert("2");
           this.requirement.msg = "";
           //this.$Message.success("Success!");
           //Si hay una condición
@@ -274,7 +293,7 @@ export default {
             this.requirement.imperative;
           //Process Verrb
           this.requirement.msg += " " + this.requirement.processVerb + " ";
-          alert("3");
+
           //Validate Relax
           if (
             (this.requirement.relaxing ==
@@ -308,8 +327,34 @@ export default {
               this.requirement.relaxing +
               " " +
               this.requirement.event;
+          } else if (
+            this.requirement.relaxing ==
+            this.$t("requirex_requirement_relax_within")
+          ) {
+            this.requirement.msg +=
+              this.requirement.object +
+              " " +
+              this.requirement.relaxing +
+              " " +
+              this.requirement.time +
+              " " +
+              this.requirement.units +
+              " ";
+          } else if (
+            this.requirement.relaxing ==
+            this.$t("requirex_requirement_relax_least")
+          ) {
+            this.requirement.object +
+              " " +
+              this.requirement.relaxing +
+              " " +
+              this.requirement.time +
+              " " +
+              this.$t("requirex_requirement_times") +
+              " " +
+              this.requirement.units +
+              " ";
           }
-          alert("4");
 
           //this.loading = true;
           this.dial = false;

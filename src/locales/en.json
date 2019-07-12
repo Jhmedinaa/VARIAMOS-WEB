@@ -208,6 +208,18 @@
   "requirex_requirement_during": "During",
   "requirex_requirement_event": "Event",
 
+  "requirex_requirement_time": "Time",  
+  "requirex_requirement_times": "Times for",  
+  "requirex_requirement_units": "Units",
+  "requirex_requirement_units_milliseconds": "Milliseconds",
+  "requirex_requirement_units_seconds": "Seconds",
+  "requirex_requirement_units_minutes": "Minutes",
+  "requirex_requirement_units_hours": "Hours",
+  "requirex_requirement_units_days": "Days",
+  "requirex_requirement_units_weeks": "weeks",
+  "requirex_requirement_units_months": "Months",
+  "requirex_requirement_units_years": "years",
+
   "requirex_requirement_sel_adaptive_complement" : "The self-adaptive system ",
   "requirex_requirement_as_posible" : "as posible",
 
