@@ -157,7 +157,6 @@ export default {
       processVerb: String,
       object: String,
       system: String,
-      processVerb: String,
       relaxing: String,
       postBehaviour: String,
       event: String,

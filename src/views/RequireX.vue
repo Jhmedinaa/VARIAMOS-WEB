@@ -9,8 +9,8 @@
         <Col span="6">
           <Dropdown placement="bottom-start" @on-click="onSelectedRequirement">
             <Button color="#17233d">
-              <Icon type="ios-add" size="24"/>Create Requirement
-              <Icon type="md-arrow-dropdown"/>
+              <Icon type="ios-add" size="24" />Create Requirement
+              <Icon type="md-arrow-dropdown" />
             </Button>
             <DropdownMenu slot="list">
               <DropdownItem :name="$t('requirex_domain')">{{$t('requirex_domain')}}</DropdownItem>
@@ -20,42 +20,6 @@
           </Dropdown>
         </Col>
       </Row>
-
-      <div class="row">
-        <div class="col-sm-4">
-          <div class="card">
-            <div class="card-body">
-              <h3 class="card-title">{{$t('requirex_domain')}}</h3>
-              <p class="card-text">Name : {{requirementDomain.name}}</p>
-              <Button @click="onAddRequirement(requirementDomain, 1)">
-                <Icon type="ios-add" size="24"/>Add
-              </Button>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="card" :v-if="isCompleteApplication">
-            <div class="card-body">
-              <h3 class="card-title">{{$t('requirex_application')}}</h3>
-              <p class="card-text">Name : {{requirementApplication.name}}</p>
-              <Button @click="onAddRequirement(requirementApplication, 2)">
-                <Icon type="ios-add" size="24"/>Add
-              </Button>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="card">
-            <div class="card-body">
-              <h3 class="card-title">{{$t('requirex_adaptation')}}</h3>
-              <p class="card-text">Name : {{requirementAdaptation.name}}</p>
-              <Button @click="onAddRequirement(requirementAdaptation, 3)">
-                <Icon type="ios-add" size="24"/>Add
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <Row :style="{margin: '2em 0'}">
         <Col span="3">
@@ -80,21 +44,21 @@
       :dialog="dialogApplication"
       @onApplicationCancel="dialogApplication = $event"
       :requirementProp="requirementApplication"
-      @handleSubmit="requirementApplication = $event"
+      @handleSubmit="onApplicationGenerate($event)"
     ></app-application>
 
     <app-domain
       :dialog="dialogDomain"
       @onDomainCancel="dialogDomain = $event"
       :requirementProp="requirementDomain"
-      @handleSubmit="requirementDomain = $event"
+      @handleSubmit="onDomainGenerate($event)"
     ></app-domain>
 
     <app-adaptation
       :dialog="dialogAdaptation"
       @onAdaptationCancel="dialogAdaptation = $event"
       :requirementProp="requirementAdaptation"
-      @handleSubmit="requirementAdaptation = $event"
+      @handleSubmit="onSeftAdaptableGenerate($event)"
     ></app-adaptation>
   </Content>
 </template>
@@ -173,6 +137,89 @@ export default {
     };
   },
   methods: {
+    onDomainGenerate(requirement) {
+      this.requirementDomain = requirement;
+      var newRequire = {
+        reqType: this.requirementDomain.reqType,
+        name: this.requirementDomain.name,
+        condition: this.requirementDomain.condition,
+        conditionDescription: this.requirementDomain.conditionDescription,
+        imperative: this.requirementDomain.imperative,
+        systemName: this.requirementDomain.systemName,
+        systemActivity: this.requirementDomain.systemActivity,
+        user: this.requirementDomain.user,
+        processVerb: this.requirementDomain.processVerb,
+        object: this.requirementDomain.object,
+        system: this.requirementDomain.system,
+        from: this.requirementDomain.from,
+        processVerb: this.requirementDomain.processVerb,
+        systemCondition: this.requirementDomain.systemCondition,
+        systemConditionDescription: this.requirementDomain
+          .systemConditionDescription,
+        msg: this.requirementDomain.msg
+      };
+      this.requirementsTableCollection[0].listRequirements.push(newRequire);
+      this.requirementsTableCollection[0].amount += 1;
+      this.requirementsTableCollection[0].lastTime = new Date()
+        .toISOString()
+        .slice(0, 10);
+      this.requirementApplication = new Object();
+    },
+    onApplicationGenerate(requirement) {
+      this.requirementApplication = requirement;
+      var newRequire = {
+        reqType: this.requirementApplication.reqType,
+        name: this.requirementApplication.name,
+        condition: this.requirementApplication.condition,
+        conditionDescription: this.requirementApplication.conditionDescription,
+        imperative: this.requirementApplication.imperative,
+        systemName: this.requirementApplication.systemName,
+        systemActivity: this.requirementApplication.systemActivity,
+        user: this.requirementApplication.user,
+        processVerb: this.requirementApplication.processVerb,
+        object: this.requirementApplication.object,
+        system: this.requirementApplication.system,
+        from: this.requirementApplication.from,
+        processVerb: this.requirementApplication.processVerb,
+        systemCondition: this.requirementApplication.systemCondition,
+        systemConditionDescription: this.requirementApplication
+          .systemConditionDescription,
+        msg: this.requirementApplication.msg
+      };
+      this.requirementsTableCollection[1].listRequirements.push(newRequire);
+      this.requirementsTableCollection[1].amount += 1;
+      this.requirementsTableCollection[1].lastTime = new Date()
+        .toISOString()
+        .slice(0, 10);
+      this.requirementDomain = new Object();
+    },
+    onSeftAdaptableGenerate(requirement) {
+      this.requirementAdaptation = requirement;
+      var newRequire = {
+        reqType: this.requirementAdaptation.reqType,
+        name: this.requirementAdaptation.name,
+        condition: this.requirementAdaptation.condition,
+        conditionDescription: this.requirementAdaptation.conditionDescription,
+        imperative: this.requirementAdaptation.imperative,
+        systemName: this.requirementAdaptation.systemName,
+        processVerb: this.requirementAdaptation.processVerb,
+        object: this.requirementAdaptation.object,
+        system: this.requirementAdaptation.system,
+        relaxing: this.requirementAdaptation.relaxing,
+        postBehaviour: this.requirementAdaptation.postBehaviour,
+        event: this.requirementAdaptation.event,
+        msg: this.requirementAdaptation.msg,
+        isComplete: this.requirementAdaptation.isComplete
+      };
+
+      this.requirementsTableCollection[2].listRequirements.push(newRequire);
+      this.requirementsTableCollection[2].amount += 1;
+      this.requirementsTableCollection[2].lastTime = new Date()
+        .toISOString()
+        .slice(0, 10);
+      this.requirementAdaptation = new Object();
+    },
+
     onSelectedRequirement(name) {
       //alert(name);
       if (name == this.$t("requirex_domain")) {
@@ -181,62 +228,6 @@ export default {
         this.dialogApplication = true;
       } else if (name == this.$t("requirex_adaptation")) {
         this.dialogAdaptation = true;
-      }
-    },
-    onAddRequirement(requirement, type) {
-      var require = requirement;
-
-      if (type == 1) {
-        var newRequire = {
-          reqType: require.reqType,
-          name: require.name,
-          condition: require.condition,
-          conditionDescription: require.conditionDescription,
-          imperative: require.imperative,
-          systemName: require.systemName,
-          systemActivity: require.systemActivity,
-          user: require.user,
-          processVerb: require.processVerb,
-          object: require.object,
-          system: require.system,
-          from: require.from,
-          processVerb: require.processVerb,
-          systemCondition: require.systemCondition,
-          systemConditionDescription: require.systemConditionDescription,
-          msg: require.msg
-        };
-        this.requirementsTableCollection[0].listRequirements.push(newRequire);
-        this.requirementsTableCollection[0].amount += 1;
-        this.requirementsTableCollection[0].lastTime = new Date()
-          .toISOString()
-          .slice(0, 10);
-        this.requirementDomain = new Object();
-      } else if (type == 2) {
-        var newRequire = {
-          reqType: require.reqType,
-          name: require.name,
-          condition: require.condition,
-          conditionDescription: require.conditionDescription,
-          imperative: require.imperative,
-          systemName: require.systemName,
-          systemActivity: require.systemActivity,
-          user: require.user,
-          processVerb: require.processVerb,
-          object: require.object,
-          system: require.system,
-          from: require.from,
-          processVerb: require.processVerb,
-          systemCondition: require.systemCondition,
-          systemConditionDescription: require.systemConditionDescription,
-          msg: require.msg
-        };
-        this.requirementsTableCollection[1].listRequirements.push(newRequire);
-        this.requirementsTableCollection[1].amount += 1;
-        this.requirementsTableCollection[1].lastTime = new Date()
-          .toISOString()
-          .slice(0, 10);
-        this.requirementApplication = new Object();
-      } else if (type == 3) {
       }
     },
     onShowModal() {
@@ -292,6 +283,8 @@ export default {
             startY: linea,
             theme: "grid"
           });
+
+          linea += domainCount * 15;
         }
 
         if (applicationCount > 0) {
@@ -303,6 +296,7 @@ export default {
           for (var i = 0; i < applicationCount; i++) {
             var item = {
               id: "R." + idCount,
+              system: this.requirementsTableCollection[1].listRequirements[i].systemName,
               name: this.requirementsTableCollection[1].listRequirements[i]
                 .name,
               requirement: this.requirementsTableCollection[1].listRequirements[

@@ -44,10 +44,10 @@
 
         <div class="row">
           <div class="col">
-            <form-item :label="$t('requirex_requirement_system_name_label')" prop="systemName">
+            <form-item :label="$t('requirex_requirement_system_domain_name_label')" prop="systemName">
               <i-input
                 v-model="requirement.systemName"
-                :placeholder="$t('requirex_requirement_system_name_label')"
+                :placeholder="$t('requirex_requirement_system_domain_name_label')"
               />
             </form-item>
           </div>
