@@ -155,6 +155,10 @@
   "requirex_requirement_affected_systems1": "All",  
   "requirex_requirement_affected_systems2": "Some",   
   "requirex_requirement_affected_systems3": "Those",
+  "requirex_requirement_affected_condition": "Plase enter a condition ",
+  "requirex_requirement_affected_that" : "that",
+
+  "requirex_requirement_affected_systems_complement":"systems of product line ",
 
   "requirex_requirement_system_activity_label" : "System Activity",
   "requirex_requirement_system_activity1": "User Interaction",  
@@ -185,6 +189,27 @@
   "requirex_requirement_from2": "Towards",   
   "requirex_requirement_from_value_1": "from",  
   "requirex_requirement_from_value_2": "towards",
+
+  "requirex_requirement_relax_label": "Relaxing",
+  "requirex_requirement_relax_many" : "As Many",
+  "requirex_requirement_relax_few" : "As Few",
+  "requirex_requirement_relax_before" : "Before",
+  "requirex_requirement_relax_after": "After",
+  "requirex_requirement_relax_during": "During",
+  "requirex_requirement_relax_until": "Until",
+  "requirex_requirement_relax_within" : "Within",
+  "requirex_requirement_relax_least" : "At Least",
+  "requirex_requirement_relax_eventually" : "Eventually",
+  "requirex_requirement_relax_close" : "As Close",
+  
+  "requirex_requirement_post_behaviour": "Post Behaviour",  
+  "requirex_requirement_after": "After",
+  "requirex_requirement_before": "Before",
+  "requirex_requirement_during": "During",
+  "requirex_requirement_event": "Event",
+
+  "requirex_requirement_sel_adaptive_complement" : "The self-adaptive system ",
+  "requirex_requirement_as_posible" : "as posible",
 
   "requirex_generate_pdf":"Generate Pdf",
   "requirex_generate":"Generate Requirement",

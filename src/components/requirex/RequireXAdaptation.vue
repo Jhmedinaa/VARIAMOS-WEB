@@ -58,6 +58,68 @@
           @onImperativeChange="requirement.imperative = $event"
           :imperative="requirement.imperative"
         ></app-imperative>
+
+        <div class="row">
+          <div class="col">
+            <form-item :label="$t('requirex_requirement_process_verb_label')" prop="processVerb">
+              <i-input
+                v-model="requirement.processVerb"
+                :placeholder="$t('requirex_requirement_process_verb_label')"
+              />
+            </form-item>
+          </div>
+          <div
+            class="col"
+            v-if="requirement.relaxing != $t('requirex_requirement_relax_many') && requirement.relaxing != $t('requirex_requirement_relax_few')"
+          >
+            <form-item :label="$t('requirex_requirement_object_label')" prop="object">
+              <i-input
+                v-model="requirement.object"
+                :placeholder="$t('requirex_requirement_object_label')"
+              />
+            </form-item>
+          </div>
+        </div>
+
+        <app-relaxing
+          :relaxing="requirement.relaxing"
+          @onRelaxinChange="requirement.relaxing = $event"
+        ></app-relaxing>
+
+        <div
+          class="row"
+          v-if="requirement.relaxing == $t('requirex_requirement_relax_many') | requirement.relaxing == $t('requirex_requirement_relax_few')"
+        >
+          <div class="col">
+            <app-postBehavior
+              :postBehaviour="requirement.postBehaviour"
+              @onPostBehaviourChange="requirement.postBehaviour = $event"
+            ></app-postBehavior>
+          </div>
+          <div class="col">
+            <form-item :label="$t('requirex_requirement_object_label')" prop="object">
+              <i-input
+                v-model="requirement.object"
+                :placeholder="$t('requirex_requirement_object_label')"
+              />
+            </form-item>
+          </div>
+        </div>
+        <div
+          class="row"
+          v-if="requirement.relaxing == $t('requirex_requirement_relax_many') |
+            requirement.relaxing == $t('requirex_requirement_relax_few') |  
+            requirement.relaxing == $t('requirex_requirement_relax_before') |
+            requirement.relaxing == $t('requirex_requirement_relax_after') |
+            requirement.relaxing == $t('requirex_requirement_relax_during') |
+            requirement.relaxing == $t('requirex_requirement_relax_until')"
+        >
+          <div class="col">
+            <form-item :label="$t('requirex_requirement_event')" prop="event">
+              <i-input v-model="requirement.event" :placeholder="$t('requirex_requirement_event')"></i-input>
+            </form-item>
+          </div>
+        </div>
       </i-form>
     </Modal>
   </div>
@@ -66,11 +128,15 @@
 <script>
 import requireType from "./components/RequireType";
 import imperative from "./components/Imperative";
+import relaxing from "./components/Relax";
+import postBehavior from "./components/PostBehaviour";
 
 export default {
   components: {
     "app-requireType": requireType,
-    "app-imperative": imperative
+    "app-imperative": imperative,
+    "app-relaxing": relaxing,
+    "app-postBehavior": postBehavior
   },
   props: {
     dialog: {
@@ -87,15 +153,13 @@ export default {
         conditionDescription: "",
         imperative: "",
         systemName: "",
-        systemActivity: "",
-        user: "",
         processVerb: "",
         object: "",
         system: "",
-        from: "",
         processVerb: "",
-        systemCondition: false,
-        systemConditionDescription: "",
+        relaxing: "",
+        postBehaviour: "",
+        event: "",
         msg: "",
         isComplete: false
       },
@@ -107,10 +171,83 @@ export default {
     };
   },
   methods: {
-    onAdaptationCancel(value, name) {
+    handleReset(name) {
+      this.$refs[name].resetFields();
+    },
+    onVisibleChange(estate) {
+      alert(estate);
+    },
+    onApplicationCancel(value, name) {
       this.dial = value;
       this.$refs[name].resetFields();
-      this.$emit("onAdaptationCancel", this.dial);
+      this.$emit("onApplicationCancel", this.dial);
+    },
+    handleSubmit(name, req) {
+      //Validar el formulario
+      this.$refs[name].validate(valid => {
+        if (valid) {
+          this.requirement.msg = "";
+          //this.$Message.success("Success!");
+          //Si hay una condición
+          if (this.requirement.condition) {
+            this.requirement.msg += this.requirement.conditionDescription + " ";
+          }
+
+          //Complemento y nombre
+          this.requirement.msg +=
+            $t("requirex_requirement_sel_adaptive_complement") +
+            this.requirement.systemName +
+            " " +
+            this.requirement.imperative;
+          //Process Verrb
+          this.requirement.msg += " " + this.requirement.processVerb + " ";
+
+          //Validate Relax
+          if (
+            (this.requirement.relaxing ==
+              this.$t("requirex_requirement_relax_many")) |
+            (this.requirement.relaxing ==
+              this.$t("requirex_requirement_relax_few"))
+          ) {
+            this.requirement.msg +=
+              this.requirement.relaxing +
+              " " +
+              this.requirement.object +
+              " " +
+              this.$t("requirex_requirement_as_posible") +
+              " " +
+              this.requirement.postBehaviour +
+              " " +
+              this.requirement.event;
+          } else if (
+            (this.requirement.relaxing ==
+              this.$t("requirex_requirement_relax_before")) |
+            (this.requirement.relaxing ==
+              this.$t("requirex_requirement_relax_after")) |
+            (this.requirement.relaxing ==
+              this.$t("requirex_requirement_relax_during")) |
+            (this.requirement.relaxing ==
+              this.$t("requirex_requirement_relax_until"))
+          ) {
+            this.requirement.msg +=
+              this.requirement.object +
+              " " +
+              this.requirement.relaxing +
+              " " +
+              this.requirement.event;
+          }
+
+          //this.loading = true;
+          this.dial = false;
+          this.requirement.isComplete = true;
+          this.$emit("onApplicationCancel", this.dial);
+          this.requirement = req;
+          this.$emit("handleSubmit", this.requirement);
+        } else {
+          this.loading = false;
+          this.$Message.error("Fail!");
+        }
+      });
     }
   }
 };

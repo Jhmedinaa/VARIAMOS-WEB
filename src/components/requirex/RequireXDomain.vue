@@ -13,12 +13,34 @@
       :loading="loading"
     >
       <i-form ref="requirement" :model="requirement" :rules="ruleValidate">
-        <app-quantity @onAffectedSystemChange="requirement.affectedSystems = $event" :affectedSystems="requirement.affectedSystems"></app-quantity>
+        <div class="row">
+          <div class="col">
+            <app-requireType
+              @onRequireTypeChange="requirement.reqType = $event"
+              :reqType="requirement.reqType"
+            ></app-requireType>
+          </div>
+          <div class="col">
+            <app-quantity
+              @onAffectedSystemChange="requirement.affectedSystems = $event"
+              :affectedSystems="requirement.affectedSystems"
+            ></app-quantity>
+          </div>
+        </div>
 
-        <app-requireType
-          @onRequireTypeChange="requirement.reqType = $event"
-          :reqType="requirement.reqType"
-        ></app-requireType>
+        <div
+          class="row"
+          v-if="requirement.affectedSystems == $t('requirex_requirement_affected_systems3')"
+        >
+          <div class="col">
+            <form-item :label="$t('requirex_requirement_affected_condition')" prop="thoseCodition">
+              <i-input
+                v-model="requirement.thoseCodition"
+                :placeholder="$t('requirex_requirement_affected_condition')"
+              />
+            </form-item>
+          </div>
+        </div>
 
         <div class="row">
           <div class="col">
@@ -132,16 +154,14 @@
                 <i-input
                   v-model="requirement.processVerb"
                   :placeholder="$t('requirex_requirement_process_verb_label')"
-                  
                 />
               </form-item>
             </div>
             <div class="col">
-              <form-item :label="$t('requirex_requirement_object_label')"  prop="object">
+              <form-item :label="$t('requirex_requirement_object_label')" prop="object">
                 <i-input
                   v-model="requirement.object"
                   :placeholder="$t('requirex_requirement_object_label')"
-                 
                 />
               </form-item>
             </div>
@@ -190,6 +210,7 @@ export default {
     },
     requirementProp: {
       affectedSystems: String,
+      thoseCodition: String,
       reqType: String,
       name: String,
       condition: Boolean,
@@ -212,6 +233,7 @@ export default {
     return {
       requirement: {
         affectedSystems: "",
+        thoseCodition: "",
         reqType: "",
         name: "",
         condition: false,
@@ -230,6 +252,13 @@ export default {
         msg: ""
       }, //Realizar validaciones del formulario
       ruleValidate: {
+        affectedSystems: [
+          {
+            required: true,
+            message: "Please select a option",
+            trigger: "change"
+          }
+        ],
         reqType: [
           {
             required: true,
@@ -334,17 +363,26 @@ export default {
         if (valid) {
           //Reiniciar requerimiento
           this.requirement.msg = "";
-          this.requirement.msg += this.requirement.affectedSystems;
+
           //Si hay una condición
           if (this.requirement.condition == true) {
             this.requirement.msg += this.requirement.conditionDescription + " ";
           }
 
+          //Sistemas afectado
+          this.requirement.msg += this.requirement.affectedSystems + " ";
+          //Complemento
+          this.requirement.msg += this.$t(
+            "requirex_requirement_affected_systems_complement"
+          );
+
+          if(this.requirement.affectedSystems == this.$t('requirex_requirement_affected_systems3')){
+            this.requirement.msg += this.$t('requirex_requirement_affected_that') + " ";
+            this.requirement.msg += this.requirement.thoseCodition + " ";
+          }
+
           this.requirement.msg +=
-            "The " +
-            this.requirement.systemName +
-            " " +
-            this.requirement.imperative;
+            this.requirement.systemName + " " + this.requirement.imperative;
 
           //Validate system activity
           if (this.requirement.systemActivity == "autoAct") {

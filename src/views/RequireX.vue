@@ -13,8 +13,8 @@
               <Icon type="md-arrow-dropdown" />
             </Button>
             <DropdownMenu slot="list">
-              <DropdownItem name="domain">Domain</DropdownItem>
-              <DropdownItem name="{{$t('requirex_domain')}}">Application</DropdownItem>
+              <DropdownItem :name="$t('requirex_domain')">{{$t('requirex_domain')}}</DropdownItem>
+              <DropdownItem :name="$t('requirex_application')">{{$t('requirex_application')}}</DropdownItem>
               <DropdownItem :name="$t('requirex_adaptation')">{{$t('requirex_adaptation')}}</DropdownItem>
             </DropdownMenu>
           </Dropdown>
@@ -172,11 +172,11 @@ export default {
   methods: {
     onSelectedRequirement(name) {
       //alert(name);
-      if (name == "domain") {
+      if (name == this.$t('requirex_domain')) {
         this.dialogDomain = true;
-      } else if (name == "application") {
+      } else if (name == this.$t('requirex_application')) {
         this.dialogApplication = true;
-      } else if (name == "adaptation") {
+      } else if (name == this.$t('requirex_adaptation')) {
         this.dialogAdaptation = true;
       }
     },
