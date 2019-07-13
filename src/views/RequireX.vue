@@ -9,8 +9,8 @@
         <Col span="6">
           <Dropdown placement="bottom-start" @on-click="onSelectedRequirement">
             <Button color="#17233d">
-              <Icon type="ios-add" size="24" />Create Requirement
-              <Icon type="md-arrow-dropdown" />
+              <Icon type="ios-add" size="24"/>Create Requirement
+              <Icon type="md-arrow-dropdown"/>
             </Button>
             <DropdownMenu slot="list">
               <DropdownItem :name="$t('requirex_domain')">{{$t('requirex_domain')}}</DropdownItem>
@@ -208,6 +208,10 @@ export default {
         relaxing: this.requirementAdaptation.relaxing,
         postBehaviour: this.requirementAdaptation.postBehaviour,
         event: this.requirementAdaptation.event,
+        timneInterval: this.requirementAdaptation.timneInterval,
+        units: this.requirementAdaptation.units,
+        quantity: this.requirementAdaptation.quantity,
+        frecuency: this.requirementAdaptation.frecuency,
         msg: this.requirementAdaptation.msg,
         isComplete: this.requirementAdaptation.isComplete
       };
@@ -236,9 +240,11 @@ export default {
     onGeneratePdf() {
       var domainCount = this.requirementsTableCollection[0].amount;
       var applicationCount = this.requirementsTableCollection[1].amount;
+      var adaptationCount = this.requirementsTableCollection[2].amount;
+
       var linea = 20;
       var idCount = 1;
-      var total = domainCount + applicationCount;
+      var total = domainCount + applicationCount + adaptation;
       var doc = new jsPDF();
 
       //Titulo
@@ -257,7 +263,7 @@ export default {
           var vec = [];
           for (var i = 0; i < domainCount; i++) {
             var item = {
-              id: "R." + idCount,
+              id: "D.R." + idCount,
               system: this.requirementsTableCollection[0].listRequirements[i]
                 .systemName,
               name: this.requirementsTableCollection[0].listRequirements[i]
@@ -283,7 +289,7 @@ export default {
             startY: linea,
             theme: "grid"
           });
-
+          linea += 15;
           linea += domainCount * 15;
         }
 
@@ -295,8 +301,9 @@ export default {
           var vec = [];
           for (var i = 0; i < applicationCount; i++) {
             var item = {
-              id: "R." + idCount,
-              system: this.requirementsTableCollection[1].listRequirements[i].systemName,
+              id: "P.R." + idCount,
+              system: this.requirementsTableCollection[1].listRequirements[i]
+                .systemName,
               name: this.requirementsTableCollection[1].listRequirements[i]
                 .name,
               requirement: this.requirementsTableCollection[1].listRequirements[
@@ -321,6 +328,48 @@ export default {
             startY: linea,
             theme: "grid"
           });
+
+          linea += 15;
+          linea += applicationCount * 15;
+        }
+
+        //Sub titulo
+        if (adaptationCount > 0) {
+          doc.setFontSize(16);
+          doc.text(20, linea, this.$t("requirex_adaptation_tittle") + "s");
+          linea += 10;
+
+          var vec = [];
+          for (var i = 0; i < adaptationCount; i++) {
+            var item = {
+              id: "A.R." + idCount,
+              system: this.requirementsTableCollection[2].listRequirements[i]
+                .systemName,
+              name: this.requirementsTableCollection[2].listRequirements[i]
+                .name,
+              requirement: this.requirementsTableCollection[2].listRequirements[
+                i
+              ].msg,
+              date: this.requirementsTableCollection[2].lastTime
+            };
+
+            vec.push(item);
+            idCount++;
+          }
+
+          doc.autoTable({
+            columns: [
+              { header: "Id", dataKey: "id" },
+              { header: "Name", dataKey: "name" },
+              { header: "Requirement", dataKey: "requirement" },
+              { header: "Date", dataKey: "date" }
+            ],
+            body: vec,
+            startY: linea,
+            theme: "grid"
+          });
+          linea += 15;
+          linea += domainCount * 15;
         }
         doc.save("requirement.pdf");
       } else {

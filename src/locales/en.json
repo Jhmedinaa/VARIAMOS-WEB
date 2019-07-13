@@ -119,7 +119,7 @@
 
   "requirex_application_tittle": "RequireX - Application requirement",
   "requirex_domain_tittle": "RequireX - Domain requirement",
-  "requirex_adaptation_tittle":"RequireX - Adaptation requirement",
+  "requirex_adaptation_tittle":"RequireX - Self-Adaptation requirement",
   "requirex_admin_tittle":"RequireX - Administration Panel",
 
   "requirex_requirement_yes":"Yes",
@@ -200,7 +200,7 @@
   "requirex_requirement_relax_within" : "Within",
   "requirex_requirement_relax_least" : "At Least",
   "requirex_requirement_relax_eventually" : "Eventually",
-  "requirex_requirement_relax_close" : "As Close",
+  "requirex_requirement_relax_close" : "As close as possible to",
   
   "requirex_requirement_post_behaviour": "Post Behaviour",  
   "requirex_requirement_after": "After",
@@ -208,7 +208,7 @@
   "requirex_requirement_during": "During",
   "requirex_requirement_event": "Event",
 
-  "requirex_requirement_time": "Time",  
+  "requirex_requirement_time": "Time Interval",  
   "requirex_requirement_times": "Times for",  
   "requirex_requirement_units": "Units",
   "requirex_requirement_units_milliseconds": "Milliseconds",
@@ -219,6 +219,12 @@
   "requirex_requirement_units_weeks": "weeks",
   "requirex_requirement_units_months": "Months",
   "requirex_requirement_units_years": "years",
+
+  "requirex_requirement_quantity": "Quantity",
+  "requirex_requirement_frecuency": "Frecuency",
+  "requirex_requirement_quantity_frecuency": "Quantity or Frecuency",
+
+  "requirex_requirement_complement": "Complement",
 
   "requirex_requirement_sel_adaptive_complement" : "The self-adaptive system ",
   "requirex_requirement_as_posible" : "as posible",

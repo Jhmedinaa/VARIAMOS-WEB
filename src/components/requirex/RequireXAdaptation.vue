@@ -126,17 +126,41 @@
           </div>
         </div>
 
-        <div
-          class="row"
-          v-if="requirement.relaxing == $t('requirex_requirement_relax_within') | requirement.relaxing == $t('requirex_requirement_relax_least')"
-        >
-          <div class="col">
+        <div class="row" v-if="requirement.relaxing == $t('requirex_requirement_relax_within')">
+          <div class="col-3">
             <form-item :label="$t('requirex_requirement_time')" prop="event">
-              <InputNumber :max="999999" :min="1" :step="1" v-model="requirement.time"></InputNumber>
+              <InputNumber :max="999999" :min="1" :step="1" v-model="requirement.timeInterval"></InputNumber>
             </form-item>
           </div>
-          <div class="col">
+          <div class="col-3">
             <app-time-list :units="requirement.units" @onUnitChange="requirement.units = $event"></app-time-list>
+          </div>
+        </div>
+
+        <div class="row" v-if="requirement.relaxing == $t('requirex_requirement_relax_least')">
+          <div class="col-3">
+            <form-item :label="$t('requirex_requirement_time')" prop="event">
+              <InputNumber :max="999999" :min="1" :step="1" v-model="requirement.timeInterval"></InputNumber>
+            </form-item>
+          </div>
+          <div class="col-9">
+            <form-item :label="$t('requirex_requirement_frecuency')" prop="frecuency">
+              <i-input
+                v-model="requirement.frecuency"
+                :placeholder="$t('requirex_requirement_frecuency')"
+              />
+            </form-item>
+          </div>
+        </div>
+
+        <div class="row" v-if="requirement.relaxing == $t('requirex_requirement_relax_close')">
+          <div class="col">
+            <form-item :label="$t('requirex_requirement_quantity_frecuency')" prop="frecuency">
+              <i-input
+                v-model="requirement.quantityFrecuency"
+                :placeholder="$t('requirex_requirement_quantity_frecuency')"
+              />
+            </form-item>
           </div>
         </div>
       </i-form>
@@ -177,8 +201,11 @@ export default {
       relaxing: String,
       postBehaviour: String,
       event: String,
-      timne: Number,
+      timneInterval: Number,
       units: String,
+      quantity: String,
+      frecuency: String,
+      complement: String,
       msg: String,
       isComplete: Boolean
     }
@@ -199,8 +226,11 @@ export default {
         relaxing: "",
         postBehaviour: "",
         event: "",
-        time: 0,
+        timeInterval: 0,
         units: "",
+        quantity: "",
+        frecuency: "",
+        quantityFrecuency: "",
         msg: "",
         isComplete: false
       },
@@ -249,8 +279,8 @@ export default {
         ],
         relaxing: [
           {
-            required: false,
-            message: "The Object  cannot be empty",
+            required: true,
+            message: "TPlease select a option",
             trigger: "change"
           }
         ]
@@ -336,7 +366,7 @@ export default {
               " " +
               this.requirement.relaxing +
               " " +
-              this.requirement.time +
+              this.requirement.timeInterval +
               " " +
               this.requirement.units +
               " ";
@@ -344,16 +374,31 @@ export default {
             this.requirement.relaxing ==
             this.$t("requirex_requirement_relax_least")
           ) {
-            this.requirement.object +
+            this.requirement.msg +=
+              this.requirement.object +
               " " +
               this.requirement.relaxing +
               " " +
-              this.requirement.time +
+              this.requirement.quantity +
               " " +
               this.$t("requirex_requirement_times") +
               " " +
-              this.requirement.units +
-              " ";
+              this.requirement.frecuency +
+              " " +
+              this.requirement.complement;
+          } else if (
+            this.requirement.relaxing ==
+            this.$t("requirex_requirement_relax_eventually")
+          ) {
+            this.requirement.msg +=
+              this.requirement.object + " " + this.requirement.relaxing;
+          } else {
+            this.requirement.msg +=
+              this.requirement.object +
+              " " +
+              this.requirement.relaxing +
+              " " +
+              this.requirement.quantityFrecuency;
           }
 
           //this.loading = true;
