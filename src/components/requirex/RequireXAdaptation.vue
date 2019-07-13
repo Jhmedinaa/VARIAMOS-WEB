@@ -384,8 +384,7 @@ export default {
               this.$t("requirex_requirement_times") +
               " " +
               this.requirement.frecuency +
-              " " +
-              this.requirement.complement;
+              " " ;
           } else if (
             this.requirement.relaxing ==
             this.$t("requirex_requirement_relax_eventually")

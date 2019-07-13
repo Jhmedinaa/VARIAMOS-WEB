@@ -244,7 +244,7 @@ export default {
 
       var linea = 20;
       var idCount = 1;
-      var total = domainCount + applicationCount + adaptation;
+      var total = domainCount + applicationCount + adaptationCount;
       var doc = new jsPDF();
 
       //Titulo
