@@ -155,7 +155,10 @@
 
         <div class="row" v-if="requirement.relaxing == $t('requirex_requirement_relax_close')">
           <div class="col">
-            <form-item :label="$t('requirex_requirement_quantity_frecuency')" prop="frecuency">
+            <form-item
+              :label="$t('requirex_requirement_quantity_frecuency')"
+              prop="quantityFrecuency"
+            >
               <i-input
                 v-model="requirement.quantityFrecuency"
                 :placeholder="$t('requirex_requirement_quantity_frecuency')"
@@ -211,6 +214,76 @@ export default {
     }
   },
   data() {
+    //Validar cuando relax sea few o many
+    const validatePostBehaviour = (rule, value, callback) => {
+      if (
+        (this.requirement.relaxing ==
+          this.$t("requirex_requirement_relax_many")) |
+        (this.requirement.relaxing == this.$t("requirex_requirement_relax_few"))
+      ) {
+        if (value === "") {
+          callback(new Error("Cannot be empty"));
+        }
+      } else callback();
+    };
+
+    //Validar Event cuando relax sea few, many, before, after, during, until
+    const validateEvent = (rule, value, callback) => {
+      if (
+        (this.requirement.relaxing ==
+          this.$t("requirex_requirement_relax_many")) |
+        (this.requirement.relaxing ==
+          this.$t("requirex_requirement_relax_few")) |
+        (this.requirement.relaxing ==
+          this.$t("requirex_requirement_relax_before")) |
+        (this.requirement.relaxing ==
+          this.$t("requirex_requirement_relax_after")) |
+        (this.requirement.relaxing ==
+          this.$t("requirex_requirement_relax_during")) |
+        (this.requirement.relaxing ==
+          this.$t("requirex_requirement_relax_until"))
+      ) {
+        if (value === "") {
+          callback(new Error("The event Cannot be empty"));
+        }
+      } else callback();
+    };
+
+    //Validar cuando relax sea within
+    const validateWithin = (rule, value, callback) => {
+      if (
+        this.requirement.relaxing ==
+        this.$t("requirex_requirement_relax_within")
+      ) {
+        if ((value === "") | (value <= "0")) {
+          callback(new Error("Cannot be empty"));
+        }
+      } else callback();
+    };
+
+    //Validar cuando relax sea least
+    const validateLeast = (rule, value, callback) => {
+      if (
+        this.requirement.relaxing == this.$t("requirex_requirement_relax_least")
+      ) {
+        if (value === "") {
+          callback(new Error("Cannot be empty"));
+        }
+      } else callback();
+    };
+
+    //Validar cuando relax sea close
+    const validateClose = (rule, value, callback) => {
+      if (
+        this.requirement.relaxing == this.$t("requirex_requirement_relax_close")
+      ) {
+        if (value === "") {
+          callback(new Error("Cannot be empty"));
+        }
+      } else callback();
+    };
+
+    ("requirex_requirement_relax_close");
     return {
       requirement: {
         reqType: "",
@@ -280,9 +353,46 @@ export default {
         relaxing: [
           {
             required: true,
-            message: "TPlease select a option",
+            message: "Please select a option",
             trigger: "change"
           }
+        ],
+        postBehaviour: [
+          {
+            required: true,
+            validator: validatePostBehaviour,
+            trigger: "blur"
+          }
+        ],
+        event: [
+          {
+            required: true,
+            validator: validateEvent,
+            trigger: "blur"
+          }
+        ],
+        timeInterval: [
+          {
+            required: true,
+            validator: validateWithin,
+            trigger: "change"
+          }
+        ],
+        units: [
+          {
+            required: true,
+            validator: validateWithin,
+            trigger: "blur"
+          }
+        ],
+        quantity: [
+          { required: true, validator: validateLeast, trigger: "blur" }
+        ],
+        frecuency: [
+          { required: true, validator: validateLeast, trigger: "blur" }
+        ],
+        quantityFrecuency: [
+          { required: true, validator: validateClose, trigger: "blur" }
         ]
       },
       dial: false,
@@ -307,14 +417,16 @@ export default {
     handleSubmit(name, req) {
       //Validar el formulario
       this.$refs[name].validate(valid => {
+        alert("hola0545");
         if (valid) {
+          alert("hola0");
           this.requirement.msg = "";
           //this.$Message.success("Success!");
           //Si hay una condición
           if (this.requirement.condition) {
             this.requirement.msg += this.requirement.conditionDescription + " ";
           }
-
+          alert("hola01");
           //Complemento y nombre
           this.requirement.msg +=
             this.$t("requirex_requirement_sel_adaptive_complement") +
@@ -324,6 +436,7 @@ export default {
           //Process Verrb
           this.requirement.msg += " " + this.requirement.processVerb + " ";
 
+          alert("hola1");
           //Validate Relax
           if (
             (this.requirement.relaxing ==
@@ -384,7 +497,7 @@ export default {
               this.$t("requirex_requirement_times") +
               " " +
               this.requirement.frecuency +
-              " " ;
+              " ";
           } else if (
             this.requirement.relaxing ==
             this.$t("requirex_requirement_relax_eventually")
@@ -399,7 +512,8 @@ export default {
               " " +
               this.requirement.quantityFrecuency;
           }
-
+          alert("hola");
+          alert(req);
           //this.loading = true;
           this.dial = false;
           this.requirement.isComplete = true;
@@ -407,7 +521,7 @@ export default {
           this.requirement = req;
           this.$emit("handleSubmit", this.requirement);
         } else {
-          this.loading = false;
+         // this.loading = false;
           this.$Message.error("Fail!");
         }
       });
