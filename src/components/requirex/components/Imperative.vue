@@ -25,12 +25,12 @@ export default {
   props: {
     imperative: {
       type: [String],
-      required: true
+      required: true,
     }
   },
   data() {
     return {
-      imp: ""
+      imp: "" 
     };
   },
   methods: {
