@@ -27,9 +27,7 @@
         </Col>
       </Row>
 
-      <div>
-        <h1>{{countApplication}}</h1>
-      </div>
+    
 
       <div :style="{margin: '1em 0'}">
         <Table
@@ -43,27 +41,7 @@
         <button type="button" class="btn btn-danger" @click="onGeneratePdf">Generarte Pdf</button>
       </div>
     </Card>
-
-    <app-application
-      :dialog="dialogApplication"
-      @onApplicationCancel="dialogApplication = $event"
-      :requirementProp="requirementApplication"
-      @handleSubmit="onApplicationGenerate($event)"
-    ></app-application>
-
-    <app-domain
-      :dialog="dialogDomain"
-      @onDomainCancel="dialogDomain = $event"
-      :requirementProp="requirementDomain"
-      @handleSubmit="onDomainGenerate($event)"
-    ></app-domain>
-
-    <app-adaptation
-      :dialog="dialogAdaptation"
-      @onAdaptationCancel="dialogAdaptation = $event"
-      :requirementProp="requirementAdaptation"
-      @handleSubmit="onSeftAdaptableGenerate($event)"
-    ></app-adaptation>
+  
   </Content>
 </template>
 
@@ -86,7 +64,6 @@ export default {
   },
   data() {
     return {
-      requirementApplication: [Object],
       requirementDomain: [Object],
       requirementAdaptation: [Object],
       requirementsTableCollection: [
@@ -135,9 +112,7 @@ export default {
         }
       ],
       dialogDomain: false,
-      dialogApplication: false,
       dialogAdaptation: false,
-      isCompleteApplication: false,
       countDomain: 0,
       countApplication: 0,
       countAdaptation: 0,
@@ -145,139 +120,17 @@ export default {
     };
   },
   methods: {
-    onDomainGenerate(requirement) {
-      this.requirementDomain = requirement;
-      //Requirement id
-      this.requirementsCount ++;
-      this.countDomain ++;
-
-      var newRequire = {
-        id: this.requirementsCount,
-        requirementNumber: "D.R." + this.countDomain,
-        reqType: this.requirementDomain.reqType,
-        name: this.requirementDomain.name,
-        condition: this.requirementDomain.condition,
-        conditionDescription: this.requirementDomain.conditionDescription,
-        imperative: this.requirementDomain.imperative,
-        systemName: this.requirementDomain.systemName,
-        systemActivity: this.requirementDomain.systemActivity,
-        user: this.requirementDomain.user,
-        processVerb: this.requirementDomain.processVerb,
-        object: this.requirementDomain.object,
-        system: this.requirementDomain.system,
-        from: this.requirementDomain.from,
-        processVerb: this.requirementDomain.processVerb,
-        systemCondition: this.requirementDomain.systemCondition,
-        systemConditionDescription: this.requirementDomain
-          .systemConditionDescription,
-        msg: this.requirementDomain.msg
-      };
-      this.requirementsTableCollection[0].listRequirements.push(newRequire);
-      this.requirementsTableCollection[0].amount += 1;
-      this.requirementsTableCollection[0].lastTime = new Date()
-        .toISOString()
-        .slice(0, 10);
-
-      //Almacenar requerimientos
-      this.saveRequirements();
-
-      this.requirementApplication = new Object();
-    },
-    onApplicationGenerate(requirement) {
-      this.requirementApplication = requirement;
-      //Requirement id
-      this.requirementsCount ++;
-      this.countApplication ++;
-
-      //setear requerimiento
-      var newRequire = {
-        id: this.requirementsCount,
-        requirementNumber: "P.R." + this.countApplication,
-        reqType: this.requirementApplication.reqType,
-        name: this.requirementApplication.name,
-        condition: this.requirementApplication.condition,
-        conditionDescription: this.requirementApplication.conditionDescription,
-        imperative: this.requirementApplication.imperative,
-        systemName: this.requirementApplication.systemName,
-        systemActivity: this.requirementApplication.systemActivity,
-        user: this.requirementApplication.user,
-        processVerb: this.requirementApplication.processVerb,
-        object: this.requirementApplication.object,
-        system: this.requirementApplication.system,
-        from: this.requirementApplication.from,
-        processVerb: this.requirementApplication.processVerb,
-        systemCondition: this.requirementApplication.systemCondition,
-        systemConditionDescription: this.requirementApplication
-          .systemConditionDescription,
-        msg: this.requirementApplication.msg
-      };
-
-      this.requirementsTableCollection[1].listRequirements.push(newRequire);
-      this.requirementsTableCollection[1].amount += 1;
-      this.requirementsTableCollection[1].lastTime = new Date()
-        .toISOString()
-        .slice(0, 10);
-
-      //Almacenar requerimientos
-      this.saveRequirements();
-
-      this.requirementDomain = new Object();
-    },
-    onSeftAdaptableGenerate(requirement) {
-      this.requirementAdaptation = requirement;
-
-      //Requirement id
-      this.requirementsCount ++;
-      this.countAdaptation ++;
-
-      var newRequire = {
-        id: this.requirementsCount,
-        requirementNumber: "A.R." + this.countAdaptation,
-        reqType: this.requirementAdaptation.reqType,
-        name: this.requirementAdaptation.name,
-        condition: this.requirementAdaptation.condition,
-        conditionDescription: this.requirementAdaptation.conditionDescription,
-        imperative: this.requirementAdaptation.imperative,
-        systemName: this.requirementAdaptation.systemName,
-        processVerb: this.requirementAdaptation.processVerb,
-        object: this.requirementAdaptation.object,
-        system: this.requirementAdaptation.system,
-        relaxing: this.requirementAdaptation.relaxing,
-        postBehaviour: this.requirementAdaptation.postBehaviour,
-        event: this.requirementAdaptation.event,
-        timneInterval: this.requirementAdaptation.timneInterval,
-        units: this.requirementAdaptation.units,
-        quantity: this.requirementAdaptation.quantity,
-        frecuency: this.requirementAdaptation.frecuency,
-        msg: this.requirementAdaptation.msg,
-        isComplete: this.requirementAdaptation.isComplete
-      };
-
-      this.requirementsTableCollection[2].listRequirements.push(newRequire);
-      this.requirementsTableCollection[2].amount += 1;
-      this.requirementsTableCollection[2].lastTime = new Date()
-        .toISOString()
-        .slice(0, 10);
-
-      //Almacenar requerimientos
-      this.saveRequirements();
-
-      this.requirementAdaptation = new Object();
-    },
-
     onSelectedRequirement(name) {
       //alert(name);
       if (name == this.$t("requirex_domain")) {
-        this.dialogDomain = true;
+        this.$router.push("/requirex/domain");
       } else if (name == this.$t("requirex_application")) {
-        this.dialogApplication = true;
+        this.$router.push("/requirex/application");
       } else if (name == this.$t("requirex_adaptation")) {
-        this.dialogAdaptation = true;
+        this.$router.push("/requirex/adaptation");
       }
     },
-    onShowModal() {
-      // this.$router.push("/requirex/application");
-    },
+
     onGeneratePdf() {
       var domainCount = this.requirementsTableCollection[0].amount;
       var applicationCount = this.requirementsTableCollection[1].amount;
@@ -304,7 +157,7 @@ export default {
           var vec = [];
           for (var i = 0; i < domainCount; i++) {
             var item = {
-              id:  this.requirementsTableCollection[0].listRequirements[i]
+              id: this.requirementsTableCollection[0].listRequirements[i]
                 .requirementNumber,
               system: this.requirementsTableCollection[0].listRequirements[i]
                 .systemName,
@@ -418,49 +271,86 @@ export default {
       } else {
         this.$Message.error("There are no requirements to generate!");
       }
-    },
-    saveRequirements() {
-      let parsed = JSON.stringify(this.requirementsTableCollection);
-      localStorage.setItem("requiremenst", parsed);
     }
   },
   mounted() {
     //Carga desde el local storage
-    if (localStorage.countDomain) this.countDomain = localStorage.countDomain;
+    if (localStorage.countDomain) {
+      this.countDomain = localStorage.countDomain;
+      this.requirementsTableCollection[0].amount = this.countDomain;
+    }
 
-    if (localStorage.countApplication)
+    if (localStorage.lastTimeDomain) {
+      this.requirementsTableCollection[0].lastTime =
+        localStorage.lastTimeDomain;
+    }
+/*---------------------------*/
+    if (localStorage.countApplication) {
       this.countApplication = localStorage.countApplication;
+      this.requirementsTableCollection[1].amount = this.countApplication;
+    }
 
-    if (localStorage.countAdaptation)
+    if (localStorage.lastTimeApplication) {
+      this.requirementsTableCollection[1].lastTime =
+        localStorage.lastTimeApplication;
+    }
+/*---------------------------*/
+    if (localStorage.lastTimeAdaptation) {
+      this.requirementsTableCollection[2].lastTime =
+        localStorage.lastTimeAdaptation;
+    }
+
+    if (localStorage.countAdaptation) {
       this.countAdaptation = localStorage.countAdaptation;
+      this.requirementsTableCollection[2].amount = this.countAdaptation;
+    }
 
-    if (localStorage.requirementsCount)
-      this.requirementsCount = localStorage.requirementsCount;
+    //Cargar lista de requerimientos
 
-    if (localStorage.getItem("requiremenst"))
+    //Aplicación
+    if (localStorage.getItem("tb_applciation_requirement")) {
       try {
-        this.requirementsTableCollection = JSON.parse(
-          localStorage.getItem("requiremenst")
+        this.requirementsTableCollection[1].listRequirements = JSON.parse(
+          localStorage.getItem("tb_applciation_requirement")
         );
       } catch (e) {
-        localStorage.removeItem("requiremenst");
+        localStorage.removeItem("tb_applciation_requirement");
       }
+    }
+
+    //Adaptation
+    if (localStorage.getItem("tb_adaptation_requirement")) {
+      try {
+        this.requirementsTableCollection[2].listRequirements = JSON.parse(
+          localStorage.getItem("tb_adaptation_requirement")
+        );
+      } catch (e) {
+        localStorage.removeItem("tb_adaptation_requirement");
+      }
+    }
+
+    //Domain
+    if (localStorage.getItem("tb_domain_requirement")) {
+      try {
+        this.requirementsTableCollection[0].listRequirements = JSON.parse(
+          localStorage.getItem("tb_domain_requirement")
+        );
+      } catch (e) {
+        localStorage.removeItem("tb_domain_requirement");
+      }
+    }
   },
   watch: {
     countDomain(newCount) {
       localStorage.countDomain = newCount;
     },
-    countApplication(newCount) {
-      localStorage.countApplication = newCount;
-    },
+
     countAdaptation(newCount) {
       localStorage.countAdaptation = newCount;
     },
+
     requirementsCount(newCount) {
       localStorage.requirementsCount = newCount;
-    },
-    requirementsTableCollection(newTable) {
-      localStorage.requirementsTableCollection = newTable;
     }
   }
 };

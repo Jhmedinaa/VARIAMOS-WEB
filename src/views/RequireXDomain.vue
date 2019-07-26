@@ -1,17 +1,6 @@
 <template>
   <div>
-    <modal
-      :value="dialog"
-      :title="$t('requirex_domain_tittle')"
-      @on-ok="handleSubmit('requirement', requirement)"
-      :ok-text=" $t('requirex_generate')"
-      @on-cancel="onDomainCancel(false, 'requirement')"
-      :cancel-text="$t('requirex_cancel')"
-      :closable="false"
-      :mask-closable="false"
-      :scrollable="true"
-      :loading="loading"
-    >
+    <div class="container my-2 form-requirement">
       <i-form ref="requirement" :model="requirement" :rules="ruleValidate">
         <div class="row">
           <div class="col">
@@ -44,7 +33,10 @@
 
         <div class="row">
           <div class="col">
-            <form-item :label="$t('requirex_requirement_system_domain_name_label')" prop="systemName">
+            <form-item
+              :label="$t('requirex_requirement_system_domain_name_label')"
+              prop="systemName"
+            >
               <i-input
                 v-model="requirement.systemName"
                 :placeholder="$t('requirex_requirement_system_domain_name_label')"
@@ -188,7 +180,15 @@
           </form-item>
         </div>
       </i-form>
-    </modal>
+
+      <div class="container text-right my-2">
+        <Button
+          class="mx-1 cb-dark"
+          @click="handleSubmit('requirement')"
+        >{{$t('requirex_generate')}}</Button>
+        <Button type="error" @click="onDomainCancel('requirement')">{{$t('requirex_cancel')}}</Button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -203,42 +203,20 @@ export default {
     "app-imperative": imperative,
     "app-quantity": quantity
   },
-  props: {
-    dialog: {
-      type: Boolean,
-      required: true
-    },
-    requirementProp: {
-      affectedSystems: String,
-      thoseCodition: String,
-      reqType: String,
-      name: String,
-      condition: Boolean,
-      conditionDescription: String,
-      imperative: String,
-      systemName: String,
-      systemActivity: String,
-      user: String,
-      processVerb: String,
-      object: String,
-      system: String,
-      from: String,
-      processVerb: String,
-      systemCondition: Boolean,
-      systemConditionDescription: String,
-      msg: String
-    }
-  },
+
   data() {
     return {
+      listDomainRequirement: [],
       requirement: {
-        affectedSystems: "",
+        id: 0,
+        requirementNumber: "",
+        affectedSystems: this.$t('requirex_requirement_affected_systems1'),
         thoseCodition: "",
-        reqType: "",
+        reqType: this.$t("requirex_requirement_type_value_1"),
         name: "",
         condition: false,
         conditionDescription: "",
-        imperative: "",
+        imperative: this.$t("requirex_requirement_imperative_value_1"),
         systemName: "",
         systemActivity: "",
         user: "",
@@ -309,9 +287,9 @@ export default {
           }
         ]
       },
+      countDomain: 0,
+      lastTimeDomain: "",
       isSystemActivity: false,
-      dial: false,
-      loading: true,
       userInt: false,
       autoAct: false,
       extInt: false
@@ -342,15 +320,11 @@ export default {
     handleReset(name) {
       this.$refs[name].resetFields();
     },
-    onVisibleChange(estate) {
-      alert(estate);
-    },
-    onDomainCancel(value, name) {
-      this.dial = value;
+    onDomainCancel(name) {
       this.$refs[name].resetFields();
-      this.$emit("onDomainCancel", this.dial);
+      this.$router.push("/requireX");
     },
-    handleSubmit(name, req) {
+    handleSubmit(name) {
       //Validar el formulario
       this.$refs[name].validate(valid => {
         if (valid) {
@@ -369,8 +343,12 @@ export default {
             "requirex_requirement_affected_systems_complement"
           );
 
-          if(this.requirement.affectedSystems == this.$t('requirex_requirement_affected_systems3')){
-            this.requirement.msg += this.$t('requirex_requirement_affected_that') + " ";
+          if (
+            this.requirement.affectedSystems ==
+            this.$t("requirex_requirement_affected_systems3")
+          ) {
+            this.requirement.msg +=
+              this.$t("requirex_requirement_affected_that") + " ";
             this.requirement.msg += this.requirement.thoseCodition + " ";
           }
 
@@ -409,17 +387,63 @@ export default {
             this.requirement.msg +=
               ", " + this.requirement.systemConditionDescription;
           }
-          //this.loading = true;
-          this.dial = false;
-          this.$emit("onDomainCancel", this.dial);
-          this.requirement = req;
-          this.$emit("handleSubmit", this.requirement);
+          //Agregar item a la lista
+          this.countDomain++;
+          this.requirement.id = this.countDomain;
+          this.requirement.requirementNumber = "D.R." + this.requirement.id;
+
+          this.listDomainRequirement.push(this.requirement);
+          this.saveRequirement();
+
+          //Contar Requerimientos
+
+          this.lastTimeDomain = new Date().toISOString().slice(0, 10);
+
+          //Reiniciar Formulario
+          this.$refs[name].resetFields();
+          this.$Message.success("Success!");
+          this.$router.push("/requireX");
         } else {
-          this.loading = false;
           this.$Message.error("Fail!");
         }
       });
+    },
+    saveRequirement() {
+      let parsed = JSON.stringify(this.listDomainRequirement);
+      localStorage.setItem("tb_domain_requirement", parsed);
+    }
+  },
+  mounted() {
+    //Cargar lista
+    if (localStorage.getItem("tb_domain_requirement")) {
+      try {
+        this.listDomainRequirement = JSON.parse(
+          localStorage.getItem("tb_domain_requirement")
+        );
+      } catch (e) {
+        localStorage.removeItem("tb_domain_requirement");
+      }
+    }
+
+    if (localStorage.countDomain) {
+      this.countDomain = localStorage.countDomain;
+    }
+  },
+  watch: {
+    countDomain(newCount) {
+      localStorage.countDomain = newCount;
+    },
+    lastTimeDomain(newDate) {
+      localStorage.lastTimeDomain = newDate;
     }
   }
 };
 </script>
+
+
+<style scoped>
+.form-requirement {
+  margin: 0 auto;
+  max-width: 500px;
+}
+</style>

@@ -1,18 +1,7 @@
 <template>
   <div>
-    <Modal
-      :value="dialog"
-      :title="$t('requirex_adaptation_tittle')"
-      @on-ok="handleSubmit('requirement', requirement)"
-      :ok-text=" $t('requirex_generate')"
-      @on-cancel="onAdaptationCancel(false, 'requirement')"
-      :cancel-text="$t('requirex_cancel')"
-      :closable="false"
-      :mask-closable="false"
-      :scrollable="true"
-      :loading="loading"
-    >
-      <i-form :model="requirement" ref="requirement" :rules="ruleValidate" label-position="top">
+    <div class="container my-2 form-requirement">
+      <i-form :model="requirement" ref="requirement" :rules="ruleValidate">
         <app-requireType
           @onRequireTypeChange="requirement.reqType = $event"
           :reqType="requirement.reqType"
@@ -167,7 +156,15 @@
           </div>
         </div>
       </i-form>
-    </Modal>
+
+      <div class="container text-right my-2">
+        <Button
+          class="mx-1 cb-dark"
+          @click="handleSubmit('requirement')"
+        >{{$t('requirex_generate')}}</Button>
+        <Button type="error" @click="onAdaptationCancel('requirement')">{{$t('requirex_cancel')}}</Button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -186,33 +183,7 @@ export default {
     "app-postBehavior": postBehavior,
     "app-time-list": timeList
   },
-  props: {
-    dialog: {
-      type: Boolean,
-      required: true
-    },
-    requirementProp: {
-      reqType: String,
-      name: String,
-      condition: Boolean,
-      conditionDescription: String,
-      imperative: String,
-      systemName: String,
-      processVerb: String,
-      object: String,
-      system: String,
-      relaxing: String,
-      postBehaviour: String,
-      event: String,
-      timneInterval: Number,
-      units: String,
-      quantity: String,
-      frecuency: String,
-      complement: String,
-      msg: String,
-      isComplete: Boolean
-    }
-  },
+
   data() {
     //Validar cuando relax sea few o many
     const validatePostBehaviour = (rule, value, callback) => {
@@ -223,7 +194,7 @@ export default {
       ) {
         if (value === "") {
           callback(new Error("Cannot be empty"));
-        }
+        } else callback();
       } else callback();
     };
 
@@ -245,7 +216,7 @@ export default {
       ) {
         if (value === "") {
           callback(new Error("The event Cannot be empty"));
-        }
+        } else callback();
       } else callback();
     };
 
@@ -257,7 +228,7 @@ export default {
       ) {
         if ((value === "") | (value <= "0")) {
           callback(new Error("Cannot be empty"));
-        }
+        } else callback();
       } else callback();
     };
 
@@ -268,7 +239,7 @@ export default {
       ) {
         if (value === "") {
           callback(new Error("Cannot be empty"));
-        }
+        } else callback();
       } else callback();
     };
 
@@ -279,18 +250,20 @@ export default {
       ) {
         if (value === "") {
           callback(new Error("Cannot be empty"));
-        }
+        } else callback();
       } else callback();
     };
 
-    ("requirex_requirement_relax_close");
     return {
+      listAdaptationRequirement: [],
       requirement: {
-        reqType: "",
+        id: 0,
+        requirementNumber: "",
+        reqType: this.$t("requirex_requirement_type_value_1"),
         name: "",
         condition: false,
         conditionDescription: "",
-        imperative: "",
+        imperative: this.$t("requirex_requirement_imperative_value_1"),
         systemName: "",
         processVerb: "",
         object: "",
@@ -304,8 +277,7 @@ export default {
         quantity: "",
         frecuency: "",
         quantityFrecuency: "",
-        msg: "",
-        isComplete: false
+        msg: ""
       },
       ruleValidate: {
         reqType: [
@@ -395,38 +367,28 @@ export default {
           { required: true, validator: validateClose, trigger: "blur" }
         ]
       },
-      dial: false,
-      loading: true,
+      countAdaptation: 0,
+      lastTimeAdaptation: "",
       userInt: false,
       autoAct: false,
       extInt: false
     };
   },
   methods: {
-    handleReset(name) {
-      this.$refs[name].resetFields();
-    },
-    onVisibleChange(estate) {
-      alert(estate);
-    },
     onAdaptationCancel(value, name) {
-      this.dial = value;
       this.$refs[name].resetFields();
-      this.$emit("onAdaptationCancel", this.dial);
+      this.$router.push("/requireX");
     },
     handleSubmit(name, req) {
       //Validar el formulario
       this.$refs[name].validate(valid => {
-        alert("hola0545");
         if (valid) {
-          alert("hola0");
           this.requirement.msg = "";
-          //this.$Message.success("Success!");
+
           //Si hay una condición
           if (this.requirement.condition) {
             this.requirement.msg += this.requirement.conditionDescription + " ";
           }
-          alert("hola01");
           //Complemento y nombre
           this.requirement.msg +=
             this.$t("requirex_requirement_sel_adaptive_complement") +
@@ -436,7 +398,6 @@ export default {
           //Process Verrb
           this.requirement.msg += " " + this.requirement.processVerb + " ";
 
-          alert("hola1");
           //Validate Relax
           if (
             (this.requirement.relaxing ==
@@ -512,20 +473,62 @@ export default {
               " " +
               this.requirement.quantityFrecuency;
           }
-          alert("hola");
-          alert(req);
+          //Agregar item a la lista
+          this.countAdaptation++;
+          this.requirement.id = this.countAdaptation;
+          this.requirement.requirementNumber = "P.R." + this.requirement.id;
+
+          this.listAdaptationRequirement.push(this.requirement);
+          this.saveRequirement();
+
+          //Contar Requerimientos
+
+          this.lastTimeAdaptation = new Date().toISOString().slice(0, 10);
+
           //this.loading = true;
-          this.dial = false;
-          this.requirement.isComplete = true;
-          this.$emit("onAdaptationCancel", this.dial);
-          this.requirement = req;
-          this.$emit("handleSubmit", this.requirement);
+          this.$refs[name].resetFields();
+          this.$Message.success("Success!");
+          this.$router.push("/requireX");
         } else {
-         // this.loading = false;
           this.$Message.error("Fail!");
         }
       });
+    },
+    saveRequirement() {
+      let parsed = JSON.stringify(this.listAdaptationRequirement);
+      localStorage.setItem("tb_adaptation_requirement", parsed);
+    }
+  },
+  mounted() {
+    //Cargar lista
+    if (localStorage.getItem("tb_applciation_requirement")) {
+      try {
+        this.listAdaptationRequirement = JSON.parse(
+          localStorage.getItem("tb_applciation_requirement")
+        );
+      } catch (e) {
+        localStorage.removeItem("tb_applciation_requirement");
+      }
+    }
+
+    if (localStorage.countAdaptation) {
+      this.countAdaptation = localStorage.countAdaptation;
+    }
+  },
+  watch: {
+    countAdaptation(newCount) {
+      localStorage.countAdaptation = newCount;
+    },
+    lastTimeAdaptation(newDate) {
+      localStorage.lastTimeAdaptation = newDate;
     }
   }
 };
 </script>
+
+<style scoped>
+.form-requirement {
+  margin: 0 auto;
+  max-width: 500px;
+}
+</style>

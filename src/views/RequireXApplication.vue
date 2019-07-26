@@ -82,7 +82,7 @@
           </div>
         </div>
 
-        <div class="sub-form" v-if="isSystemActivity">
+        <div>
           <form-item :label="$t('requirex_requirement_user_label')" v-if="userInt" prop="user">
             <i-input
               v-model="requirement.user"
@@ -174,6 +174,7 @@
         >{{$t('requirex_generate')}}</Button>
         <Button type="error" @click="onApplicationCancel('requirement')">{{$t('requirex_cancel')}}</Button>
       </div>
+      
     </div>
   </div>
 </template>
@@ -193,8 +194,8 @@ export default {
       if (this.userInt) {
         if (value === "") {
           callback(new Error("The User cannot be empty"));
-          // Callback(new Error("content cannot be empty"));
         }
+        callback();
       } else {
         callback();
       }
@@ -205,18 +206,24 @@ export default {
       if (this.extInt) {
         if (value === "") {
           callback(new Error("Cannot be empty"));
+        } else {
+          callback();
         }
-      } else callback();
+      } else {
+        callback();
+      }
     };
 
     return {
       listApplicationRequirement: [],
       requirement: {
-        reqType: this.$t('requirex_requirement_type_value_1'),
+        id: 0,
+        requirementNumber: "",
+        reqType: this.$t("requirex_requirement_type_value_1"),
         name: "",
         condition: false,
         conditionDescription: "",
-        imperative: this.$t('requirex_requirement_imperative_value_1'),
+        imperative: this.$t("requirex_requirement_imperative_value_1"),
         systemName: "",
         systemActivity: "",
         user: "",
@@ -230,6 +237,8 @@ export default {
         msg: "",
         isComplete: false
       },
+      countApplication: 0,
+      lastTimeApplication: "",
       ruleValidate: {
         reqType: [
           {
@@ -334,15 +343,13 @@ export default {
       //Validar el formulario
       this.$refs[name].validate(valid => {
         if (valid) {
-alert("1");
-
           this.requirement.msg = "";
           //this.$Message.success("Success!");
           //Si hay una condición
           if (this.requirement.condition) {
             this.requirement.msg += this.requirement.conditionDescription + " ";
           }
-alert("2");
+
           this.requirement.msg +=
             "The " +
             this.requirement.systemName +
@@ -375,21 +382,29 @@ alert("2");
               " the " +
               this.requirement.system;
           }
-alert("3");
+
           //Validat conditions
           if (this.requirement.systemCondition) {
             this.requirement.msg +=
               ", " + this.requirement.systemConditionDescription;
           }
 
-          alert("llego");
           //Agregar item a la lista
+          this.countApplication ++;
+          this.requirement.id =  this.countApplication;
+          this.requirement.requirementNumber = "P.R." + this.requirement.id;
+
           this.listApplicationRequirement.push(this.requirement);
           this.saveRequirement();
+
+          //Contar Requerimientos
+          
+          this.lastTimeApplication = new Date().toISOString().slice(0, 10);
 
           //Reiniciar Formulario
           this.$refs[name].resetFields();
           this.$Message.success("Success!");
+          this.$router.push("/requireX");
         } else {
           this.$Message.error("Fail!");
         }
@@ -417,6 +432,18 @@ alert("3");
       } catch (e) {
         localStorage.removeItem("tb_applciation_requirement");
       }
+    }
+
+    if (localStorage.countApplication) {
+      this.countApplication = localStorage.countApplication;
+    }
+  },
+  watch: {
+    countApplication(newCount) {
+      localStorage.countApplication = newCount;
+    },
+    lastTimeApplication(newDate) {
+      localStorage.lastTimeApplication = newDate;
     }
   }
 };
