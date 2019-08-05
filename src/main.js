@@ -12,6 +12,11 @@ import iView from 'iview'
 import 'iview/dist/styles/iview.css'
 import messages from './assets/js/common/messages'
 
+import VueAxios from 'vue-axios';
+import axios from 'axios';
+
+Vue.use(VueAxios, axios);
+
 Vue.use(iView)
 Vue.config.productionTip = false
 Vue.use(VueI18n)

@@ -27,8 +27,6 @@
         </Col>
       </Row>
 
-    
-
       <div :style="{margin: '1em 0'}">
         <Table
           :columns="requirementsTable"

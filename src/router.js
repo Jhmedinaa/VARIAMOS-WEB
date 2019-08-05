@@ -45,20 +45,20 @@ export default new Router({
     {
       path: '/requireX',
       name: 'RequireX',
-      component: () => import('./views/RequireX.vue'), 
-    },   
+      component: () => import('./views/RequireX.vue'),
+    },
     {
-      path: '/requirex/application', 
+      path: '/requirex/application',
       name: 'requirexapplication',
       component: () => import('./views/RequireXApplication.vue')
     },
     {
-      path: '/requirex/adaptation', 
+      path: '/requirex/adaptation',
       name: 'requirexadaptation',
       component: () => import('./views/RequireXAdaptation.vue')
     },
     {
-      path: '/requirex/domain', 
+      path: '/requirex/domain',
       name: 'requirexdomain',
       component: () => import('./views/RequireXDomain.vue')
     },
