@@ -235,7 +235,7 @@ export default {
         systemCondition: false,
         systemConditionDescription: "",
         msg: "",
-        isComplete: false
+        estado: true
       },
       countApplication: 0,
       lastTimeApplication: "",
@@ -394,15 +394,13 @@ export default {
           this.requirement.id =  this.countApplication;
           this.requirement.requirementNumber = "P.R." + this.requirement.id;
 
-          this.listApplicationRequirement.push(this.requirement);
-          this.saveRequirement();
+         this.saveRequirement();
 
           //Contar Requerimientos
           
           this.lastTimeApplication = new Date().toISOString().slice(0, 10);
 
           //Reiniciar Formulario
-          this.$refs[name].resetFields();
           this.$Message.success("Success!");
           this.$router.push("/requireX");
         } else {
@@ -410,42 +408,23 @@ export default {
         }
       });
     },
-    handleReset(name) {
-      this.$refs[name].resetFields();
-    },
     onApplicationCancel(name) {
       this.$refs[name].resetFields();
       this.$router.push("/requireX");
     },
     saveRequirement() {
-      let parsed = JSON.stringify(this.listApplicationRequirement);
-      localStorage.setItem("tb_applciation_requirement", parsed);
+     let uri = "http://localhost:4000/applications/add";
+      this.axios.post(uri, this.requirement).then(() => {
+        this.$Message.success("Success!");
+        this.$router.push("/requirex");
+      });
     }
   },
   mounted() {
-    //Cargar lista
-    if (localStorage.getItem("tb_applciation_requirement")) {
-      try {
-        this.listApplicationRequirement = JSON.parse(
-          localStorage.getItem("tb_applciation_requirement")
-        );
-      } catch (e) {
-        localStorage.removeItem("tb_applciation_requirement");
-      }
-    }
-
-    if (localStorage.countApplication) {
-      this.countApplication = localStorage.countApplication;
-    }
+    //Cargar datos
+    this.$refs['requirement'].resetFields();
   },
-  watch: {
-    countApplication(newCount) {
-      localStorage.countApplication = newCount;
-    },
-    lastTimeApplication(newDate) {
-      localStorage.lastTimeApplication = newDate;
-    }
-  }
+
 };
 </script>
 

@@ -6,7 +6,12 @@ const cors = require('cors');
 //Importar base de datos
 const mongoose = require('mongoose');
 const config = require('./DB.js');
+
+//rutas de consulta express
 const postRoute = require('./post.route');
+const adaptationRoute = require('./adaptation.route');
+const applicationRoute = require('./application.route');
+const domainRoute = require('./domain.route');
 
 mongoose.Promise = global.Promise;
 mongoose.connect(config.DB, { useNewUrlParser: true }).then(
@@ -19,6 +24,9 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 app.use('/posts', postRoute);
+app.use('/adaptations', adaptationRoute);
+app.use('/applications', applicationRoute);
+app.use('/domains', domainRoute);
 
 app.listen(PORT, function(){
   console.log('Server is running on Port:',PORT);

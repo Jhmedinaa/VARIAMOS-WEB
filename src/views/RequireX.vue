@@ -39,7 +39,6 @@
         <button type="button" class="btn btn-danger" @click="onGeneratePdf">Generarte Pdf</button>
       </div>
     </Card>
-  
   </Content>
 </template>
 
@@ -62,8 +61,9 @@ export default {
   },
   data() {
     return {
-      requirementDomain: [Object],
-      requirementAdaptation: [Object],
+      requirementsDomain: [],
+      requirementsAdaptation: [],
+      requirementsApplication: [],
       requirementsTableCollection: [
         {
           reqType: this.$t("requirex_domain"),
@@ -271,84 +271,53 @@ export default {
       }
     }
   },
+  created() {
+    //Cargar lista de requerimientos de dominio
+    let uri = "http://localhost:4000/domains";
+    this.axios.get(uri).then(response => {
+      this.requirementsDomain = response.data;
+      this.requirementsTableCollection[0].listRequirements = this.requirementsDomain;
+      this.requirementsTableCollection[0].amount = this.requirementsDomain.length;
+    });
+
+    //Cargar lista de requerimientos de aplicacion
+    uri = "http://localhost:4000/applications";
+    this.axios.get(uri).then(response => {
+      
+      for (var i = 0; i < response.data.length; i++) {        
+         if(response.data[i].estado){
+           this.requirementsApplication.push(response.data[i]);
+         }        
+      }
+
+      //this.requirementsApplication = response.data;
+      this.requirementsTableCollection[1].listRequirements = this.requirementsApplication;
+      this.requirementsTableCollection[1].amount = this.requirementsApplication.length;
+    });
+
+    //Cargar lista de requerimientos de aplicacion
+    uri = "http://localhost:4000/adaptations";
+    this.axios.get(uri).then(response => {
+      this.requirementsAdaptation = response.data;
+      this.requirementsTableCollection[2].listRequirements = this.requirementsAdaptation;
+      this.requirementsTableCollection[2].amount = this.requirementsAdaptation.length;
+    });
+  },
   mounted() {
     //Carga desde el local storage
-    if (localStorage.countDomain) {
-      this.countDomain = localStorage.countDomain;
-      this.requirementsTableCollection[0].amount = this.countDomain;
-    }
-
     if (localStorage.lastTimeDomain) {
       this.requirementsTableCollection[0].lastTime =
         localStorage.lastTimeDomain;
     }
-/*---------------------------*/
-    if (localStorage.countApplication) {
-      this.countApplication = localStorage.countApplication;
-      this.requirementsTableCollection[1].amount = this.countApplication;
-    }
-
+    /*---------------------------*/
     if (localStorage.lastTimeApplication) {
       this.requirementsTableCollection[1].lastTime =
         localStorage.lastTimeApplication;
     }
-/*---------------------------*/
+    /*---------------------------*/
     if (localStorage.lastTimeAdaptation) {
       this.requirementsTableCollection[2].lastTime =
         localStorage.lastTimeAdaptation;
-    }
-
-    if (localStorage.countAdaptation) {
-      this.countAdaptation = localStorage.countAdaptation;
-      this.requirementsTableCollection[2].amount = this.countAdaptation;
-    }
-
-    //Cargar lista de requerimientos
-
-    //Aplicación
-    if (localStorage.getItem("tb_applciation_requirement")) {
-      try {
-        this.requirementsTableCollection[1].listRequirements = JSON.parse(
-          localStorage.getItem("tb_applciation_requirement")
-        );
-      } catch (e) {
-        localStorage.removeItem("tb_applciation_requirement");
-      }
-    }
-
-    //Adaptation
-    if (localStorage.getItem("tb_adaptation_requirement")) {
-      try {
-        this.requirementsTableCollection[2].listRequirements = JSON.parse(
-          localStorage.getItem("tb_adaptation_requirement")
-        );
-      } catch (e) {
-        localStorage.removeItem("tb_adaptation_requirement");
-      }
-    }
-
-    //Domain
-    if (localStorage.getItem("tb_domain_requirement")) {
-      try {
-        this.requirementsTableCollection[0].listRequirements = JSON.parse(
-          localStorage.getItem("tb_domain_requirement")
-        );
-      } catch (e) {
-        localStorage.removeItem("tb_domain_requirement");
-      }
-    }
-  },
-  watch: {
-    countDomain(newCount) {
-      localStorage.countDomain = newCount;
-    },
-
-    countAdaptation(newCount) {
-      localStorage.countAdaptation = newCount;
-    },
-
-    requirementsCount(newCount) {
-      localStorage.requirementsCount = newCount;
     }
   }
 };

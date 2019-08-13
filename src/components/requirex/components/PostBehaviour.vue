@@ -15,7 +15,7 @@
 </template>
 <script>
 export default {
-  prop: {
+  props: {
     postBehaviour: {
       type: [String],
       required: true

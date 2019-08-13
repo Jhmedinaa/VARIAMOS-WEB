@@ -210,7 +210,7 @@ export default {
       requirement: {
         id: 0,
         requirementNumber: "",
-        affectedSystems: this.$t('requirex_requirement_affected_systems1'),
+        affectedSystems: this.$t("requirex_requirement_affected_systems1"),
         thoseCodition: "",
         reqType: this.$t("requirex_requirement_type_value_1"),
         name: "",
@@ -224,10 +224,10 @@ export default {
         object: "",
         system: "",
         from: "",
-        processVerb: "",
         systemCondition: false,
         systemConditionDescription: "",
-        msg: ""
+        msg: "",
+        estado: true
       }, //Realizar validaciones del formulario
       ruleValidate: {
         affectedSystems: [
@@ -392,7 +392,6 @@ export default {
           this.requirement.id = this.countDomain;
           this.requirement.requirementNumber = "D.R." + this.requirement.id;
 
-          this.listDomainRequirement.push(this.requirement);
           this.saveRequirement();
 
           //Contar Requerimientos
@@ -400,7 +399,6 @@ export default {
           this.lastTimeDomain = new Date().toISOString().slice(0, 10);
 
           //Reiniciar Formulario
-          this.$refs[name].resetFields();
           this.$Message.success("Success!");
           this.$router.push("/requireX");
         } else {
@@ -409,33 +407,16 @@ export default {
       });
     },
     saveRequirement() {
-      let parsed = JSON.stringify(this.listDomainRequirement);
-      localStorage.setItem("tb_domain_requirement", parsed);
+       let uri = "http://localhost:4000/domains/add";
+      this.axios.post(uri, this.requirement).then(() => {
+        this.$Message.success("Success!");
+        this.$router.push("/requirex");
+      });
     }
   },
   mounted() {
-    //Cargar lista
-    if (localStorage.getItem("tb_domain_requirement")) {
-      try {
-        this.listDomainRequirement = JSON.parse(
-          localStorage.getItem("tb_domain_requirement")
-        );
-      } catch (e) {
-        localStorage.removeItem("tb_domain_requirement");
-      }
-    }
-
-    if (localStorage.countDomain) {
-      this.countDomain = localStorage.countDomain;
-    }
-  },
-  watch: {
-    countDomain(newCount) {
-      localStorage.countDomain = newCount;
-    },
-    lastTimeDomain(newDate) {
-      localStorage.lastTimeDomain = newDate;
-    }
+    //Cargar datos
+    this.$refs["requirement"].resetFields();
   }
 };
 </script>

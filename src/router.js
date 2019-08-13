@@ -61,6 +61,10 @@ export default new Router({
       path: '/requirex/domain',
       name: 'requirexdomain',
       component: () => import('./views/RequireXDomain.vue')
+    }, {
+      name: 'create',
+      path: '/create',
+      component: () => import('./views/CreateComponent.vue')
     },
   ]
 })

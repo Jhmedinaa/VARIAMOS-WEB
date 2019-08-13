@@ -84,11 +84,12 @@
           v-if="requirement.relaxing == $t('requirex_requirement_relax_many') | requirement.relaxing == $t('requirex_requirement_relax_few')"
         >
           <div class="col">
-            <app-postBehavior
+            <app-postBehaviour
               :postBehaviour="requirement.postBehaviour"
               @onPostBehaviourChange="requirement.postBehaviour = $event"
-            ></app-postBehavior>
+            ></app-postBehaviour>
           </div>
+
           <div class="col">
             <form-item :label="$t('requirex_requirement_object_label')" prop="object">
               <i-input
@@ -172,7 +173,7 @@
 import requireType from "./../components/requirex/components/RequireType";
 import imperative from "./../components/requirex/components/Imperative";
 import relaxing from "./../components/requirex/components/Relax";
-import postBehavior from "./../components/requirex/components/PostBehaviour";
+import postBehaviour from "./../components/requirex/components/PostBehaviour";
 import timeList from "./../components/requirex/components/TimeList";
 
 export default {
@@ -180,7 +181,7 @@ export default {
     "app-requireType": requireType,
     "app-imperative": imperative,
     "app-relaxing": relaxing,
-    "app-postBehavior": postBehavior,
+    "app-postBehaviour": postBehaviour,
     "app-time-list": timeList
   },
 
@@ -268,16 +269,16 @@ export default {
         processVerb: "",
         object: "",
         system: "",
-        processVerb: "",
-        relaxing: "",
-        postBehaviour: "",
+        relaxing: this.$t("requirex_requirement_relax_many"),
+        postBehaviour: this.$t("requirex_requirement_after"),
         event: "",
         timeInterval: 0,
         units: "",
         quantity: "",
         frecuency: "",
         quantityFrecuency: "",
-        msg: ""
+        msg: "",
+        estado: true
       },
       ruleValidate: {
         reqType: [
@@ -379,7 +380,7 @@ export default {
       this.$refs[name].resetFields();
       this.$router.push("/requireX");
     },
-    handleSubmit(name, req) {
+    handleSubmit(name) {
       //Validar el formulario
       this.$refs[name].validate(valid => {
         if (valid) {
@@ -476,9 +477,8 @@ export default {
           //Agregar item a la lista
           this.countAdaptation++;
           this.requirement.id = this.countAdaptation;
-          this.requirement.requirementNumber = "P.R." + this.requirement.id;
+          this.requirement.requirementNumber = "S.R." + this.requirement.id;
 
-          this.listAdaptationRequirement.push(this.requirement);
           this.saveRequirement();
 
           //Contar Requerimientos
@@ -486,8 +486,6 @@ export default {
           this.lastTimeAdaptation = new Date().toISOString().slice(0, 10);
 
           //this.loading = true;
-          this.$refs[name].resetFields();
-          this.$Message.success("Success!");
           this.$router.push("/requireX");
         } else {
           this.$Message.error("Fail!");
@@ -495,33 +493,16 @@ export default {
       });
     },
     saveRequirement() {
-      let parsed = JSON.stringify(this.listAdaptationRequirement);
-      localStorage.setItem("tb_adaptation_requirement", parsed);
+      let uri = "http://localhost:4000/adaptations/add";
+      this.axios.post(uri, this.requirement).then(() => {
+        this.$Message.success("Success!");
+        this.$router.push("/requirex");
+      });
     }
   },
   mounted() {
-    //Cargar lista
-    if (localStorage.getItem("tb_applciation_requirement")) {
-      try {
-        this.listAdaptationRequirement = JSON.parse(
-          localStorage.getItem("tb_applciation_requirement")
-        );
-      } catch (e) {
-        localStorage.removeItem("tb_applciation_requirement");
-      }
-    }
-
-    if (localStorage.countAdaptation) {
-      this.countAdaptation = localStorage.countAdaptation;
-    }
-  },
-  watch: {
-    countAdaptation(newCount) {
-      localStorage.countAdaptation = newCount;
-    },
-    lastTimeAdaptation(newDate) {
-      localStorage.lastTimeAdaptation = newDate;
-    }
+    //Cargar datos
+    this.$refs['requirement'].resetFields();
   }
 };
 </script>

@@ -25,6 +25,7 @@ postRoutes.route('/').get(function (req, res) {
       res.json(err);
     }
     else {
+      console.log("Entro");
       res.json(posts);
     }
   });
