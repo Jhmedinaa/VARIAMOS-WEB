@@ -182,16 +182,12 @@
       </i-form>
 
       <div class="container text-right my-2">
-        <Button
-          class="mx-1 cb-dark"
-          @click="handleSubmit('requirement')"
-        >{{$t('requirex_generate')}}</Button>
+        <Button class="mx-1 cb-dark" @click="handleSubmit('requirement')">{{$t('requirex_edit')}}</Button>
         <Button type="error" @click="onDomainCancel('requirement')">{{$t('requirex_cancel')}}</Button>
       </div>
     </div>
   </div>
 </template>
-
 <script>
 import requireType from "./../components/requirex/components/RequireType";
 import imperative from "./../components/requirex/components/Imperative";
@@ -203,32 +199,9 @@ export default {
     "app-imperative": imperative,
     "app-quantity": quantity
   },
-
   data() {
     return {
-      listDomainRequirement: [],
-      requirement: {
-        id: 0,
-        requirementNumber: "",
-        affectedSystems: this.$t("requirex_requirement_affected_systems1"),
-        thoseCodition: "",
-        reqType: this.$t("requirex_requirement_type_value_1"),
-        name: "",
-        condition: false,
-        conditionDescription: "",
-        imperative: this.$t("requirex_requirement_imperative_value_1"),
-        systemName: "",
-        systemActivity: "",
-        user: "",
-        processVerb: "",
-        object: "",
-        system: "",
-        from: "",
-        systemCondition: false,
-        systemConditionDescription: "",
-        msg: "",
-        estado: true
-      }, //Realizar validaciones del formulario
+      requirement: {}, //Realizar validaciones del formulario
       ruleValidate: {
         affectedSystems: [
           {
@@ -295,6 +268,12 @@ export default {
       extInt: false
     };
   },
+  created() {
+    let uri = `http://localhost:4000/domains/${this.$route.params.id}`;
+    this.axios.get(uri).then(response => {
+      this.requirement = response.data;
+    });
+  },
   methods: {
     //Realizar filtro de opciones al cambiar de actividades
     onSystemActivityChange() {
@@ -322,7 +301,7 @@ export default {
     },
     onDomainCancel(name) {
       this.$refs[name].resetFields();
-      this.$router.push("/requireX");
+      this.$router.replaceState("/requireX");
     },
     handleSubmit(name) {
       //Validar el formulario
@@ -387,12 +366,8 @@ export default {
             this.requirement.msg +=
               ", " + this.requirement.systemConditionDescription;
           }
-          //Agregar item a la lista
-          this.countDomain++;
-          this.requirement.id = this.countDomain;
-          this.requirement.requirementNumber = "D.R." + this.requirement.id;
 
-          this.saveRequirement();
+          this.updateRequirement();
 
           //Contar Requerimientos
 
@@ -406,33 +381,12 @@ export default {
         }
       });
     },
-    saveRequirement() {
-      let uri = "http://localhost:4000/domains/add";
+    updateRequirement() {
+      let uri = `http://localhost:4000/domains/update/${this.$route.params.id}`;
       this.axios.post(uri, this.requirement).then(() => {
-        this.$Message.success("Success!");
-        this.$router.push("/requirex");
+        this.$router.replace("/requireX");
       });
     }
-  },
-  created() {
-    //Cargar lista de requerimientos de dominio
-    let uri = "http://localhost:4000/domains";
-    this.axios.get(uri).then(response => {
-      this.listDomainRequirement = response.data;
-      this.countDomain = this.listDomainRequirement.length;
-    });
-  },
-  mounted() {
-    //Cargar datos
-    this.$refs["requirement"].resetFields();
   }
 };
 </script>
-
-
-<style scoped>
-.form-requirement {
-  margin: 0 auto;
-  max-width: 500px;
-}
-</style>

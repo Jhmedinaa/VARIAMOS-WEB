@@ -1,45 +1,18 @@
 <template>
   <div>
     <div class="container my-2 form-requirement">
-      <i-form ref="requirement" :model="requirement" :rules="ruleValidate">
-        <div class="row">
-          <div class="col">
-            <app-requireType
-              @onRequireTypeChange="requirement.reqType = $event"
-              :reqType="requirement.reqType"
-            ></app-requireType>
-          </div>
-          <div class="col">
-            <app-quantity
-              @onAffectedSystemChange="requirement.affectedSystems = $event"
-              :affectedSystems="requirement.affectedSystems"
-            ></app-quantity>
-          </div>
-        </div>
-
-        <div
-          class="row"
-          v-if="requirement.affectedSystems == $t('requirex_requirement_affected_systems3')"
-        >
-          <div class="col">
-            <form-item :label="$t('requirex_requirement_affected_condition')" prop="thoseCodition">
-              <i-input
-                v-model="requirement.thoseCodition"
-                :placeholder="$t('requirex_requirement_affected_condition')"
-              />
-            </form-item>
-          </div>
-        </div>
+      <i-form :model="requirement" ref="requirement" :rules="ruleValidate">
+        <app-requireType
+          @onRequireTypeChange="requirement.reqType = $event"
+          :reqType="requirement.reqType"
+        ></app-requireType>
 
         <div class="row">
           <div class="col">
-            <form-item
-              :label="$t('requirex_requirement_system_domain_name_label')"
-              prop="systemName"
-            >
+            <form-item :label="$t('requirex_requirement_system_name_label')" prop="systemName">
               <i-input
                 v-model="requirement.systemName"
-                :placeholder="$t('requirex_requirement_system_domain_name_label')"
+                :placeholder="$t('requirex_requirement_system_name_label')"
               />
             </form-item>
           </div>
@@ -63,7 +36,11 @@
             </form-item>
           </div>
           <div class="col">
-            <form-item prop="desc" v-if="requirement.condition">
+            <form-item
+              :label="$t('requirex_requirement_description')"
+              prop="desc"
+              v-if="requirement.condition"
+            >
               <i-input
                 v-model="requirement.conditionDescription"
                 type="textarea"
@@ -105,8 +82,8 @@
           </div>
         </div>
 
-        <div class="sub-form" v-if="isSystemActivity">
-          <form-item :label="$t('requirex_requirement_user_label')" v-if="userInt">
+        <div>
+          <form-item :label="$t('requirex_requirement_user_label')" v-if="userInt" prop="user">
             <i-input
               v-model="requirement.user"
               :placeholder="$t('requirex_requirement_user_label')"
@@ -115,7 +92,11 @@
 
           <div class="row">
             <div class="col">
-              <form-item :label="$t('requirex_requirement_system_label')" v-if="extInt">
+              <form-item
+                :label="$t('requirex_requirement_system_label')"
+                v-if="extInt"
+                prop="system"
+              >
                 <i-input
                   v-model="requirement.system"
                   :placeholder="$t('requirex_requirement_system_label')"
@@ -123,7 +104,7 @@
               </form-item>
             </div>
             <div class="col">
-              <form-item :label="$t('requirex_requirement_from_label')" v-if="extInt">
+              <form-item :label="$t('requirex_requirement_from_label')" v-if="extInt" prop="from">
                 <i-select
                   v-model="requirement.from"
                   :placeholder="$t('requirex_select')"
@@ -159,34 +140,36 @@
             </div>
           </div>
 
-          <form-item :label="$t('requirex_requirement_system_condition_domain_label')">
-            <i-switch v-model="requirement.systemCondition" size="large">
-              <span slot="open">{{$t('requirex_requirement_yes')}}</span>
-              <span slot="close">{{$t('requirex_requirement_no')}}</span>
-            </i-switch>
-          </form-item>
-
-          <form-item
-            :label="$t('requirex_requirement_description')"
-            prop="desc"
-            v-if="requirement.systemCondition"
-          >
-            <i-input
-              v-model="requirement.systemConditionDescription"
-              type="textarea"
-              :autosize="{minRows: 2,maxRows: 5}"
-              :placeholder="$t('requirex_requirement_system_condition_descrive_label')"
-            ></i-input>
-          </form-item>
+          <div class="row">
+            <div class="col">
+              <form-item :label="$t('requirex_requirement_system_condition_label')">
+                <i-switch v-model="requirement.systemCondition" size="large">
+                  <span slot="open">{{$t('requirex_requirement_yes')}}</span>
+                  <span slot="close">{{$t('requirex_requirement_no')}}</span>
+                </i-switch>
+              </form-item>
+            </div>
+            <div class="col">
+              <form-item
+                :label="$t('requirex_requirement_description')"
+                prop="desc"
+                v-if="requirement.systemCondition"
+              >
+                <i-input
+                  v-model="requirement.systemConditionDescription"
+                  type="textarea"
+                  :autosize="{minRows: 2,maxRows: 5}"
+                  :placeholder="$t('requirex_requirement_system_condition_descrive_label')"
+                ></i-input>
+              </form-item>
+            </div>
+          </div>
         </div>
       </i-form>
 
       <div class="container text-right my-2">
-        <Button
-          class="mx-1 cb-dark"
-          @click="handleSubmit('requirement')"
-        >{{$t('requirex_generate')}}</Button>
-        <Button type="error" @click="onDomainCancel('requirement')">{{$t('requirex_cancel')}}</Button>
+        <Button class="mx-1 cb-dark" @click="handleSubmit('requirement')">{{$t('requirex_edit')}}</Button>
+        <Button type="error" @click="onApplicationCancel('requirement')">{{$t('requirex_cancel')}}</Button>
       </div>
     </div>
   </div>
@@ -195,48 +178,41 @@
 <script>
 import requireType from "./../components/requirex/components/RequireType";
 import imperative from "./../components/requirex/components/Imperative";
-import quantity from "./../components/requirex/components/Quantity";
 
 export default {
   components: {
     "app-requireType": requireType,
-    "app-imperative": imperative,
-    "app-quantity": quantity
+    "app-imperative": imperative
   },
-
   data() {
+    //Validar usuario
+    const validateUser = (rule, value, callback) => {
+      if (this.userInt) {
+        if (value === "") {
+          callback(new Error("The User cannot be empty"));
+        }
+        callback();
+      } else {
+        callback();
+      }
+    };
+
+    //Valida cuando se activa interface externa
+    const validateExternalInterface = (rule, value, callback) => {
+      if (this.extInt) {
+        if (value === "") {
+          callback(new Error("Cannot be empty"));
+        } else {
+          callback();
+        }
+      } else {
+        callback();
+      }
+    };
+
     return {
-      listDomainRequirement: [],
-      requirement: {
-        id: 0,
-        requirementNumber: "",
-        affectedSystems: this.$t("requirex_requirement_affected_systems1"),
-        thoseCodition: "",
-        reqType: this.$t("requirex_requirement_type_value_1"),
-        name: "",
-        condition: false,
-        conditionDescription: "",
-        imperative: this.$t("requirex_requirement_imperative_value_1"),
-        systemName: "",
-        systemActivity: "",
-        user: "",
-        processVerb: "",
-        object: "",
-        system: "",
-        from: "",
-        systemCondition: false,
-        systemConditionDescription: "",
-        msg: "",
-        estado: true
-      }, //Realizar validaciones del formulario
+      requirement: {},
       ruleValidate: {
-        affectedSystems: [
-          {
-            required: true,
-            message: "Please select a option",
-            trigger: "change"
-          }
-        ],
         reqType: [
           {
             required: true,
@@ -285,15 +261,40 @@ export default {
             message: "The Object  cannot be empty",
             trigger: "change"
           }
+        ],
+        user: [
+          {
+            required: true,
+            validator: validateUser,
+            trigger: "blur"
+          }
+        ],
+        from: [
+          {
+            required: true,
+            validator: validateExternalInterface,
+            trigger: "blur"
+          }
+        ],
+        system: [
+          {
+            required: true,
+            validator: validateExternalInterface,
+            trigger: "change"
+          }
         ]
       },
-      countDomain: 0,
-      lastTimeDomain: "",
       isSystemActivity: false,
       userInt: false,
       autoAct: false,
       extInt: false
     };
+  },
+  created() {
+    let uri = `http://localhost:4000/applications/${this.$route.params.id}`;
+    this.axios.get(uri).then(response => {
+      this.requirement = response.data;
+    });
   },
   methods: {
     //Realizar filtro de opciones al cambiar de actividades
@@ -317,43 +318,26 @@ export default {
         this.extInt = true;
       }
     },
-    handleReset(name) {
+    onApplicationCancel(name) {
       this.$refs[name].resetFields();
-    },
-    onDomainCancel(name) {
-      this.$refs[name].resetFields();
-      this.$router.push("/requireX");
+      this.$router.replace("/requireX");
     },
     handleSubmit(name) {
       //Validar el formulario
       this.$refs[name].validate(valid => {
         if (valid) {
-          //Reiniciar requerimiento
           this.requirement.msg = "";
-
+          //this.$Message.success("Success!");
           //Si hay una condición
-          if (this.requirement.condition == true) {
+          if (this.requirement.condition) {
             this.requirement.msg += this.requirement.conditionDescription + " ";
           }
 
-          //Sistemas afectado
-          this.requirement.msg += this.requirement.affectedSystems + " ";
-          //Complemento
-          this.requirement.msg += this.$t(
-            "requirex_requirement_affected_systems_complement"
-          );
-
-          if (
-            this.requirement.affectedSystems ==
-            this.$t("requirex_requirement_affected_systems3")
-          ) {
-            this.requirement.msg +=
-              this.$t("requirex_requirement_affected_that") + " ";
-            this.requirement.msg += this.requirement.thoseCodition + " ";
-          }
-
           this.requirement.msg +=
-            this.requirement.systemName + " " + this.requirement.imperative;
+            "The " +
+            this.requirement.systemName +
+            " " +
+            this.requirement.imperative;
 
           //Validate system activity
           if (this.requirement.systemActivity == "autoAct") {
@@ -364,7 +348,7 @@ export default {
               this.requirement.object;
           } else if (this.requirement.systemActivity == "userInt") {
             this.requirement.msg +=
-              " provide the " + this.requirement.user + " with the capacity of";
+              " provide the " + this.requirement.user + " the capacity of";
             this.requirement.msg +=
               " " +
               this.requirement.processVerb +
@@ -387,52 +371,27 @@ export default {
             this.requirement.msg +=
               ", " + this.requirement.systemConditionDescription;
           }
-          //Agregar item a la lista
-          this.countDomain++;
-          this.requirement.id = this.countDomain;
-          this.requirement.requirementNumber = "D.R." + this.requirement.id;
 
-          this.saveRequirement();
+          this.updateRequirement();
 
           //Contar Requerimientos
 
-          this.lastTimeDomain = new Date().toISOString().slice(0, 10);
+          this.lastTimeApplication = new Date().toISOString().slice(0, 10);
 
           //Reiniciar Formulario
           this.$Message.success("Success!");
-          this.$router.push("/requireX");
+          this.$router.replace("/requireX");
         } else {
           this.$Message.error("Fail!");
         }
       });
     },
-    saveRequirement() {
-      let uri = "http://localhost:4000/domains/add";
+    updateRequirement() {
+      let uri = `http://localhost:4000/applications/update/${this.$route.params.id}`;
       this.axios.post(uri, this.requirement).then(() => {
-        this.$Message.success("Success!");
-        this.$router.push("/requirex");
+        this.$router.replace("/requireX");
       });
     }
-  },
-  created() {
-    //Cargar lista de requerimientos de dominio
-    let uri = "http://localhost:4000/domains";
-    this.axios.get(uri).then(response => {
-      this.listDomainRequirement = response.data;
-      this.countDomain = this.listDomainRequirement.length;
-    });
-  },
-  mounted() {
-    //Cargar datos
-    this.$refs["requirement"].resetFields();
   }
 };
 </script>
-
-
-<style scoped>
-.form-requirement {
-  margin: 0 auto;
-  max-width: 500px;
-}
-</style>

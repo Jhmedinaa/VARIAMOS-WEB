@@ -275,7 +275,11 @@ export default {
     //Cargar lista de requerimientos de dominio
     let uri = "http://localhost:4000/domains";
     this.axios.get(uri).then(response => {
-      this.requirementsDomain = response.data;
+      for (var i = 0; i < response.data.length; i++) {
+        if (response.data[i].estado) {
+          this.requirementsDomain.push(response.data[i]);
+        }
+      }
       this.requirementsTableCollection[0].listRequirements = this.requirementsDomain;
       this.requirementsTableCollection[0].amount = this.requirementsDomain.length;
     });
@@ -283,11 +287,10 @@ export default {
     //Cargar lista de requerimientos de aplicacion
     uri = "http://localhost:4000/applications";
     this.axios.get(uri).then(response => {
-      
-      for (var i = 0; i < response.data.length; i++) {        
-         if(response.data[i].estado){
-           this.requirementsApplication.push(response.data[i]);
-         }        
+      for (var i = 0; i < response.data.length; i++) {
+        if (response.data[i].estado) {
+          this.requirementsApplication.push(response.data[i]);
+        }
       }
 
       //this.requirementsApplication = response.data;
@@ -298,7 +301,12 @@ export default {
     //Cargar lista de requerimientos de aplicacion
     uri = "http://localhost:4000/adaptations";
     this.axios.get(uri).then(response => {
-      this.requirementsAdaptation = response.data;
+      for (var i = 0; i < response.data.length; i++) {
+        if (response.data[i].estado) {
+          this.requirementsAdaptation.push(response.data[i]);
+        }
+      }
+
       this.requirementsTableCollection[2].listRequirements = this.requirementsAdaptation;
       this.requirementsTableCollection[2].amount = this.requirementsAdaptation.length;
     });

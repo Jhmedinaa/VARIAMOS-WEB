@@ -31,4 +31,33 @@ adaptationRoutes.route('/').get(function (req, res) {
     });
 });
 
+//  Defined update route
+adaptationRoutes.route('/delete/:id').post(function (req, res) {
+    Adaptation.findById(req.params.id, function (err, adaptation) {
+
+        if (!adaptation)
+            res.status(404).send("data is not found");
+        else {
+            adaptation.estado = req.body.estado;
+            adaptation.save().then(() => {
+                res.json(req.body.estado);
+            })
+                .catch(() => {
+                    res.status(400).send("unable to update the database");
+                });
+        }
+    });
+});
+
+// Defined edit route
+adaptationRoutes.route('/:id').get(function (req, res) {
+    let id = req.params.id;
+    Adaptation.findById(id, function (err, adaptation) {
+        if (err) {
+            res.json(err);
+        }
+        res.json(adaptation);
+    });
+});
+
 module.exports = adaptationRoutes;

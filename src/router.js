@@ -61,10 +61,21 @@ export default new Router({
       path: '/requirex/domain',
       name: 'requirexdomain',
       component: () => import('./views/RequireXDomain.vue')
-    }, {
-      name: 'create',
-      path: '/create',
-      component: () => import('./views/CreateComponent.vue')
+    },
+    {
+      name: 'requirexapplicationedit',
+      path: '/requirex/application/edit/:id',
+      component: () => import('./views/RequireXApplicationEdit.vue')
+    }, 
+    {
+      path: '/requirex/domain/edit/:id',
+      name: 'requirexdomainedit',
+      component: () => import('./views/RequireXDomainEdit.vue')
+    },
+    {
+      path: '/requirex/adaptation/edit/:id',
+      name: 'requirexadaptationedit',
+      component: () => import('./views/RequireXAdaptationEdit.vue')
     },
   ]
 })

@@ -424,6 +424,14 @@ export default {
     //Cargar datos
     this.$refs['requirement'].resetFields();
   },
+  created(){
+        //Cargar lista de requerimientos de aplicacion
+    let uri = "http://localhost:4000/applications";
+    this.axios.get(uri).then(response => {
+      this.listApplicationRequirement = response.data;
+      this.countApplication = this.listApplicationRequirement.length;
+    });
+  }
 
 };
 </script>

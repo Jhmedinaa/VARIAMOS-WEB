@@ -159,16 +159,12 @@
       </i-form>
 
       <div class="container text-right my-2">
-        <Button
-          class="mx-1 cb-dark"
-          @click="handleSubmit('requirement')"
-        >{{$t('requirex_generate')}}</Button>
+        <Button class="mx-1 cb-dark" @click="handleSubmit('requirement')">{{$t('requirex_edit')}}</Button>
         <Button type="error" @click="onAdaptationCancel('requirement')">{{$t('requirex_cancel')}}</Button>
       </div>
     </div>
   </div>
 </template>
-
 <script>
 import requireType from "./../components/requirex/components/RequireType";
 import imperative from "./../components/requirex/components/Imperative";
@@ -184,7 +180,6 @@ export default {
     "app-postBehaviour": postBehaviour,
     "app-time-list": timeList
   },
-
   data() {
     //Validar cuando relax sea few o many
     const validatePostBehaviour = (rule, value, callback) => {
@@ -256,30 +251,7 @@ export default {
     };
 
     return {
-      listAdaptationRequirement: [],
-      requirement: {
-        id: 0,
-        requirementNumber: "",
-        reqType: this.$t("requirex_requirement_type_value_1"),
-        name: "",
-        condition: false,
-        conditionDescription: "",
-        imperative: this.$t("requirex_requirement_imperative_value_1"),
-        systemName: "",
-        processVerb: "",
-        object: "",
-        system: "",
-        relaxing: this.$t("requirex_requirement_relax_many"),
-        postBehaviour: this.$t("requirex_requirement_after"),
-        event: "",
-        timeInterval: 0,
-        units: "",
-        quantity: "",
-        frecuency: "",
-        quantityFrecuency: "",
-        msg: "",
-        estado: true
-      },
+      requirement: {},
       ruleValidate: {
         reqType: [
           {
@@ -368,7 +340,6 @@ export default {
           { required: true, validator: validateClose, trigger: "blur" }
         ]
       },
-      countAdaptation: 0,
       lastTimeAdaptation: "",
       userInt: false,
       autoAct: false,
@@ -455,7 +426,7 @@ export default {
               this.requirement.relaxing +
               " " +
               this.requirement.timeInterval +
-              " " + 
+              " " +
               this.requirement.quantity +
               " " +
               this.$t("requirex_requirement_times") +
@@ -476,12 +447,7 @@ export default {
               " " +
               this.requirement.quantityFrecuency;
           }
-          //Agregar item a la lista
-          this.countAdaptation++;
-          this.requirement.id = this.countAdaptation;
-          this.requirement.requirementNumber = "S.R." + this.requirement.id;
-
-          this.saveRequirement();
+          this.updateRequirement();
 
           //Contar Requerimientos
 
@@ -494,32 +460,19 @@ export default {
         }
       });
     },
-    saveRequirement() {
-      let uri = "http://localhost:4000/adaptations/add";
+    updateRequirement() {
+      let uri = `http://localhost:4000/adaptations/update/${this.$route.params.id}`;
       this.axios.post(uri, this.requirement).then(() => {
-        this.$Message.success("Success!");
-        this.$router.push("/requirex");
+        this.$router.replace("/requireX");
       });
     }
   },
-  mounted() {
-    //Cargar datos
-    this.$refs['requirement'].resetFields();
-  },
-  created(){
-     //Cargar lista de requerimientos de aplicacion
-    let uri = "http://localhost:4000/adaptations";
+  created() {
+    let uri = `http://localhost:4000/adaptations/${this.$route.params.id}`;
     this.axios.get(uri).then(response => {
-        this.listAdaptationRequirement = response.data;
-        this.countAdaptation = this.listAdaptationRequirement.length;
+      this.requirement = response.data;
+      console.log(this.requirement);
     });
   }
 };
 </script>
-
-<style scoped>
-.form-requirement {
-  margin: 0 auto;
-  max-width: 500px;
-}
-</style>
