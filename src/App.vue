@@ -14,7 +14,7 @@
         </nav>
         <div class="container-fluid">
             <div class="row">
-              <Menu class="col-md-2 bg-light sidebar collapseMulti collapse show">
+              <Menu class="col-md-2 bg-dark sidebar collapseMulti collapse show">
                 <div class="sidebar-sticky">
                       <Filetree></Filetree>
                       <Divider />

@@ -14,6 +14,8 @@ import messages from './assets/js/common/messages'
 
 import VueAxios from 'vue-axios';
 import axios from 'axios';
+import BootstrapVueTreeview from 'bootstrap-vue-treeview'
+Vue.use(BootstrapVueTreeview)
 
 Vue.use(VueAxios, axios);
 

@@ -48,7 +48,7 @@ describe('Filetree Store Unit tests', () => {
             "modeltype": 1,
             "contextmenuIndex": 0
           },
-          "numberOfChildren": 3
+          "numberOfChildren": 4
         }, {
           "children": [],
           "data": {
