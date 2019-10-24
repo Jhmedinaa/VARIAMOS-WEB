@@ -14,11 +14,12 @@
         :data="treeData"
         :contextMenuItems="contextMenuItems"
         :showIcons="true"
-		prependIconClass="fa"
+        prependIconClass="fa"
       ></b-tree-view>
     </div>
 
     <div>
+      <!--This modal set a name for a new proyect-->
       <Modal
         v-model="modal"
         :title="$t('filemanagement_addproject_title')"
@@ -49,6 +50,7 @@
         </div>
       </Modal>
     </div>
+    
   </div>
 </template>
 
@@ -58,82 +60,27 @@ export default {
   data: function() {
     return {
       proyectName: "",
-      treeData: [   {
-          id: 1,
-          name: "Users",
-          icon: "fa-folder"
-        },
-        {
-          id: 2,
-          name: "Books",
-          icon: "fa-book",
-          children: [
-            {
-              id: 3,
-              name: "Neptune",
-              icon: "fa-book"
-            }
-          ]
-        },
-        {
-          id: 5,
-          name: "Vehicles",
-          children: [
-            {
-              id: 23,
-              name: "Cars",
-              icon: "fa-car"
-            },
-            {
-              id: 34,
-              name: "Trucks",
-              icon: "fa-truck",
-              children: [
-                {
-                  id: 101,
-                  name: "Mars"
-                }
-              ]
-            }
-          ]
-        }],
+      treeData: [],
       baseTreeData: [
         {
           id: 1,
-          name: "Users",
-          icon: "fa-users"
-        },
-        {
-          id: 2,
-          name: "Books",
-          icon: "fa-book",
+          name: "",
+          icon: "fa-folder",
           children: [
             {
               id: 3,
-              name: "Neptune",
-              icon: "fa-book"
-            }
-          ]
-        },
-        {
-          id: 5,
-          name: "Vehicles",
-          children: [
-            {
-              id: 23,
-              name: "Cars",
-              icon: "fa-car"
+              name: "Domain",
+              icon: "fa-globe-americas"
             },
             {
-              id: 34,
-              name: "Trucks",
-              icon: "fa-truck",
-              children: [
-                {
-                  id: 101,
-                  name: "Mars"
-                }
-              ]
+              id: 3,
+              name: "Application",
+              icon: "fas fa-mobile-alt"
+            },
+            {
+              id: 3,
+              name: "Adaptation",
+              icon: "fa-headphones-alt"
             }
           ]
         }
@@ -153,16 +100,19 @@ export default {
   methods: {
     //Cambiar nombre del proyecto
     createProyect() {
-      alert(this.treeData.length);
+      //Verficar si existe un proyecto
+
       if (this.treeData.length == 0) {
         this.treeData = this.baseTreeData;
-      }
 
-      this.treeData[0].name = this.proyectName;
-      this.$nextTick(function() {
-        console.log(this.$el.textContent); // => 'updated'
-      });
-      this.isCreated = true;
+        this.treeData[0].name = this.proyectName;
+        this.$nextTick(function() {
+          console.log(this.$el.textContent); // => 'updated'
+        });
+        this.isCreated = true;
+      }else{
+
+      }
     }
   }
 };
