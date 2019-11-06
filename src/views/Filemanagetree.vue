@@ -50,7 +50,6 @@
         </div>
       </Modal>
     </div>
-    
   </div>
 </template>
 
@@ -75,13 +74,20 @@ export default {
             {
               id: 3,
               name: "Application",
-              icon: "fas fa-mobile-alt"
-            },
-            {
-              id: 3,
+              icon: "fas fa-mobile-alt",
+              children:[
+               {
+              id: 4,
               name: "Adaptation",
               icon: "fa-headphones-alt"
-            }
+              },
+              {
+                id: 5,
+                name: "Prueba"
+              }
+            ]
+            },
+           
           ]
         }
       ],
