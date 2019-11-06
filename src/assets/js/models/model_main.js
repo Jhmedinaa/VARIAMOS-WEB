@@ -38,8 +38,6 @@ let main = function main(graph,layers,mxModel,toolbar,keyHandler,container,model
 
 			//setup graph config
 			setup_graph_config(graph);
-			//setup custom shapes
-			setup_custom_shapes();
 		}
 		
 		//setup buttons
@@ -50,10 +48,12 @@ let main = function main(graph,layers,mxModel,toolbar,keyHandler,container,model
 		setupFunctions["setup_keys"](keyHandler,graph,reused_functions);
 		//setup custom elements
 		setupFunctions["setup_elements"](graph,data["m_elements"],data["m_attributes"],data["m_clon_cells"],data["m_constraints_ic"],toolbar,data["m_type"]);
+		//setup custom shapes
+		setup_custom_shapes(model_type);
 		//setup label changed
 		setup_label_changed(graph,data["m_labels"]);	
 		//setup relations
-		setupFunctions["setup_relations"](graph,data["m_relations"],data["m_relation_styles"]);
+		setupFunctions["setup_relations"](graph,data["m_relations"],data["m_relation_styles"],data["m_constraints_relations"]);
 		//setup custom features by model type
 		setup_custom_features_by_type(data["m_type"]);
 		//setup overlay
@@ -84,7 +84,7 @@ let main = function main(graph,layers,mxModel,toolbar,keyHandler,container,model
 		}
 	}
 
-	function setup_custom_shapes(){
+	function setup_custom_shapes(model_type){
 		function CustomShape()
 		{
 			mxShape.call(this);
@@ -93,12 +93,11 @@ let main = function main(graph,layers,mxModel,toolbar,keyHandler,container,model
 
 		// Replaces existing actor shape
 		mxCellRenderer.registerShape('customShape', CustomShape);
-		
-		// Loads the stencils into the registry
-		let req = mxUtils.load(projectPath+'xml/MX/custom_shapes.xml');
+
+		let req = mxUtils.load(projectPath+'xml/MX/'+model_type+'/custom_shapes.xml');
 		let root = req.getDocumentElement();
 		let shape = root.firstChild;
-		
+	
 		while (shape != null)
 		{
 			if (shape.nodeType == mxConstants.NODETYPE_ELEMENT)
@@ -119,7 +118,7 @@ let main = function main(graph,layers,mxModel,toolbar,keyHandler,container,model
 		graph.setPanning(true);
 		graph.setCellsEditable(false); // Avoid double click cells
 		new mxRubberband(graph); // Enables rectangular selection
-		graph.maximumGraphBounds = new mxRectangle(0, 0, 2000, 2000);
+		graph.maximumGraphBounds = new mxRectangle(0, 0, 4000, 4000);
 		// new mxOutline(graph, document.getElementById('navigator'));
 	}
 

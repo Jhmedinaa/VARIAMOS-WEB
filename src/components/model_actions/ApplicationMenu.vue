@@ -3,11 +3,13 @@
     <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       {{ $t("application_menu") }}
     </a>
-    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-      <a @click="set_parameters()" class="dropdown-item">{{ $t("application_menu_set_app") }}</a>
-      <a @click="execute_derivation()" class="dropdown-item">{{ $t("domain_implementation_execute") }}</a>      
-      <a @click="customize_derivation()" class="dropdown-item">{{ $t("domain_implementation_customize") }}</a>
-      <a @click="verify_derivation()" class="dropdown-item">{{ $t("domain_implementation_verify") }}</a>
+    <div id="application-menu" class="dropdown-menu" aria-labelledby="navbarDropdown">
+      <a data-menudisplay="['feature','component','binding_feature_component']" @click="set_parameters()" class="dropdown-item">{{ $t("application_menu_set_app") }}</a>
+      <a data-menudisplay="['feature','component','binding_feature_component']" @click="execute_derivation()" class="dropdown-item">{{ $t("domain_implementation_execute") }}</a>      
+      <a data-menudisplay="['feature','component','binding_feature_component']" @click="customize_derivation()" class="dropdown-item">{{ $t("domain_implementation_customize") }}</a>
+      <a data-menudisplay="['feature','component','binding_feature_component']" @click="verify_derivation()" class="dropdown-item">{{ $t("domain_implementation_verify") }}</a>
+      <a data-menudisplay="['adaptation_state','adaptation_hardware','adaptation_binding_state_hardware']" @click="adaptation_state_source_code_generation()" class="dropdown-item">Source code generation</a>
+      <component :is="dynamicComponent" :current_graph="current_graph"></component>
     </div>
 
   </li>
@@ -15,32 +17,58 @@
 
 <script>
 import axios from "axios";
-import di_actions from '@/assets/js/models/actions/domain_implementation/di_actions.js'
-import { setupModal, modalH3, modalSimpleText, modalInputTexts, modalCustomization, modalButton } from '../../assets/js/common/util'
+import di_actions from '@/assets/js/models/actions/domain_implementation/di_actions.js';
+import "@/assets/js/chart/Chart.min.js";
+import { setupModal, modalH3, modalSimpleText, modalInputTexts, modalCustomization, modalButton, downloadFile } from '../../assets/js/common/util.js';
+import adaptation_state_actions from '@/assets/js/models/actions/domain_implementation/adaptation_state_actions.js';
 
 export default {
-  data: function(){
+  data: function() {
     return {
-      model_data:"",
-      file_to_upload:"",
-      file_dest:"",
-      previous_dest:"",
-      previous_cpoint:"",
-      previous_plan:"",
-      customization_data:"",
-      customization_comp_pos:0,
-      customization_comp_max_pos:0,
-      customization_cus_pos:0,
-      customization_cus_max_pos:0,
-      customization_response:"",
-      errors:[], //errors
-    }
+      model_data: "",
+      file_to_upload: "",
+      file_dest: "",
+      previous_dest: "",
+      previous_cpoint: "",
+      previous_plan: "",
+      customization_data: "",
+      customization_comp_pos: 0,
+      customization_comp_max_pos: 0,
+      customization_cus_pos: 0,
+      customization_cus_max_pos: 0,
+      customization_response: "",
+      errors: [] //errors
+    };
   },
   props: {
-   current_graph: {
-    type: Object,
-    required: true
-   }
+    current_graph: {
+      type: Object,
+      required: true
+    },
+    model_type: {
+      type: String,
+      required: true
+    }
+  },
+  computed: {
+    // load dynamic application menu actions
+    dynamicComponent() {
+      this.compo = "./"+this.model_type+"/ApplicationActions.vue";
+      let compo = "./"+this.model_type+"/ApplicationActions.vue";
+      if(this.model_type==""){
+        // nothing
+      }else{
+        try{
+          let test = require(`${compo}`);
+          function imp(){
+            return import(`${compo}`);
+          }
+          return imp;
+        }catch (ex) {
+          return null;
+        }
+      }
+    }
   },
   methods: {
     //Start set parameters
@@ -51,7 +79,7 @@ export default {
       let inputs = ["server_derived_path"];
       if (localStorage["domain_implementation_pool_path"]) {
         default_vals = [localStorage["domain_implementation_derived_path"]];
-      }else{
+      } else {
         default_vals = ["uploads/component_derived/"];
       }
       let c_body = modalInputTexts(texts,inputs,default_vals);
@@ -119,7 +147,7 @@ export default {
       if (localStorage["domain_implementation_main_path"] && localStorage["domain_implementation_pool_path"] && localStorage["domain_implementation_derived_path"]) {
         this.errors=[];
         this.customization_data=di_actions(this.current_graph,"customize");
-
+        
         if(this.customization_data.length==0){
           let c_header = modalH3(this.$t("modal_error"),"error");
           let c_body = modalSimpleText("No components to customize");
@@ -167,9 +195,11 @@ export default {
       }
     },
     //Start save parameters
-    save_parameters(){
-      localStorage["domain_implementation_derived_path"] =  document.getElementById('server_derived_path').value;
-      document.getElementById('main_modal').style.display="none";
+    save_parameters() {
+      localStorage[
+        "domain_implementation_derived_path"
+      ] = document.getElementById("server_derived_path").value;
+      document.getElementById("main_modal").style.display = "none";
     },
     //Start run customization
     run_customization(){
@@ -203,66 +233,77 @@ export default {
               model_datax[5]=this.previous_plan;
               model_datax[6]=customized_content;
             }
-
-            this.model_data=JSON.stringify(model_datax);
-            document.getElementById('Start/Next').disabled = true;
+           
+           this.model_data = JSON.stringify(model_datax);
+            document.getElementById("Start/Next").disabled = true;
             
-            axios.post(localStorage["domain_implementation_main_path"]+'ComponentImplementation/customize/next', {
-              data: this.model_data,
-              p_pool: localStorage["domain_implementation_pool_path"],
-              p_derived: localStorage["domain_implementation_derived_path"]
-            })
-            .then(response => {
-              document.getElementById('Start/Next').disabled = false;
-              if(response.data==""){
-                this.previous_dest="";
-                document.getElementById('notification').value="Customization point not found, verify current file";
-              }else if(response.data=="file"){
-                this.file_dest=destination;
-                document.getElementById('filetouploadtr').style.display = "";
-                document.getElementById('customized').disabled = true;
-              }else{
-                this.previous_dest=destination;
-                this.previous_cpoint=model_datax[1];
-                this.previous_plan=model_datax[2];
-                document.getElementById('default').value=response.data;
-                document.getElementById('customized').value=response.data;
-              }
-            })
-            .catch(e => {
-              this.previous_dest="";
-              document.getElementById('Start/Next').disabled = false;
-            });
-
+            axios
+              .post(
+                localStorage["domain_implementation_main_path"] +
+                  "ComponentImplementation/customize/next",
+                {
+                  data: this.model_data,
+                  p_pool: localStorage["domain_implementation_pool_path"],
+                  p_derived: localStorage["domain_implementation_derived_path"]
+                }
+              )
+              .then(response => {
+                document.getElementById("Start/Next").disabled = false;
+                if (response.data == "") {
+                  this.previous_dest = "";
+                  document.getElementById("notification").value =
+                    "Customization point not found, verify current file";
+                } else if (response.data == "file") {
+                  this.file_dest = destination;
+                  document.getElementById("filetouploadtr").style.display = "";
+                  document.getElementById("customized").disabled = true;
+                } else {
+                  this.previous_dest = destination;
+                  this.previous_cpoint = model_datax[1];
+                  this.previous_plan = model_datax[2];
+                  document.getElementById("default").value = response.data;
+                  document.getElementById("customized").value = response.data;
+                }
+              })
+              .catch(e => {
+                this.previous_dest = "";
+                document.getElementById("Start/Next").disabled = false;
+              });
           }
           this.customization_cus_pos++;
-        }else{
-          let customized_content=document.getElementById('customized').value;
-          if(this.previous_dest!="" && customized_content!=""){
-            let model_datax=[];
-            model_datax[0]=this.previous_dest;
-            model_datax[1]=this.previous_cpoint;
-            model_datax[2]=this.previous_plan;
-            model_datax[3]=customized_content;
-            this.model_data=JSON.stringify(model_datax);
-            axios.post(localStorage["domain_implementation_main_path"]+'ComponentImplementation/customize/onlysave', {
-              data: this.model_data,
-              p_pool: localStorage["domain_implementation_pool_path"],
-              p_derived: localStorage["domain_implementation_derived_path"]
-            })
-            .then(response => {
-              //
-            })
-            .catch(e => {
-              this.previous_dest="";
-            });
+        } else {
+          let customized_content = document.getElementById("customized").value;
+          if (this.previous_dest != "" && customized_content != "") {
+            let model_datax = [];
+            model_datax[0] = this.previous_dest;
+            model_datax[1] = this.previous_cpoint;
+            model_datax[2] = this.previous_plan;
+            model_datax[3] = customized_content;
+            this.model_data = JSON.stringify(model_datax);
+            axios
+              .post(
+                localStorage["domain_implementation_main_path"] +
+                  "ComponentImplementation/customize/onlysave",
+                {
+                  data: this.model_data,
+                  p_pool: localStorage["domain_implementation_pool_path"],
+                  p_derived: localStorage["domain_implementation_derived_path"]
+                }
+              )
+              .then(response => {
+                //
+              })
+              .catch(e => {
+                this.previous_dest = "";
+              });
           }
-          this.previous_dest="";
-          document.getElementById('current').value="";
-          document.getElementById('default').value="";
-          document.getElementById('customized').value="";
-          document.getElementById('notification').value="Component succesfully customized, click Start/Next to continue with another component";
-          this.customization_cus_pos=0;
+          this.previous_dest = "";
+          document.getElementById("current").value = "";
+          document.getElementById("default").value = "";
+          document.getElementById("customized").value = "";
+          document.getElementById("notification").value =
+            "Component succesfully customized, click Start/Next to continue with another component";
+          this.customization_cus_pos = 0;
           this.customization_comp_pos++;
         }
       }else{
@@ -271,48 +312,84 @@ export default {
         setupModal(c_header,c_body);
       }
     },
-    send_file(event){
+    send_file(event) {
       let formData = new FormData();
-      formData.append('file', event.target.files[0]);
-      axios.post(localStorage["domain_implementation_main_path"]+'ComponentImplementation/uploadfile?dest='+this.file_dest+"&p_derived="+localStorage["domain_implementation_derived_path"],
-        formData,
-        {
-          headers: {
-              'Content-Type': undefined
+      formData.append("file", event.target.files[0]);
+      axios
+        .post(
+          localStorage["domain_implementation_main_path"] +
+            "ComponentImplementation/uploadfile?dest=" +
+            this.file_dest +
+            "&p_derived=" +
+            localStorage["domain_implementation_derived_path"],
+          formData,
+          {
+            headers: {
+              "Content-Type": undefined
+            }
+          }
+        )
+        .then(response => {
+          if (response.data == "uploaded") {
+            document.getElementById("notification").value =
+              "File succesfully uploaded";
+          } else {
+            document.getElementById("notification").value =
+              "Error uploading the file";
           }
         })
-      .then(response => {
-        if(response.data=="uploaded"){
-          document.getElementById('notification').value="File succesfully uploaded";
-        }else{
-          document.getElementById('notification').value="Error uploading the file";
-        }
-      })
-      .catch(function(){
-        document.getElementById('notification').value="Error uploading the file";
-      });
+        .catch(function() {
+          document.getElementById("notification").value =
+            "Error uploading the file";
+        });
     },
-    find_destination_file(id){
+    find_destination_file(id) {
       //collect the information of the components and files to be customized
       let component_root = this.current_graph.getModel().getCell("component");    
       let component_relations = this.current_graph.getModel().getChildEdges(component_root);
-
       let destination = "";
-
       for (let i = 0; i < component_relations.length; i++) {
         let source = component_relations[i].source.getAttribute("label");
-        if(source==id){
+        if (source == id) {
           return component_relations[i].source.getAttribute("destination");
           break;
         }
       }
-
+      return "";
+    },
+    adaptation_state_source_code_generation() {
+      try {
+        let serverUrl =
+          localStorage["domain_implementation_main_path"] +
+          "AdaptationStateImplementation/generateSourceCode";
+        //alert(serverUrl);
+        let directory = localStorage["domain_implementation_pool_path"];
+        //alert(directory);
+        let modelJson = adaptation_state_actions(
+          this.current_graph,
+          "serializeJson"
+        );
+        //alert(modelJson);
+        downloadFile("BindingStateHardwareModel.json", modelJson);
+        axios
+          .post(serverUrl, {
+            data: modelJson,
+            p_pool: directory
+          })
+          .then(response => {
+            downloadFile("Arduino.ino", response.data);
+          })
+          .catch(e => {
+            this.previous_dest = "";
+            document.getElementById("Start/Next").disabled = false;
+          });
+      } catch (ex) {
+        alert(ex);
+      }
       return "";
     }
   }
-}
+};
 </script>
-
-
 <style scoped>
 </style>
