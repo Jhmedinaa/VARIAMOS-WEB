@@ -1,20 +1,43 @@
 <template>
   <div id="app">
     <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
-          <div id="top-menu" class="navbar-brand col-sm-4 col-md-2 mr-0"><div id="main-text" class="main-text"><router-link class="link-white" to="/">{{ $t("app_variamos") }}</router-link></div>
-          <div id="main-button-col" class="main-button"> <button class="navbar-toggler" type="button">
+      <div id="top-menu" class="navbar-brand col-sm-4 col-md-2 mr-0">
+        <div id="main-text" class="main-text">
+          <router-link class="link-white" to="/">{{ $t("app_variamos") }}</router-link>
+        </div>
+        <div id="main-button-col" class="main-button">
+          <button class="navbar-toggler" type="button">
             <span @click="custom_collapse()" class="navbar-toggler-icon"></span>
-          </button></div></div>
-          <input id="search-bar" class="form-control form-control-dark w-100 height-100" name="keyword" type="text" v-bind:placeholder="$t('app_search')" v-bind:aria-label="$t('app_search')">
-          <!--<ul id="sign-out" class="navbar-nav px-3">
+          </button>
+        </div>
+      </div>
+      <input
+        id="search-bar"
+        class="form-control form-control-dark w-100 height-100"
+        name="keyword"
+        type="text"
+        v-bind:placeholder="$t('app_search')"
+        v-bind:aria-label="$t('app_search')"
+      />
+      <!--<ul id="sign-out" class="navbar-nav px-3">
             <li class="nav-item text-nowrap">
               <a class="nav-link">{{ $t("app_sign_out") }}</a>
             </li>
-          </ul>-->
+      </ul>-->
+    </nav>
+    <div class="container-fluid">
+      <div class="row">
+        <nav
+          class="col-md-2 d-none d-md-block bg-white sidebar"
+          style="box-shadow: none; position: inherit;z-index: inherit;"
+        >
+          <div class="sidebar-sticky">
+            <Filetree></Filetree>
+          </div>
         </nav>
-        <div class="container-fluid">
-            <div class="row">
-              <Menu class="col-md-2 bg-dark sidebar collapseMulti collapse show">
+        <!--Menu -->
+
+        <!--   <Menu class="col-md-2 bg-dark sidebar collapseMulti collapse show">
                 <div class="sidebar-sticky">
                       <Filetree></Filetree>
                   <ul class="nav flex-column" style="display:none;">
@@ -65,17 +88,27 @@
                     </li>
                   </ul>
                 </div>
-              </Menu>
+        </Menu>-->
 
-              <main role="main" id="main-sketch" class="top-main col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-
-                <div>
-                  <div id="mainview">
-                    <keep-alive>
-                      <router-view></router-view>
-                    </keep-alive>
-                  </div>
-                </div>
+        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="toast-header">
+            <img src class="rounded mr-2" alt />
+            <strong class="mr-auto">Bootstrap</strong>
+            <small>11 mins ago</small>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="toast-body">{{$t("filemanagement_addproject_error3")}}</div>
+        </div>
+        <main role="main" id="main-sketch" class="top-main col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+          <div>
+            <div id="mainview">
+              <keep-alive>
+                <router-view></router-view>
+              </keep-alive>
+            </div>
+          </div>
 
           <!-- begin main modal -->
           <div>
@@ -118,10 +151,10 @@ export default {
     };
   },
   methods: {
-    hide_modal(){
-      document.getElementById('main_modal').style.display="none";
+    hide_modal() {
+      document.getElementById("main_modal").style.display = "none";
     },
-    custom_collapse(){
+    custom_collapse() {
       let sidebar = document.getElementById("sidebar");
       let maintext = document.getElementById("main-text");
       let ldraw = document.getElementById("left-draw");
@@ -129,23 +162,31 @@ export default {
       let element = document.getElementById("top-menu");
       let elementb = document.getElementById("main-button-col");
       let elementc = document.getElementById("main-sketch");
-      if(element.classList.contains("col-sm-1")){
-        sidebar.style.display="";
-        maintext.style.display="";
-        element.classList.remove("col-sm-1"); element.classList.remove("col-md-1");
-        element.classList.add("col-sm-4"); element.classList.add("col-md-2");
+      if (element.classList.contains("col-sm-1")) {
+        sidebar.style.display = "";
+        maintext.style.display = "";
+        element.classList.remove("col-sm-1");
+        element.classList.remove("col-md-1");
+        element.classList.add("col-sm-4");
+        element.classList.add("col-md-2");
         elementb.classList.remove("center-button");
-        elementc.classList.remove("col-md-12"); elementc.classList.remove("col-lg-12");
-        elementc.classList.add("col-md-9"); elementc.classList.add("col-lg-10");
+        elementc.classList.remove("col-md-12");
+        elementc.classList.remove("col-lg-12");
+        elementc.classList.add("col-md-9");
+        elementc.classList.add("col-lg-10");
         //rdraw.classList.remove("col-xl-2"); ldraw.classList.remove("col-xl-10");
-      }else{
-        sidebar.style.display="none";
-        maintext.style.display="none";
-        element.classList.remove("col-sm-4"); element.classList.remove("col-md-2");
-        element.classList.add("col-sm-1"); element.classList.add("col-md-1");
+      } else {
+        sidebar.style.display = "none";
+        maintext.style.display = "none";
+        element.classList.remove("col-sm-4");
+        element.classList.remove("col-md-2");
+        element.classList.add("col-sm-1");
+        element.classList.add("col-md-1");
         elementb.classList.add("center-button");
-        elementc.classList.remove("col-md-9"); elementc.classList.remove("col-lg-9");
-        elementc.classList.add("col-md-12"); elementc.classList.add("col-lg-12");
+        elementc.classList.remove("col-md-9");
+        elementc.classList.remove("col-lg-9");
+        elementc.classList.add("col-md-12");
+        elementc.classList.add("col-lg-12");
         //rdraw.classList.add("col-xl-2"); ldraw.classList.add("col-xl-10");
       }
     }
@@ -162,33 +203,34 @@ export default {
   }
 }
 
-.link-white, .link-white:hover{
-    color: #fff;
+.link-white,
+.link-white:hover {
+  color: #fff;
 }
 
 .navbar-toggler {
-    padding: 0px !important;
-    font-size: 1 !important;
+  padding: 0px !important;
+  font-size: 1 !important;
 }
 
-.center-button{
+.center-button {
   text-align: center;
   float: none !important;
 }
 
-.main-text{
+.main-text {
   display: inline;
   line-height: 32px;
 }
 
-.main-button{
+.main-button {
   line-height: 32px;
   float: right;
 }
 
 .navbar-brand {
-    padding-top: .5rem !important;
-    padding-bottom: .5rem !important;
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
 }
 
 .height-100 {

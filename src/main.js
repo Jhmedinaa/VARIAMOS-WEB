@@ -17,7 +17,7 @@ Vue.use(BootstrapVueTreeview)
 
 Vue.use(VueAxios, axios);
 
-Vue.use(iView)
+//Vue.use(iView)
 Vue.config.productionTip = false
 Vue.use(VueI18n)
 
