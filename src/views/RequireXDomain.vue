@@ -191,6 +191,8 @@
     </div>
   </div>
 </template>
+<script src="//vuejs.org/js/vue.min.js"></script>
+<script src="//unpkg.com/iview/dist/iview.min.js"></script>
 
 <script>
 import requireType from "./../components/requirex/components/RequireType";
@@ -428,7 +430,6 @@ export default {
   }
 };
 </script>
-
 
 <style scoped>
 .form-requirement {

@@ -18,10 +18,11 @@
       <b-tree-view
         class="text-black"
         :data="treeData"
+        ref="tree"
         :contextMenuItems="contextMenuItems"
         :showIcons="true"
         @nodeSelect="nodeSelect"
-        @deleteNode="deleteNode"
+        @contextMenuItemSelect="menuItemSelected"
         prependIconClass="fa"
       ></b-tree-view>
     </div>
@@ -62,6 +63,7 @@
               <button
                 type="button"
                 class="btn btn-primary"
+                :labelProp="nodeLabelProp"
                 @click="createProyect"
                 data-dismiss="modal"
               >Save changes</button>
@@ -88,6 +90,10 @@ export default {
     return {
       proyectName: "",
       errormessage: "",
+      nodeLabelProp: {
+        type: String,
+        default: "name"
+      },
       treeData: [],
       baseTreeData: [
         {
@@ -101,25 +107,29 @@ export default {
               icon: "fa-globe-americas",
               children: [
                 {
-                  id: 3,
-                  name: "feature"
+                  id: 13,
+                  name: "feature",
+                  folder: this.$t("treeview_domain")
                 },
                 {
                   id: 4,
-                  name: "component"
+                  name: "component",
+                  folder: this.$t("treeview_domain")
                 },
                 {
                   id: 5,
-                  name: "binding_feature_component"
+                  name: "binding_feature_component",
+                  folder: this.$t("treeview_domain")
                 },
                 {
                   id: 6,
-                  name: "istar"
+                  name: "istar",
+                  folder: this.$t("treeview_domain")
                 }
               ]
             },
             {
-              id: 7,
+              id: 3,
               name: "Application",
               icon: "fas fa-mobile-alt",
               children: [
@@ -130,19 +140,23 @@ export default {
                 },
                 {
                   id: 9,
-                  name: "adaptation_state"
+                  name: "adaptation_state",
+                  folder: this.$t("treeview_application")
                 },
                 {
                   id: 10,
-                  name: "adaptation_hardware"
+                  name: "adaptation_hardware",
+                  folder: this.$t("treeview_application")
                 },
                 {
                   id: 11,
-                  name: "adaptation_binding_state_hardware"
+                  name: "adaptation_binding_state_hardware",
+                  folder: this.$t("treeview_application")
                 },
                 {
                   id: 12,
-                  name: "control"
+                  name: "control",
+                  folder: this.$t("treeview_application")
                 }
               ]
             }
@@ -157,6 +171,7 @@ export default {
         },
         { code: "RENAME_NODE", label: "Rename" }
       ],
+      selectedNode: null,
       isCreated: false
     };
   },
@@ -178,14 +193,38 @@ export default {
       }
     },
     nodeSelect(node, isSelected) {
-      this.$emit("nodeSelect", node, isSelected);
-      if (isSelected) {
-        console.log("by larry " + node);
+      console.log(
+        "Node " +
+          node.data.name +
+          " has been " +
+          (isSelected ? "selected" : "deselected")
+      );
+      console.log(JSON.stringify(node.data));
 
-        this.$router.push(
-          "/models/" + this.proyectName + "/" + "Domain-jhon" + "/" + "feature"
-        );
-        this.$store.dispatch('setopen', 1);
+      if (isSelected) {
+        if (node.data.id > 3) {
+          this.$router.push(
+            "/models/" +
+              this.proyectName +
+              "/" +
+              node.data.folder +
+              "-" +
+              this.proyectName +
+              "/" +
+              node.data.name
+          );
+        }
+
+        this.$store.dispatch("setopen", 1);
+      } else if (node.data === this.selectedNode) {
+        this.selectedNode = null;
+      }
+    },
+    menuItemSelected(item, node) {
+      if (item.code === "DELETE_NODE") {
+        if (node.data.id === 1) {
+          this.$router.push("/models/default/default/default");
+        }
       }
     },
     deleteNode(nodeData) {
