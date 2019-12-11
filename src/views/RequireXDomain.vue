@@ -1,117 +1,138 @@
 <template>
   <div>
     <div class="container my-2 form-requirement">
-      <i-form ref="requirement" :model="requirement" :rules="ruleValidate">
+      <form ref="requirement">
         <div class="row">
           <div class="col">
-            <app-requireType
-              @onRequireTypeChange="requirement.reqType = $event"
-              :reqType="requirement.reqType"
-            ></app-requireType>
+            <label for="reqType">
+              <font size="3" color="red">*</font>
+              {{$t('requirex_requirement_type_label')}}
+            </label>
+
+            <select id="reqType" class="form-control">
+              <option
+                :value="$t('requirex_requirement_type_value_1')"
+              >{{ $t('requirex_requirement_type1')}}</option>
+              <option
+                :value="$t('requirex_requirement_type_value_2')"
+              >{{ $t('requirex_requirement_type2')}}</option>
+              <option
+                :value="$t('requirex_requirement_type_value_3')"
+              >{{ $t('requirex_requirement_type3')}}</option>
+            </select>
           </div>
           <div class="col">
-            <app-quantity
-              @onAffectedSystemChange="requirement.affectedSystems = $event"
-              :affectedSystems="requirement.affectedSystems"
-            ></app-quantity>
+            <label for="affectedSystems">
+              <font size="3" color="red">*</font>
+              {{$t('requirex_requirement_affected_systems_label')}}
+            </label>
+
+            <select id="affectedSystems" class="form-control">
+              <option
+                :value="$t('requirex_requirement_affected_systems1')"
+                selected
+              >{{ $t('requirex_requirement_affected_systems1')}}</option>
+              <option
+                :value="$t('requirex_requirement_affected_systems2')"
+              >{{ $t('requirex_requirement_affected_systems2')}}</option>
+              <option
+                :value="$t('requirex_requirement_affected_systems3')"
+              >{{ $t('requirex_requirement_affected_systems3')}}</option>
+            </select>
           </div>
         </div>
 
-        <div
-          class="row"
-          v-if="requirement.affectedSystems == $t('requirex_requirement_affected_systems3')"
-        >
+        <div id="thoseCoditionContainer" class="form-group my-3" style="display: none">
+          <label for="thoseCodition">{{$t('requirex_requirement_affected_condition')}}</label>
+          <input
+            id="thoseCodition"
+            class="form-control"
+            :placeholder="$t('requirex_requirement_affected_condition')"
+          />
+        </div>
+
+        <div class="row my-2">
           <div class="col">
-            <form-item :label="$t('requirex_requirement_affected_condition')" prop="thoseCodition">
-              <i-input
-                v-model="requirement.thoseCodition"
-                :placeholder="$t('requirex_requirement_affected_condition')"
-              />
-            </form-item>
+            <label>{{$t('requirex_requirement_system_domain_name_label')}}</label>
+            <input
+              id="systemName"
+              class="form-control"
+              :placeholder="$t('requirex_requirement_system_domain_name_label')"
+            />
+          </div>
+          <div class="col">
+            <label>{{$t('requirex_requirement_name_label')}}</label>
+            <input
+              id="name"
+              class="form-control"
+              :placeholder="$t('requirex_requirement_name_label')"
+            />
+          </div>
+        </div>
+
+        <div class="row my-2">
+          <div class="col">
+            <div class="custom-control custom-switch">
+              <input type="checkbox" class="custom-control-input" id="condition" />
+              <label
+                class="custom-control-label"
+                for="condition"
+              >{{$t('requirex_requirement_condition_label')}}</label>
+            </div>
+          </div>
+          <div id="conditionDescriptionContainer" class="col" style="display: none">
+            <textarea
+              id="conditionDescription"
+              class="form-control"
+              type="textarea"
+              :autosize="{minRows: 2,maxRows: 5}"
+              :placeholder="$t('requirex_requirement_condition_descrive_label')"
+            />
           </div>
         </div>
 
         <div class="row">
           <div class="col">
-            <form-item
-              :label="$t('requirex_requirement_system_domain_name_label')"
-              prop="systemName"
+            <label>{{ $t('requirex_requirement_imperative_label') }}</label>
+            <select id="imperative" class="form-control" :placeholder="$t('requirex_select')">
+              <option
+                :value="$t('requirex_requirement_imperative_value_1')"
+              >{{ $t('requirex_requirement_imperative1')}}</option>
+              <option
+                :value="$t('requirex_requirement_imperative_value_2')"
+              >{{ $t('requirex_requirement_imperative2')}}</option>
+              <option
+                :value="$t('requirex_requirement_imperative_value_3')"
+              >{{ $t('requirex_requirement_imperative3')}}</option>
+            </select>
+          </div>
+
+          <div class="col">
+            <label>{{ $t('requirex_requirement_system_activity_label') }}</label>
+            <select
+              id="systemActivity" class="form-control"
+              :placeholder="$t('requirex_select')"
+              :remote-method="onSystemActivityChange"
             >
-              <i-input
-                v-model="requirement.systemName"
-                :placeholder="$t('requirex_requirement_system_domain_name_label')"
-              />
-            </form-item>
-          </div>
-          <div class="col">
-            <form-item :label="$t('requirex_requirement_name_label')" prop="name">
-              <i-input
-                v-model="requirement.name"
-                :placeholder="$t('requirex_requirement_name_label')"
-              />
-            </form-item>
+              <option
+                :value="$t('requirex_requirement_system_activity_value_1')"
+              >{{ $t('requirex_requirement_system_activity1')}}</option>
+              <option
+                :value="$t('requirex_requirement_system_activity_value_2')"
+              >{{ $t('requirex_requirement_system_activity2')}}</option>
+              <option
+                :value="$t('requirex_requirement_system_activity_value_3')"
+              >{{ $t('requirex_requirement_system_activity3')}}</option>
+            </select>
           </div>
         </div>
 
-        <div class="row">
-          <div class="col">
-            <form-item :label="$t('requirex_requirement_condition_label')">
-              <i-switch v-model="requirement.condition" size="large">
-                <span slot="open">{{$t('requirex_requirement_yes')}}</span>
-                <span slot="close">{{$t('requirex_requirement_no')}}</span>
-              </i-switch>
-            </form-item>
-          </div>
-          <div class="col">
-            <form-item prop="desc" v-if="requirement.condition">
-              <i-input
-                v-model="requirement.conditionDescription"
-                type="textarea"
-                :autosize="{minRows: 2,maxRows: 5}"
-                :placeholder="$t('requirex_requirement_condition_descrive_label')"
-              ></i-input>
-            </form-item>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col">
-            <app-imperative
-              @onImperativeChange="requirement.imperative = $event"
-              :imperative="requirement.imperative"
-            ></app-imperative>
-          </div>
-          <div class="col">
-            <form-item
-              :label="$t('requirex_requirement_system_activity_label')"
-              prop="systemActivity"
-            >
-              <i-select
-                v-model="requirement.systemActivity"
-                :placeholder="$t('requirex_select')"
-                :remote-method="onSystemActivityChange"
-              >
-                <i-option
-                  :value="$t('requirex_requirement_system_activity_value_1')"
-                >{{ $t('requirex_requirement_system_activity1')}}</i-option>
-                <i-option
-                  :value="$t('requirex_requirement_system_activity_value_2')"
-                >{{ $t('requirex_requirement_system_activity2')}}</i-option>
-                <i-option
-                  :value="$t('requirex_requirement_system_activity_value_3')"
-                >{{ $t('requirex_requirement_system_activity3')}}</i-option>
-              </i-select>
-            </form-item>
-          </div>
-        </div>
-
-        <div class="sub-form" v-if="isSystemActivity">
-          <form-item :label="$t('requirex_requirement_user_label')" v-if="userInt">
-            <i-input
-              v-model="requirement.user"
+        <div style="display: none">
+          <label >{{$t('requirex_requirement_user_label')}}</label>
+          <input id="user"  class="form-control"
               :placeholder="$t('requirex_requirement_user_label')"
             />
-          </form-item>
+        </div>
 
           <div class="row">
             <div class="col">
@@ -140,6 +161,7 @@
             </div>
           </div>
 
+        <!--
           <div class="row">
             <div class="col">
               <form-item :label="$t('requirex_requirement_process_verb_label')" prop="processVerb">
@@ -179,7 +201,8 @@
             ></i-input>
           </form-item>
         </div>
-      </i-form>
+        -->
+      </form>
 
       <div class="container text-right my-2">
         <Button
@@ -195,15 +218,58 @@
 <script src="//unpkg.com/iview/dist/iview.min.js"></script>
 
 <script>
-import requireType from "./../components/requirex/components/RequireType";
 import imperative from "./../components/requirex/components/Imperative";
-import quantity from "./../components/requirex/components/Quantity";
+import { getDomainRequirement } from "../assets/js/common/requirement.js";
+
+import $ from "jquery";
+
+$(document).ready(function() {
+  //Declara modelo del requerimineto
+  var requirement = getDomainRequirement();
+
+  //Tipo de requerimiento
+  requirement.reqType = $("#reqType").val();
+  //Sistemas afectados
+  requirement.affectedSystems = $("#affectedSystems").val();
+
+  //Evento que se ejecuta cuando se cambia el tipo de requerimiento
+  $(document).on("change", "#reqType", function() {
+    requirement.reqType = $("#reqType").val();
+  });
+
+  //Evento que se ejecuta cuando se cambiam los sistemas afectados
+  $(document).on("change", "#affectedSystems", function() {
+    requirement.affectedSystems = $("#affectedSystems").val();
+    console.log(requirement.affectedSystems);
+    if (requirement.affectedSystems == "Those") {
+      $("#thoseCoditionContainer")
+        .first()
+        .fadeIn("slow");
+    } else {
+      $("#thoseCoditionContainer").hide();
+    }
+  });
+
+  //Activar condiciones
+  $("#condition").click(function() {
+    if ($("#condition").is(":checked")) {
+      $("#conditionDescriptionContainer")
+        .first()
+        .fadeIn("slow");
+    } else {
+      $("#conditionDescriptionContainer").hide();
+    }
+  });
+
+  //Cambiar de Actividad del sistema
+  $(document).on("change", "#systemActivity", function(){
+      alert("");
+  });
+});
 
 export default {
   components: {
-    "app-requireType": requireType,
-    "app-imperative": imperative,
-    "app-quantity": quantity
+    "app-imperative": imperative
   },
 
   data() {
@@ -298,6 +364,9 @@ export default {
     };
   },
   methods: {
+    getRequirement() {
+      return JSON.stringify(this.requirement);
+    },
     //Realizar filtro de opciones al cambiar de actividades
     onSystemActivityChange() {
       this.isSystemActivity = true;

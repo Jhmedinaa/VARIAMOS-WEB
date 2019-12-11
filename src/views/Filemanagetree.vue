@@ -77,6 +77,8 @@
 
 <script>
 import $ from "jquery";
+import { getModelInfo } from "../assets/js/common/treeview-json";
+import  Bus  from "../assets/js/common/bus";
 
 $(document).ready(function() {
   $(".toast")
@@ -95,74 +97,6 @@ export default {
         default: "name"
       },
       treeData: [],
-      baseTreeData: [
-        {
-          id: 1,
-          name: "",
-          icon: "fa-folder",
-          children: [
-            {
-              id: 2,
-              name: "Domain",
-              icon: "fa-globe-americas",
-              children: [
-                {
-                  id: 13,
-                  name: "feature",
-                  folder: this.$t("treeview_domain")
-                },
-                {
-                  id: 4,
-                  name: "component",
-                  folder: this.$t("treeview_domain")
-                },
-                {
-                  id: 5,
-                  name: "binding_feature_component",
-                  folder: this.$t("treeview_domain")
-                },
-                {
-                  id: 6,
-                  name: "istar",
-                  folder: this.$t("treeview_domain")
-                }
-              ]
-            },
-            {
-              id: 3,
-              name: "Application",
-              icon: "fas fa-mobile-alt",
-              children: [
-                {
-                  id: 8,
-                  name: "Adaptation",
-                  icon: "fa-headphones-alt"
-                },
-                {
-                  id: 9,
-                  name: "adaptation_state",
-                  folder: this.$t("treeview_application")
-                },
-                {
-                  id: 10,
-                  name: "adaptation_hardware",
-                  folder: this.$t("treeview_application")
-                },
-                {
-                  id: 11,
-                  name: "adaptation_binding_state_hardware",
-                  folder: this.$t("treeview_application")
-                },
-                {
-                  id: 12,
-                  name: "control",
-                  folder: this.$t("treeview_application")
-                }
-              ]
-            }
-          ]
-        }
-      ],
       contextMenuItems: [
         { code: "DELETE_NODE", label: "Delete node" },
         {
@@ -180,7 +114,7 @@ export default {
     createProyect() {
       //Verficar si existe un proyecto
       if (this.treeData.length == 0) {
-        this.treeData = this.baseTreeData;
+        this.treeData = getModelInfo();
 
         this.treeData[0].name = this.proyectName;
         this.$nextTick(function() {
@@ -193,16 +127,15 @@ export default {
       }
     },
     nodeSelect(node, isSelected) {
-      console.log(
-        "Node " +
-          node.data.name +
-          " has been " +
-          (isSelected ? "selected" : "deselected")
-      );
-      console.log(JSON.stringify(node.data));
-
+    
       if (isSelected) {
+        if (node.data.id == 1) {
+          return;
+        }
+
         if (node.data.id > 3) {
+
+          if(node.data.type == "model"){
           this.$router.push(
             "/models/" +
               this.proyectName +
@@ -213,9 +146,37 @@ export default {
               "/" +
               node.data.name
           );
-        }
+          }else if(node.data.type == "form"){
+            this.$router.push(
+            "/forms/" +
+              this.proyectName +
+              "/" +
+              node.data.folder +
+              "-" +
+              this.proyectName +
+              "/" +
+              node.data.name
+          );
+          }
+          //Para pasar objetos entre objetos
 
-        this.$store.dispatch("setopen", 1);
+          Bus.$emit("proyectName", this.proyectName);
+          Bus.$emit("itemSelect", JSON.stringify(node.data));
+        } else {
+          var defaultView = node.data.children[0];
+          this.$router.push(
+            "/models/" +
+              this.proyectName +
+              "/" +
+              defaultView.folder +
+              "-" +
+              this.proyectName +
+              "/" +
+              defaultView.name
+          );
+          //Para pasar objetos entre objetos
+          Bus.$emit("itemSelect", JSON.stringify(defaultView));
+        }
       } else if (node.data === this.selectedNode) {
         this.selectedNode = null;
       }

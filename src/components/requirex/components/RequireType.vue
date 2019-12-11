@@ -1,26 +1,28 @@
 <template>
-  <div>
-    <form-item :label="$t('requirex_requirement_type_label')" prop="reqType">
-      <i-select
-        :value="reqType"
-        :placeholder="$t('requirex_select')"
-        @on-change="onRequireTypeChange"
-      >
-        <i-option
+  <div id="reqType">
+
+    <label for="reqType">{{$t('requirex_requirement_type_label')}}</label>
+    <select id="reqTypeValue" class="form-control" v-model="reqType">
+       <option
           :value="$t('requirex_requirement_type_value_1')"
-        >{{ $t('requirex_requirement_type1')}}</i-option>
-        <i-option
+        >{{ $t('requirex_requirement_type1')}}</option>
+        <option
           :value="$t('requirex_requirement_type_value_2')"
-        >{{ $t('requirex_requirement_type2')}}</i-option>
-        <i-option
+        >{{ $t('requirex_requirement_type2')}}</option>
+        <option
           :value="$t('requirex_requirement_type_value_3')"
-        >{{ $t('requirex_requirement_type3')}}</i-option>
-      </i-select>
-    </form-item>
+        >{{ $t('requirex_requirement_type3')}}</option>
+    </select>
+   
   </div>
 </template>
 
 <script>
+import $ from "jquery";
+$(document).on(function(){
+
+});
+
 export default {
   props: {
     reqType: {

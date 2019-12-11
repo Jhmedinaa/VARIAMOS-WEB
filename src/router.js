@@ -23,6 +23,18 @@ export default new Router({
       component: () => import('./views/Multi-models.vue')
     },
     {
+      path: '/forms/:project/:folder/:type',
+      name: 'Forms',
+      component: () => import('./views/Multi-models.vue'),
+      children: [
+        {
+          path: '/requirex/domain',
+          name: 'requirexdomain',
+          component: () => import('./views/RequireXDomain.vue')
+        }
+      ]
+    },
+    {
       path: '/reports',
       name: 'Reports',
       component: () => import('./views/Reports.vue')
@@ -66,7 +78,7 @@ export default new Router({
       name: 'requirexapplicationedit',
       path: '/requirex/application/edit/:id',
       component: () => import('./views/RequireXApplicationEdit.vue')
-    }, 
+    },
     {
       path: '/requirex/domain/edit/:id',
       name: 'requirexdomainedit',
