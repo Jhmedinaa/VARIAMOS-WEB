@@ -5,6 +5,7 @@ export function getDomainRequirement(){
             requirementNumber: "",
             affectedSystems: "",
             thoseCodition: "",
+            isThoseCodition: false,
             reqType: "",
             name: "",
             condition: false,

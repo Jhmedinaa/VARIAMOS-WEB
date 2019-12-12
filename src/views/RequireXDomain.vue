@@ -1,5 +1,11 @@
 <template>
-  <div>
+  <div class="container">
+    <div id="domainMessage" class="alert alert-danger" role="alert" style="display: none">
+      <span></span>
+    </div>
+    <div class="my-3">
+      <h2>{{$t("requirex_domain_tittle")}}</h2>
+    </div>
     <div class="container my-2 form-requirement">
       <form id="domainForm" ref="requirement">
         <div class="row">
@@ -160,12 +166,7 @@
           </div>
           <div class="col">
             <label>{{ $t('requirex_requirement_from_label') }}</label>
-            <select
-              id="from"
-              class="form-control"
-              :placeholder="$t('requirex_select')"
-              :remote-method="onSystemActivityChange"
-            >
+            <select id="from" class="form-control" :placeholder="$t('requirex_select')">
               <option
                 :value="$t('requirex_requirement_from_value_1')"
               >{{ $t('requirex_requirement_from1')}}</option>
@@ -222,11 +223,12 @@
       </form>
 
       <div class="container text-right my-2">
-        <Button
-          class="mx-1 cb-dark"
-          @click="handleSubmit('requirement')"
-        >{{$t('requirex_generate')}}</Button>
-        <Button id="cancel" class="btn btn-danger">{{$t('requirex_cancel')}}</Button>
+        <button
+          id="generate"
+          type="button"
+          class="btn btn-outline-dark mx-2"
+        >{{$t('requirex_generate')}}</button>
+        <button id="cancel" type="button" class="btn btn-danger">{{$t('requirex_cancel')}}</button>
       </div>
     </div>
   </div>
@@ -240,14 +242,11 @@ import { getDomainRequirement } from "../assets/js/common/requirement.js";
 
 import $ from "jquery";
 
-$(function() {
-  //Declara modelo del requerimineto
-  var requirement = getDomainRequirement();
+//Declara modelo del requerimineto
+let requirement = getDomainRequirement();
 
-  //Tipo de requerimiento
-  requirement.reqType = $("#reqType").val();
-  //Sistemas afectados
-  requirement.affectedSystems = $("#affectedSystems").val();
+$(function() {
+  console.log(requirement);
 
   //Evento que se ejecuta cuando se cambia el tipo de requerimiento
   $(document).on("change", "#reqType", function() {
@@ -285,16 +284,222 @@ $(function() {
     //affected systems change
     affectedSystems();
   });
+
+  $(document).on("click", "#generate", function() {
+    var valid = true;
+    //Tipo de requerimiento
+    requirement.reqType = $("#reqType").val();
+    //Sistemas afectados
+    requirement.affectedSystems = $("#affectedSystems").val();
+    //Tiene condition
+    if (requirement.isThoseCodition) {
+      requirement.thoseCodition = $("#thoseCodition").val();
+      if (requirement.thoseCodition.length <= 0) {
+        $("#thoseCodition").addClass("error");
+        valid = false;
+      } else {
+        $("#thoseCodition").removeClass("error");
+      }
+    }
+    //nombre de la linea de productos
+    requirement.systemName = $("#systemName").val();
+    if (requirement.systemName.length <= 0) {
+      $("#systemName").addClass("error");
+      valid = false;
+    } else {
+      $("#systemName").removeClass("error");
+    }
+
+    //requirement name
+    requirement.name = $("#name").val();
+    if (requirement.name.length <= 0) {
+      $("#name").addClass("error");
+      valid = false;
+    } else {
+      $("#name").removeClass("error");
+    }
+
+    // Si tiene una condicion
+    //requirement.condition = $("#condition").val();
+    alert(requirement.condition);
+    if (requirement.condition) {
+      requirement.conditionDescription = $("#conditionDescription").val();
+      if (requirement.conditionDescription.length <= 0) {
+        $("#conditionDescription").addClass("error");
+        valid = false;
+      } else {
+        $("#conditionDescription").removeClass("error");
+      }
+    }
+
+    //Sistem activity
+    requirement.systemActivity = $("#systemActivity").val();
+    if (requirement.systemActivity == "userInt") {
+      requirement.user = $("#user").val();
+      if (requirement.user.length <= 0) {
+        $("#user").addClass("error");
+        valid = false;
+      } else {
+        $("#user").removeClass("error");
+      }
+    } else if (requirement.systemActivity == "extInt") {
+      requirement.system = $("#system").val();
+      if (requirement.system.length <= 0) {
+        $("#system").addClass("error");
+        valid = false;
+      } else {
+        $("#system").removeClass("error");
+      }
+    }
+
+    //Proces verb
+    requirement.processVerb = $("#processVerb").val();
+    if (requirement.processVerb <= 0) {
+      $("#processVerb").addClass("error");
+      valid = false;
+    } else {
+      $("#processVerb").removeClass("error");
+    }
+
+    //Objecto
+    requirement.object = $("#object").val();
+    if (requirement.object <= 0) {
+      $("#object").addClass("error");
+      valid = false;
+    } else {
+      $("#object").removeClass("error");
+    }
+
+    //Si el sistema tiene una condicion
+    requirement.systemCondition = $("#systemCondition").val();
+    if (requirement.systemCondition) {
+      requirement.systemConditionDescription = $(
+        "#systemConditionDescription"
+      ).val();
+      if (requirement.systemConditionDescription <= 0) {
+        $("#systemConditionDescription").addClass("error");
+        valid = false;
+      } else {
+        $("#systemConditionDescription").removeClass("error");
+      }
+    }
+
+    if (valid) {
+      //Reiniciar requerimiento
+      requirement.msg = "";
+
+      //Si hay una condición
+      if (requirement.condition == true) {
+        requirement.msg += requirement.conditionDescription + " ";
+      }
+
+      //Sistemas afectado
+      requirement.msg += requirement.affectedSystems + " ";
+      //Complemento
+      requirement.msg += $t("requirex_requirement_affected_systems_complement");
+
+      if (
+        requirement.affectedSystems ==
+        $t("requirex_requirement_affected_systems3")
+      ) {
+        requirement.msg += $t("requirex_requirement_affected_that") + " ";
+        requirement.msg += requirement.thoseCodition + " ";
+      }
+
+      requirement.msg += requirement.systemName + " " + requirement.imperative;
+
+      //Validate system activity
+      if (requirement.systemActivity == "autoAct") {
+        requirement.msg +=
+          " " + requirement.processVerb + " " + requirement.object;
+      } else if (requirement.systemActivity == "userInt") {
+        requirement.msg +=
+          " provide the " + requirement.user + " with the capacity of";
+        requirement.msg +=
+          " " + requirement.processVerb + " " + requirement.object;
+      } else if (requirement.systemActivity == "extInt") {
+        requirement.msg +=
+          " have the capacity of " +
+          requirement.processVerb +
+          " " +
+          requirement.object +
+          " " +
+          requirement.from +
+          " the " +
+          requirement.system;
+      }
+
+      //Validat conditions
+      if (requirement.systemCondition) {
+        requirement.msg += ", " + requirement.systemConditionDescription;
+      }
+      //Agregar item a la lista
+      countDomain++;
+      requirement.id = countDomain;
+      requirement.requirementNumber = "D.R." + requirement.id;
+
+      saveRequirement();
+
+      //Contar Requerimientos
+
+      lastTimeDomain = new Date().toISOString().slice(0, 10);
+
+      //Reiniciar Formulario
+      $("#domainMessage span").text("Success!");
+      setTimeout(showTooltip, 500);
+    } else {
+      $("#domainMessage span").text("please check the data");
+      setTimeout(showTooltip, 500);
+    }
+  });
+
+  function showTooltip() {
+    $("#domainMessage").show("slow");
+    setTimeout(hideTooltip, 5000);
+  }
+
+  function hideTooltip() {
+    $("#domainMessage").hide("slow");
+  }
+  //Activar condiciones
+  function conditionChange() {
+    if ($("#condition").is(":checked")) {
+      $("#conditionDescriptionContainer")
+        .first()
+        .fadeIn("slow");
+
+      requirement.condition = true;
+    } else {
+      requirement.condition = false;
+      $("#conditionDescriptionContainer").hide();
+    }
+  }
+
+  //Activar o desactivar systemas afectados
+  function affectedSystemsChange() {
+    requirement.affectedSystems = $("#affectedSystems").val();
+    if (requirement.affectedSystems == "Those") {
+      $("#thoseCoditionContainer")
+        .first()
+        .fadeIn("slow");
+
+      requirement.isThoseCodition = true;
+    } else {
+      requirement.isThoseCodition = false;
+      $("#thoseCoditionContainer").hide();
+    }
+  }
 });
 
 /**
  * Funciones externas
  */
+
+//Cambiar actividates del sistema
 function systemActivityChange() {
   var systemActivity = $("#systemActivity").val();
   //Al selecccionar interaccion con el usuario
   if (systemActivity == "userInt") {
-    console.log("entro");
     $("#userContent")
       .first()
       .fadeIn("slow");
@@ -311,16 +516,8 @@ function systemActivityChange() {
       .fadeIn("slow");
   }
 }
-function conditionChange() {
-  if ($("#condition").is(":checked")) {
-    $("#conditionDescriptionContainer")
-      .first()
-      .fadeIn("slow");
-  } else {
-    $("#conditionDescriptionContainer").hide();
-  }
-}
 
+//Activar o desactivar condiciones del sistema
 function systemConditionChange() {
   if ($("#systemCondition").is(":checked")) {
     $("#systemConditionDescriptionContainer")
@@ -331,111 +528,11 @@ function systemConditionChange() {
   }
 }
 
-function affectedSystems() {
-  requirement.affectedSystems = $("#affectedSystems").val();
-  if (requirement.affectedSystems == "Those") {
-    $("#thoseCoditionContainer")
-      .first()
-      .fadeIn("slow");
-  } else {
-    $("#thoseCoditionContainer").hide();
-  }
-}
-
 export default {
-  components: {
-    "app-imperative": imperative
-  },
-
   data() {
     return {
       listDomainRequirement: [],
-      requirement: {
-        id: 0,
-        requirementNumber: "",
-        affectedSystems: this.$t("requirex_requirement_affected_systems1"),
-        thoseCodition: "",
-        reqType: this.$t("requirex_requirement_type_value_1"),
-        name: "",
-        condition: false,
-        conditionDescription: "",
-        imperative: this.$t("requirex_requirement_imperative_value_1"),
-        systemName: "",
-        systemActivity: "",
-        user: "",
-        processVerb: "",
-        object: "",
-        system: "",
-        from: "",
-        systemCondition: false,
-        systemConditionDescription: "",
-        msg: "",
-        estado: true
-      }, //Realizar validaciones del formulario
-      ruleValidate: {
-        affectedSystems: [
-          {
-            required: true,
-            message: "Please select a option",
-            trigger: "change"
-          }
-        ],
-        reqType: [
-          {
-            required: true,
-            message: "Please select the requirement type",
-            trigger: "change"
-          }
-        ],
-        name: [
-          {
-            required: true,
-            message: "The name cannot be empty",
-            trigger: "blur"
-          }
-        ],
-        imperative: [
-          {
-            required: true,
-            message: "Please select the imperative",
-            trigger: "change"
-          }
-        ],
-        systemName: [
-          {
-            required: true,
-            message: "The system or subsystem name cannot be empty",
-            trigger: "blur"
-          }
-        ],
-        systemActivity: [
-          {
-            required: true,
-            message: "Please select the system activity",
-            trigger: "change"
-          }
-        ],
-        processVerb: [
-          {
-            required: true,
-            message: "The Process Verb cannot be empty",
-            trigger: "change"
-          }
-        ],
-        object: [
-          {
-            required: true,
-            message: "The Object  cannot be empty",
-            trigger: "change"
-          }
-        ]
-      },
       countDomain: 0,
-      lastTimeDomain: "",
-      isSystemActivity: false,
-      userInt: false,
-      autoAct: false,
-      extInt: false
     };
   },
   methods: {
@@ -443,89 +540,6 @@ export default {
       return JSON.stringify(this.requirement);
     },
 
-    handleReset(name) {
-      // this.$refs[name].resetFields();
-    },
-    onDomainCancel(name) {
-      // this.$refs[name].resetFields();
-      this.$router.push("/requireX");
-    },
-    handleSubmit(name) {
-      //Validar el formulario
-      //this.$refs[name].validate(valid => {
-      if (valid) {
-        //Reiniciar requerimiento
-        this.requirement.msg = "";
-
-        //Si hay una condición
-        if (this.requirement.condition == true) {
-          this.requirement.msg += this.requirement.conditionDescription + " ";
-        }
-
-        //Sistemas afectado
-        this.requirement.msg += this.requirement.affectedSystems + " ";
-        //Complemento
-        this.requirement.msg += this.$t(
-          "requirex_requirement_affected_systems_complement"
-        );
-
-        if (
-          this.requirement.affectedSystems ==
-          this.$t("requirex_requirement_affected_systems3")
-        ) {
-          this.requirement.msg +=
-            this.$t("requirex_requirement_affected_that") + " ";
-          this.requirement.msg += this.requirement.thoseCodition + " ";
-        }
-
-        this.requirement.msg +=
-          this.requirement.systemName + " " + this.requirement.imperative;
-
-        //Validate system activity
-        if (this.requirement.systemActivity == "autoAct") {
-          this.requirement.msg +=
-            " " + this.requirement.processVerb + " " + this.requirement.object;
-        } else if (this.requirement.systemActivity == "userInt") {
-          this.requirement.msg +=
-            " provide the " + this.requirement.user + " with the capacity of";
-          this.requirement.msg +=
-            " " + this.requirement.processVerb + " " + this.requirement.object;
-        } else if (this.requirement.systemActivity == "extInt") {
-          this.requirement.msg +=
-            " have the capacity of " +
-            this.requirement.processVerb +
-            " " +
-            this.requirement.object +
-            " " +
-            this.requirement.from +
-            " the " +
-            this.requirement.system;
-        }
-
-        //Validat conditions
-        if (this.requirement.systemCondition) {
-          this.requirement.msg +=
-            ", " + this.requirement.systemConditionDescription;
-        }
-        //Agregar item a la lista
-        this.countDomain++;
-        this.requirement.id = this.countDomain;
-        this.requirement.requirementNumber = "D.R." + this.requirement.id;
-
-        this.saveRequirement();
-
-        //Contar Requerimientos
-
-        this.lastTimeDomain = new Date().toISOString().slice(0, 10);
-
-        //Reiniciar Formulario
-        this.$Message.success("Success!");
-        this.$router.push("/requireX");
-      } else {
-        this.$Message.error("Fail!");
-      }
-      // });
-    },
     saveRequirement() {
       let uri = "http://localhost:4000/domains/add";
       this.axios.post(uri, this.requirement).then(() => {
@@ -541,10 +555,6 @@ export default {
       this.listDomainRequirement = response.data;
       this.countDomain = this.listDomainRequirement.length;
     });
-  },
-  mounted() {
-    //Cargar datos
-    //this.$refs["requirement"].resetFields();
   }
 };
 </script>
@@ -553,5 +563,9 @@ export default {
 .form-requirement {
   margin: 0 auto;
   max-width: 500px;
+}
+
+.error {
+  border: 1px solid red;
 }
 </style>
