@@ -257,6 +257,7 @@
       <div class="container text-right my-2">
         <button
           id="generate"
+          @click="onGenerateRequirement"
           type="button"
           class="btn btn-outline-dark mx-2"
         >{{$t('requirex_generate')}}</button>
@@ -275,9 +276,8 @@ $(function() {
   //Agregar o retirar condiciones del sistema
   $(document).on("click", "#cancel", function() {
     $("#domainForm").trigger("reset");
-   
   });
-
+  /*
   $(document).on("click", "#generate", function() {
     var valid = true;
     //Tipo de requerimiento
@@ -381,80 +381,14 @@ $(function() {
     }
 
     if (valid) {
-      //Reiniciar requerimiento
-      requirement.msg = "";
-
-      //Si hay una condición
-      if (requirement.condition == true) {
-        requirement.msg += requirement.conditionDescription + " ";
-      }
-
-      //Sistemas afectado
-      requirement.msg += requirement.affectedSystems + " ";
-      //Complemento
-      requirement.msg += $t("requirex_requirement_affected_systems_complement");
-
-      if (
-        requirement.affectedSystems ==
-        $t("requirex_requirement_affected_systems3")
-      ) {
-        requirement.msg += $t("requirex_requirement_affected_that") + " ";
-        requirement.msg += requirement.thoseCodition + " ";
-      }
-
-      requirement.msg += requirement.systemName + " " + requirement.imperative;
-
-      //Validate system activity
-      if (requirement.systemActivity == "autoAct") {
-        requirement.msg +=
-          " " + requirement.processVerb + " " + requirement.object;
-      } else if (requirement.systemActivity == "userInt") {
-        requirement.msg +=
-          " provide the " + requirement.user + " with the capacity of";
-        requirement.msg +=
-          " " + requirement.processVerb + " " + requirement.object;
-      } else if (requirement.systemActivity == "extInt") {
-        requirement.msg +=
-          " have the capacity of " +
-          requirement.processVerb +
-          " " +
-          requirement.object +
-          " " +
-          requirement.from +
-          " the " +
-          requirement.system;
-      }
-
-      //Validat conditions
-      if (requirement.systemCondition) {
-        requirement.msg += ", " + requirement.systemConditionDescription;
-      }
-      //Agregar item a la lista
-      countDomain++;
-      requirement.id = countDomain;
-      requirement.requirementNumber = "D.R." + requirement.id;
-
-      //Contar Requerimientos
-
-      var lastTimeDomain = new Date().toISOString().slice(0, 10);
-      saveRequirement();
       //Reiniciar Formulario
-      $("#domainMessage span").text("Success!");
-      setTimeout(showTooltip, 500);
+     
     } else {
       $("#domainMessage span").text("please check the data");
       setTimeout(showTooltip, 500);
     }
   });
-
-  function showTooltip() {
-    $("#domainMessage").show("slow");
-    setTimeout(hideTooltip, 5000);
-  }
-
-  function hideTooltip() {
-    $("#domainMessage").hide("slow");
-  }
+*/
 });
 
 export default {
@@ -525,7 +459,7 @@ export default {
         $("#systemConditionDescriptionContainer")
           .first()
           .fadeIn("slow");
-          this.requirement.systemCondition = true;
+        this.requirement.systemCondition = true;
       } else {
         this.requirement.systemCondition = false;
         $("#systemConditionDescriptionContainer").hide();
@@ -548,6 +482,84 @@ export default {
           .first()
           .fadeIn("slow");
       }
+    },
+    onGenerateRequirement() {
+      //Reiniciar requerimiento
+      this.requirement.msg = "";
+
+      //Si hay una condición
+      if (this.requirement.condition == true) {
+        this.requirement.msg += this.requirement.conditionDescription + " ";
+      }
+
+      //Sistemas afectado
+      this.requirement.msg += this.requirement.affectedSystems + " ";
+      //Complemento
+      this.requirement.msg += this.$t(
+        "requirex_requirement_affected_systems_complement"
+      );
+
+      if (
+        this.requirement.affectedSystems ==
+        this.$t("requirex_requirement_affected_systems3")
+      ) {
+        this.requirement.msg +=
+          this.$t("requirex_requirement_affected_that") + " ";
+        this.requirement.msg += this.requirement.thoseCodition + " ";
+      }
+
+      this.requirement.msg +=
+        this.requirement.systemName + " " + this.requirement.imperative;
+
+      //Validate system activity
+      if (this.requirement.systemActivity == "autoAct") {
+        this.requirement.msg +=
+          " " + this.requirement.processVerb + " " + this.requirement.object;
+      } else if (this.requirement.systemActivity == "userInt") {
+        this.requirement.msg +=
+          " provide the " + this.requirement.user + " with the capacity of";
+        this.requirement.msg +=
+          " " + this.requirement.processVerb + " " + this.requirement.object;
+      } else if (this.requirement.systemActivity == "extInt") {
+        this.requirement.msg +=
+          " have the capacity of " +
+          this.requirement.processVerb +
+          " " +
+          this.requirement.object +
+          " " +
+          this.requirement.from +
+          " the " +
+          this.requirement.system;
+      }
+
+      //Validat conditions
+      if (this.requirement.systemCondition) {
+        this.requirement.msg +=
+          ", " + this.requirement.systemConditionDescription;
+      }
+      //Agregar item a la lista
+      this.countDomain++;
+      this.requirement.id = this.countDomain;
+      this.requirement.requirementNumber = "D.R." + this.requirement.id;
+
+      this.saveRequirement();
+
+      //Contar Requerimientos
+
+      this.lastTimeDomain = new Date().toISOString().slice(0, 10);
+
+      $("#domainMessage span").text("Success!");
+      $("#domainMessage").addClass("alert-success");
+      $("#domainMessage").removeClass("alert-danger");
+      setTimeout(this.showTooltip, 500);
+    },
+    showTooltip() {
+      $("#domainMessage").show("slow");
+      setTimeout(this.hideTooltip, 5000);
+    },
+
+    hideTooltip() {
+      $("#domainMessage").hide("slow");
     },
     saveRequirement() {
       let uri = "http://localhost:4000/domains/add";
