@@ -77,14 +77,8 @@
 
 <script>
 import $ from "jquery";
-import { getModelInfo } from "../assets/js/common/treeview-json";
-import  Bus  from "../assets/js/common/bus";
-
-$(document).ready(function() {
-  $(".toast")
-    .toast({ delay: 1000 })
-    .toast("show");
-});
+import { getModelInfo, getModels } from "../assets/js/common/treeview-json";
+import Bus from "../assets/js/common/bus";
 
 export default {
   components: {},
@@ -122,41 +116,41 @@ export default {
         });
         this.isCreated = true;
       } else {
-        this.errormessage = this.$t("filemanagement_addproject_error3");
-        $(".toast").toast("show");
+        $("#AppMessage span").text(this.$t("filemanagement_addproject_error3"));
+        $("#AppMessage span")
+          .first()
+          .fadeIn("slow");
       }
     },
     nodeSelect(node, isSelected) {
-    
       if (isSelected) {
         if (node.data.id == 1) {
           return;
         }
 
         if (node.data.id > 3) {
-
-          if(node.data.type == "model"){
-          this.$router.push(
-            "/models/" +
-              this.proyectName +
-              "/" +
-              node.data.folder +
-              "-" +
-              this.proyectName +
-              "/" +
-              node.data.name
-          );
-          }else if(node.data.type == "form"){
+          if (node.data.type == "model") {
             this.$router.push(
-            "/forms/" +
-              this.proyectName +
-              "/" +
-              node.data.folder +
-              "-" +
-              this.proyectName +
-              "/" +
-              node.data.name
-          );
+              "/models/" +
+                this.proyectName +
+                "/" +
+                node.data.folder +
+                "-" +
+                this.proyectName +
+                "/" +
+                node.data.name
+            );
+          } else if (node.data.type == "form") {
+            this.$router.push(
+              "/forms/" +
+                this.proyectName +
+                "/" +
+                node.data.folder +
+                "-" +
+                this.proyectName +
+                "/" +
+                node.data.name
+            );
           }
           //Para pasar objetos entre objetos
 
@@ -193,6 +187,18 @@ export default {
       let idx = nodes.indexOf(nodeData);
       nodes.splice(idx, 1);
       this.$router.push("/models/default/default/default");
+    }
+  },
+  mounted() {
+    if (localStorage.proyectName){
+       this.proyectName = localStorage.proyectName;
+       this.createProyect();
+    }
+
+  },
+  watch: {
+    proyectName(proyectName) {
+      localStorage.proyectName = proyectName;
     }
   }
 };

@@ -1,3 +1,5 @@
+import { model } from "mongoose";
+
 //Modelo de datos Json para el treeview
 export function getModelInfo() {
 
@@ -63,7 +65,7 @@ export function getModelInfo() {
                                     id: 16,
                                     name: "requirement",
                                     folder: "domain",
-                                    type: "model",
+                                    type: "form",
                                 }
                             ]
                         },
@@ -94,8 +96,8 @@ export function getModelInfo() {
                         {
                             id: 15,
                             name: "requirement",
-                            folder: "domain",
-                            type: "model",
+                            folder: "application",
+                            type: "form",
                         }
                     ]
                 }
@@ -104,4 +106,34 @@ export function getModelInfo() {
     ];
 
     return json;
+}
+
+export function getModels(){
+    var json = getModelInfo();
+    //Modelos registrados
+    var models = [];
+    //Rama principal
+    var ramaPrincipal = json[0].children;
+    //Recorrer arreglo
+    for(var i = 0; i < ramaPrincipal.length; i++){
+        if(ramaPrincipal[i].type == "content"){
+           models = models.concat(recorrerHijo(ramaPrincipal[i].children));
+        }
+    }   
+
+    return JSON.stringify(models);
+}
+
+//Recorrer hijos del vector
+function recorrerHijo(hijo){
+    var models = [];
+    for(var i = 0; i < hijo.length; i++){
+        if(hijo[i].type == "model"){
+            models.push(hijo[i].name);
+        }else if(hijo[i].type == "content"){
+            models = models.concat(recorrerHijo(hijo[i].children));
+        }
+    }
+
+    return models;
 }

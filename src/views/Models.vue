@@ -89,6 +89,7 @@ import model_load from "@/assets/js/models/model_load.js";
 import Bus from "../assets/js/common/bus.js";
 import { getModelInfo } from "../assets/js/common/global_info";
 import { setupModal, modalH3, modalSimpleText } from "../assets/js/common/util";
+import { getModels } from '@/assets/js/common/treeview-json.js'
 
 /* import actions */
 import DomainMenu from "../components/model_actions/DomainMenu";
@@ -127,7 +128,7 @@ export default {
     Bus.$on("setfalsegraph", data => {
       this.graph.setEnabled(false);
     });
-    this.models = getModelInfo()["gmodels"]; //represent the available models
+    this.models = getModels(); //represent the available models
     //preload the saved model if exists
     let temp = this.getmodel_component;
     if (localStorage[temp]) {
@@ -312,6 +313,8 @@ export default {
 
         if(folder == "domain-" + proyec){
            this.$router.push("/requirex/domain");
+        }else if(folder == "application-" + proyec){
+            this.$router.push("/requirex/application");
         }
        
       }

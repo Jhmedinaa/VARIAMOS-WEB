@@ -31,7 +31,12 @@ export default new Router({
           path: '/requirex/domain',
           name: 'requirexdomain',
           component: () => import('./views/RequireXDomain.vue')
-        }
+        }, 
+        {
+          path: '/requirex/application',
+          name: 'requirexapplication',
+          component: () => import('./views/RequireXApplication.vue')
+        },
       ]
     },
     {
@@ -59,11 +64,7 @@ export default new Router({
       name: 'RequireX',
       component: () => import('./views/RequireX.vue'),
     },
-    {
-      path: '/requirex/application',
-      name: 'requirexapplication',
-      component: () => import('./views/RequireXApplication.vue')
-    },
+
     {
       path: '/requirex/adaptation',
       name: 'requirexadaptation',

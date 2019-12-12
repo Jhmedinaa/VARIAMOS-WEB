@@ -15,7 +15,7 @@
               {{$t('requirex_requirement_type_label')}}
             </label>
 
-            <select id="reqType" class="form-control">
+            <select id="reqType" v-model="requirement.reqType" class="form-control">
               <option
                 :value="$t('requirex_requirement_type_value_1')"
               >{{ $t('requirex_requirement_type1')}}</option>
@@ -33,7 +33,12 @@
               {{$t('requirex_requirement_affected_systems_label')}}
             </label>
 
-            <select id="affectedSystems" class="form-control">
+            <select
+              id="affectedSystems"
+              v-model="requirement.affectedSystems"
+              @change="onaffectedSystemsChange"
+              class="form-control"
+            >
               <option
                 :value="$t('requirex_requirement_affected_systems1')"
                 selected
@@ -52,6 +57,7 @@
           <label for="thoseCodition">{{$t('requirex_requirement_affected_condition')}}</label>
           <input
             id="thoseCodition"
+            v-model="requirement.thoseCodition"
             class="form-control"
             :placeholder="$t('requirex_requirement_affected_condition')"
           />
@@ -65,6 +71,7 @@
             </label>
             <input
               id="systemName"
+              v-model="requirement.systemName"
               class="form-control"
               :placeholder="$t('requirex_requirement_system_domain_name_label')"
             />
@@ -76,6 +83,7 @@
             </label>
             <input
               id="name"
+              v-model="requirement.name"
               class="form-control"
               :placeholder="$t('requirex_requirement_name_label')"
             />
@@ -85,7 +93,14 @@
         <div class="row my-2">
           <div class="col">
             <div class="custom-control custom-switch">
-              <input type="checkbox" class="custom-control-input" id="condition" />
+              <input
+                type="checkbox"
+                class="custom-control-input"
+                id="condition"
+                v-model="requirement.condition"
+                value="false"
+                @click="onConditionCheck"
+              />
               <label
                 class="custom-control-label"
                 for="condition"
@@ -95,6 +110,7 @@
           <div id="conditionDescriptionContainer" class="col" style="display: none">
             <textarea
               id="conditionDescription"
+              v-model="requirement.conditionDescription"
               class="form-control"
               type="textarea"
               :autosize="{minRows: 2,maxRows: 5}"
@@ -109,15 +125,15 @@
               <font size="3" color="red">*</font>
               {{ $t('requirex_requirement_imperative_label') }}
             </label>
-            <select id="imperative" class="form-control" :placeholder="$t('requirex_select')">
+            <select id="imperative" v-model="requirement.imperative" class="form-control">
               <option
-                value="$t('requirex_requirement_imperative_value_1')"
-              >{{ $t('requirex_requirement_imperative1')}}</option>
+                :value="$t('requirex_requirement_imperative_value_1')"
+              >{{ $t('requirex_requirement_imperative1') }}</option>
               <option
-                value="$t('requirex_requirement_imperative_value_2')"
+                :value="$t('requirex_requirement_imperative_value_2')"
               >{{ $t('requirex_requirement_imperative2')}}</option>
               <option
-                value="$t('requirex_requirement_imperative_value_3')"
+                :value="$t('requirex_requirement_imperative_value_3')"
               >{{ $t('requirex_requirement_imperative3')}}</option>
             </select>
           </div>
@@ -129,9 +145,9 @@
             </label>
             <select
               id="systemActivity"
+              v-model="requirement.systemActivity"
               class="form-control"
-              placeholder="$t('requirex_select')"
-              onload="systemActivityChange()"
+              @click="onSystemActivityChange"
             >
               <option
                 :value="$t('requirex_requirement_system_activity_value_1')"
@@ -150,6 +166,7 @@
           <label>{{$t('requirex_requirement_user_label')}}</label>
           <input
             id="user"
+            v-model="requirement.user"
             class="form-control"
             :placeholder="$t('requirex_requirement_user_label')"
           />
@@ -160,13 +177,19 @@
             <label>{{$t('requirex_requirement_system_label')}}</label>
             <input
               id="system"
+              v-model="requirement.system"
               class="form-control"
               :placeholder="$t('requirex_requirement_system_label')"
             />
           </div>
           <div class="col">
             <label>{{ $t('requirex_requirement_from_label') }}</label>
-            <select id="from" class="form-control" :placeholder="$t('requirex_select')">
+            <select
+              id="from"
+              v-model="requirement.from"
+              class="form-control"
+              :placeholder="$t('requirex_select')"
+            >
               <option
                 :value="$t('requirex_requirement_from_value_1')"
               >{{ $t('requirex_requirement_from1')}}</option>
@@ -185,6 +208,7 @@
             </label>
             <input
               id="processVerb"
+              v-model="requirement.processVerb"
               class="form-control"
               :placeholder="$t('requirex_requirement_process_verb_label')"
             />
@@ -196,6 +220,7 @@
             </label>
             <input
               id="object"
+              v-model="requirement.object"
               class="form-control"
               :placeholder="$t('requirex_requirement_object_label')"
             />
@@ -203,7 +228,13 @@
         </div>
 
         <div class="custom-control custom-switch my-2">
-          <input type="checkbox" class="custom-control-input" id="systemCondition" />
+          <input
+            type="checkbox"
+            class="custom-control-input"
+            id="systemCondition"
+            v-model="requirement.systemCondition"
+            @click="onSystemConditionCheck"
+          />
           <label
             class="custom-control-label"
             for="systemCondition"
@@ -214,6 +245,7 @@
           <label>{{ $t('requirex_requirement_description') }}</label>
           <textarea
             id="systemConditionDescription"
+            v-model="requirement.systemConditionDescription"
             class="form-control"
             type="textarea"
             :autosize="{minRows: 2,maxRows: 5}"
@@ -237,52 +269,13 @@
 <script src="//unpkg.com/iview/dist/iview.min.js"></script>
 
 <script>
-import imperative from "./../components/requirex/components/Imperative";
-import { getDomainRequirement } from "../assets/js/common/requirement.js";
-
 import $ from "jquery";
 
-//Declara modelo del requerimineto
-let requirement = getDomainRequirement();
-
 $(function() {
-  console.log(requirement);
-
-  //Evento que se ejecuta cuando se cambia el tipo de requerimiento
-  $(document).on("change", "#reqType", function() {
-    requirement.reqType = $("#reqType").val();
-  });
-
-  //Evento que se ejecuta cuando se cambiam los sistemas afectados
-  $(document).on("change", "#affectedSystems", function() {
-    affectedSystemsChange();
-  });
-
-  //Activar condiciones
-  $("#condition").change(function() {
-    conditionChange();
-  });
-
-  //Cambiar de Actividad del sistema, oculta o muestra las funciones correspondientes
-  $(document).on("change", "#systemActivity", function() {
-    systemActivityChange();
-  });
-
   //Agregar o retirar condiciones del sistema
-  $("#systemCondition").click(function() {
-    systemConditionChange();
-  });
-
   $(document).on("click", "#cancel", function() {
     $("#domainForm").trigger("reset");
-    //systemActivity
-    systemActivityChange();
-    //System condition change
-    systemConditionChange();
-    //Condition change
-    conditionChange();
-    //affected systems change
-    affectedSystems();
+   
   });
 
   $(document).on("click", "#generate", function() {
@@ -320,9 +313,8 @@ $(function() {
     }
 
     // Si tiene una condicion
-    //requirement.condition = $("#condition").val();
-    alert(requirement.condition);
-    if (requirement.condition) {
+    if ($("#condition").is(":checked")) {
+      requirement.condition = true;
       requirement.conditionDescription = $("#conditionDescription").val();
       if (requirement.conditionDescription.length <= 0) {
         $("#conditionDescription").addClass("error");
@@ -330,6 +322,8 @@ $(function() {
       } else {
         $("#conditionDescription").removeClass("error");
       }
+    } else {
+      requirement.condition = false;
     }
 
     //Sistem activity
@@ -371,8 +365,8 @@ $(function() {
     }
 
     //Si el sistema tiene una condicion
-    requirement.systemCondition = $("#systemCondition").val();
-    if (requirement.systemCondition) {
+    if ($("#systemCondition").is(":checked")) {
+      requirement.systemCondition = true;
       requirement.systemConditionDescription = $(
         "#systemConditionDescription"
       ).val();
@@ -382,6 +376,8 @@ $(function() {
       } else {
         $("#systemConditionDescription").removeClass("error");
       }
+    } else {
+      requirement.systemCondition = false;
     }
 
     if (valid) {
@@ -438,12 +434,10 @@ $(function() {
       requirement.id = countDomain;
       requirement.requirementNumber = "D.R." + requirement.id;
 
-      saveRequirement();
-
       //Contar Requerimientos
 
-      lastTimeDomain = new Date().toISOString().slice(0, 10);
-
+      var lastTimeDomain = new Date().toISOString().slice(0, 10);
+      saveRequirement();
       //Reiniciar Formulario
       $("#domainMessage span").text("Success!");
       setTimeout(showTooltip, 500);
@@ -461,85 +455,100 @@ $(function() {
   function hideTooltip() {
     $("#domainMessage").hide("slow");
   }
-  //Activar condiciones
-  function conditionChange() {
-    if ($("#condition").is(":checked")) {
-      $("#conditionDescriptionContainer")
-        .first()
-        .fadeIn("slow");
-
-      requirement.condition = true;
-    } else {
-      requirement.condition = false;
-      $("#conditionDescriptionContainer").hide();
-    }
-  }
-
-  //Activar o desactivar systemas afectados
-  function affectedSystemsChange() {
-    requirement.affectedSystems = $("#affectedSystems").val();
-    if (requirement.affectedSystems == "Those") {
-      $("#thoseCoditionContainer")
-        .first()
-        .fadeIn("slow");
-
-      requirement.isThoseCodition = true;
-    } else {
-      requirement.isThoseCodition = false;
-      $("#thoseCoditionContainer").hide();
-    }
-  }
 });
-
-/**
- * Funciones externas
- */
-
-//Cambiar actividates del sistema
-function systemActivityChange() {
-  var systemActivity = $("#systemActivity").val();
-  //Al selecccionar interaccion con el usuario
-  if (systemActivity == "userInt") {
-    $("#userContent")
-      .first()
-      .fadeIn("slow");
-    $("#extIntContent").hide();
-  } else if (systemActivity == "autoAct") {
-    //Al selecccionar actividad autonoma
-    $("#userContent").hide();
-    $("#extIntContent").hide();
-  } else if (systemActivity == "extInt") {
-    //Al seleccionar actividad externa
-    $("#userContent").hide();
-    $("#extIntContent")
-      .first()
-      .fadeIn("slow");
-  }
-}
-
-//Activar o desactivar condiciones del sistema
-function systemConditionChange() {
-  if ($("#systemCondition").is(":checked")) {
-    $("#systemConditionDescriptionContainer")
-      .first()
-      .fadeIn("slow");
-  } else {
-    $("#systemConditionDescriptionContainer").hide();
-  }
-}
 
 export default {
   data() {
     return {
       listDomainRequirement: [],
       countDomain: 0,
+      requirement: {
+        id: 0,
+        requirementNumber: "",
+        affectedSystems: this.$t("requirex_requirement_affected_systems1"),
+        thoseCodition: "",
+        isThoseCodition: false,
+        reqType: this.$t("requirex_requirement_type_value_1"),
+        name: "",
+        condition: false,
+        conditionDescription: "",
+        imperative: this.$t("requirex_requirement_imperative_value_1"),
+        systemName: "",
+        systemActivity: this.$t("requirex_requirement_system_activity_value_1"),
+        user: "",
+        processVerb: "",
+        object: "",
+        system: "",
+        from: this.$t("requirex_requirement_from_value_1"),
+        systemCondition: false,
+        systemConditionDescription: "",
+        msg: "",
+        estado: true
+      }
     };
   },
   methods: {
-    getRequirement() {
-      return JSON.stringify(this.requirement);
-    },
+    //Alcambiar Los sistemas afectados
+    onaffectedSystemsChange() {
+      alert(this.requirement.affectedSystems);
+      if (
+        this.requirement.affectedSystems ==
+        this.$t("requirex_requirement_affected_systems3")
+      ) {
+        $("#thoseCoditionContainer")
+          .first()
+          .fadeIn("slow");
 
+        this.requirement.isThoseCodition = true;
+      } else {
+        this.requirement.isThoseCodition = false;
+        $("#thoseCoditionContainer").hide();
+      }
+    },
+    //Activar condiciones
+    onConditionCheck() {
+      console.log("entro");
+      if ($("#condition").is(":checked")) {
+        $("#conditionDescriptionContainer")
+          .first()
+          .fadeIn("slow");
+
+        this.requirement.condition = true;
+      } else {
+        this.requirement.condition = false;
+        $("#conditionDescriptionContainer").hide();
+      }
+    },
+    //Activar condiciones
+    onSystemConditionCheck() {
+      if ($("#systemCondition").is(":checked")) {
+        $("#systemConditionDescriptionContainer")
+          .first()
+          .fadeIn("slow");
+          this.requirement.systemCondition = true;
+      } else {
+        this.requirement.systemCondition = false;
+        $("#systemConditionDescriptionContainer").hide();
+      }
+    },
+    onSystemActivityChange() {
+      if (this.requirement.systemActivity == "userInt") {
+        $("#userContent")
+          .first()
+          .fadeIn("slow");
+        $("#extIntContent").hide();
+      } else if (this.requirement.systemActivity == "autoAct") {
+        //Al selecccionar actividad autonoma
+        $("#userContent").hide();
+        $("#extIntContent").hide();
+      } else if (this.requirement.systemActivity == "extInt") {
+        //Al seleccionar actividad externa
+        $("#userContent").hide();
+        $("#extIntContent")
+          .first()
+          .fadeIn("slow");
+      }
+    },
     saveRequirement() {
       let uri = "http://localhost:4000/domains/add";
       this.axios.post(uri, this.requirement).then(() => {
@@ -554,6 +563,7 @@ export default {
     this.axios.get(uri).then(response => {
       this.listDomainRequirement = response.data;
       this.countDomain = this.listDomainRequirement.length;
+      console.log(this.countDomain);
     });
   }
 };
